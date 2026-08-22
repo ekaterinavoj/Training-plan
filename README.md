@@ -19,7 +19,7 @@ Celá appka je za přihlášením – bez přihlášení tě server přesměruje
 
 | | |
 |---|---|
-| Uživatelské jméno | `ekaterina` |
+| Uživatelské jméno | `trainer936499` |
 | Heslo | `SilaHubnuti-26x!` |
 | Záchranný kód (pro obnovení hesla) | `ObnovaHesla-9427-Trenink` |
 
@@ -110,7 +110,7 @@ docker run -d \
 | Proměnná | Výchozí | Význam |
 |---|---|---|
 | `PORT` | `3100` | Port, na kterém server poslouchá uvnitř kontejneru. Pokud ho měníš, uprav i `EXPOSE`/mapování portu. |
-| `ADMIN_USERNAME` | `ekaterina` | Přihlašovací jméno. |
+| `ADMIN_USERNAME` | `trainer936499` | Přihlašovací jméno. |
 | `ADMIN_PASSWORD` | `SilaHubnuti-26x!` | Přihlašovací heslo – **změň před nasazením do produkce.** Pokud si heslo později změníš přes appku (🔑) nebo přes záchranný kód, uloží se do `data/auth.json` a od té chvíle má přednost před touhle proměnnou. |
 | `ADMIN_RESET_CODE` | `ObnovaHesla-9427-Trenink` | Záchranný kód pro obnovení zapomenutého hesla na `/login` → "Zapomenuté heslo?". **Změň ho na něco, co nikde jinde nepoužíváš** – kdokoliv tenhle kód zná, může nastavit nové přihlašovací heslo bez znalosti toho starého. |
 

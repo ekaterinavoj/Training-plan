@@ -9,7 +9,7 @@ services:
       - "3100:3100"
     environment:
       - PORT=3100
-      - ADMIN_USERNAME=ekaterina
+      - ADMIN_USERNAME=trainer936499
       - ADMIN_PASSWORD=SilaHubnuti-26x!
       - ADMIN_RESET_CODE=ObnovaHesla-9427-Trenink
     volumes:
