@@ -76,6 +76,7 @@ function normalizeDay(d) {
     d.sections = exs.length ? [{ id: uid('s'), name: '', exercises: exs }] : [];
   }
   delete d.exercises;
+  delete d.warmup; // moved from day-level to a per-exercise warm-up set
   return d;
 }
 
@@ -184,14 +185,17 @@ function makeItem(ex) {
   const node = itemTpl.content.firstElementChild.cloneNode(true);
 
   if (ex) {
-    node.querySelector('.ex-name').value          = ex.name          || '';
-    node.querySelector('.ex-sets').value          = ex.sets          ?? '';
-    node.querySelector('.ex-reps').value          = ex.reps          ?? '';
-    node.querySelector('.ex-weight').value        = ex.weight        || '';
-    node.querySelector('.ex-actual-sets').value   = ex.actualSets    ?? '';
-    node.querySelector('.ex-actual-reps').value   = ex.actualReps    ?? '';
-    node.querySelector('.ex-actual-weight').value = ex.actualWeight  || '';
-    node.querySelector('.ex-note').value          = ex.note          || '';
+    node.querySelector('.ex-name').value           = ex.name          || '';
+    node.querySelector('.ex-warmup-sets').value    = ex.warmupSets    ?? '';
+    node.querySelector('.ex-warmup-reps').value    = ex.warmupReps    ?? '';
+    node.querySelector('.ex-warmup-weight').value  = ex.warmupWeight  || '';
+    node.querySelector('.ex-sets').value           = ex.sets          ?? '';
+    node.querySelector('.ex-reps').value           = ex.reps          ?? '';
+    node.querySelector('.ex-weight').value         = ex.weight        || '';
+    node.querySelector('.ex-actual-sets').value    = ex.actualSets    ?? '';
+    node.querySelector('.ex-actual-reps').value    = ex.actualReps    ?? '';
+    node.querySelector('.ex-actual-weight').value  = ex.actualWeight  || '';
+    node.querySelector('.ex-note').value           = ex.note          || '';
   }
 
   node.querySelector('.btn-clear-actual').addEventListener('click', () => {
@@ -214,10 +218,11 @@ function dayHasContent(dayNode) {
 }
 function sectionHasContent(sectionNode) {
   if (sectionNode.querySelector('.section-name').value.trim()) return true;
-  return Array.from(sectionNode.querySelectorAll('.exercise-item')).some(item =>
-    ['.ex-name', '.ex-sets', '.ex-reps', '.ex-weight', '.ex-actual-sets', '.ex-actual-reps', '.ex-actual-weight', '.ex-note']
-      .some(sel => item.querySelector(sel).value.trim())
-  );
+  return Array.from(sectionNode.querySelectorAll('.exercise-item')).some(exerciseItemHasContent);
+}
+function exerciseItemHasContent(item) {
+  return ['.ex-name', '.ex-warmup-sets', '.ex-warmup-reps', '.ex-warmup-weight', '.ex-sets', '.ex-reps', '.ex-weight', '.ex-actual-sets', '.ex-actual-reps', '.ex-actual-weight', '.ex-note']
+    .some(sel => item.querySelector(sel).value.trim());
 }
 
 function escapeAttr(str) {
@@ -250,26 +255,8 @@ function syncCycleCurrentWeekFromDom(cycle) {
       const sName = sectionNode.querySelector('.section-name').value.trim();
       const exercises = [];
       sectionNode.querySelectorAll('.exercise-items > .exercise-item').forEach(item => {
-        const exName       = item.querySelector('.ex-name').value.trim();
-        const sets         = item.querySelector('.ex-sets').value;
-        const reps         = item.querySelector('.ex-reps').value;
-        const weight       = item.querySelector('.ex-weight').value.trim();
-        const actualSets   = item.querySelector('.ex-actual-sets').value;
-        const actualReps   = item.querySelector('.ex-actual-reps').value;
-        const actualWeight = item.querySelector('.ex-actual-weight').value.trim();
-        const note         = item.querySelector('.ex-note').value.trim();
-        if (exName || sets || reps || weight || actualSets || actualReps || actualWeight || note) {
-          exercises.push({
-            name: exName,
-            sets: sets === '' ? null : Number(sets),
-            reps: reps === '' ? null : Number(reps),
-            weight,
-            actualSets: actualSets === '' ? null : Number(actualSets),
-            actualReps: actualReps === '' ? null : Number(actualReps),
-            actualWeight,
-            note
-          });
-        }
+        const ex = readExerciseItem(item);
+        if (ex) exercises.push(ex);
       });
       if (sName || exercises.length) {
         sections.push({ id: uid('s'), name: sName, exercises });
@@ -279,6 +266,35 @@ function syncCycleCurrentWeekFromDom(cycle) {
     days.push({ id, name, focus, sections });
   });
   week.days = days;
+}
+
+function readExerciseItem(item) {
+  const exName        = item.querySelector('.ex-name').value.trim();
+  const warmupSets    = item.querySelector('.ex-warmup-sets').value;
+  const warmupReps    = item.querySelector('.ex-warmup-reps').value;
+  const warmupWeight  = item.querySelector('.ex-warmup-weight').value.trim();
+  const sets          = item.querySelector('.ex-sets').value;
+  const reps          = item.querySelector('.ex-reps').value;
+  const weight        = item.querySelector('.ex-weight').value.trim();
+  const actualSets    = item.querySelector('.ex-actual-sets').value;
+  const actualReps    = item.querySelector('.ex-actual-reps').value;
+  const actualWeight  = item.querySelector('.ex-actual-weight').value.trim();
+  const note          = item.querySelector('.ex-note').value.trim();
+  if (!exName && !warmupSets && !warmupReps && !warmupWeight && !sets && !reps && !weight
+      && !actualSets && !actualReps && !actualWeight && !note) return null;
+  return {
+    name: exName,
+    warmupSets: warmupSets === '' ? null : Number(warmupSets),
+    warmupReps: warmupReps === '' ? null : Number(warmupReps),
+    warmupWeight,
+    sets: sets === '' ? null : Number(sets),
+    reps: reps === '' ? null : Number(reps),
+    weight,
+    actualSets: actualSets === '' ? null : Number(actualSets),
+    actualReps: actualReps === '' ? null : Number(actualReps),
+    actualWeight,
+    note
+  };
 }
 
 // ── Structural actions ─────────────────────────────────────────────────────────
@@ -486,14 +502,24 @@ function buildViewerExercise(ex) {
   const card = document.createElement('div');
   card.className = 'viewer-exercise';
 
+  const warmupParts = [];
+  if (ex.warmupSets != null || ex.warmupReps != null) warmupParts.push(`${ex.warmupSets ?? '?'} × ${ex.warmupReps ?? '?'}`);
+  if (ex.warmupWeight) warmupParts.push(ex.warmupWeight);
+
   const planParts = [];
   if (ex.sets != null || ex.reps != null) planParts.push(`${ex.sets ?? '?'} × ${ex.reps ?? '?'}`);
   if (ex.weight) planParts.push(ex.weight);
 
-  // Plán and Realita are two matching rows, same size — Realita just in red,
-  // with small inline fields instead of a boxed form, so it doesn't dominate.
+  // Rozcvička, Plán and Realita are matching-size rows, stacked in that
+  // order — only the color tells them apart. Rozcvička only shows up when
+  // it's actually filled in, since not every exercise needs a warm-up set.
   card.innerHTML = `
     <div class="viewer-ex-name">${escapeHtml(ex.name || '(bez názvu)')}</div>
+    ${warmupParts.length ? `
+    <div class="viewer-line viewer-line-warmup">
+      <span class="viewer-line-label">🔥 Rozcvička</span>
+      <span class="viewer-line-value">${escapeHtml(warmupParts.join(' · '))}</span>
+    </div>` : ''}
     <div class="viewer-line viewer-line-plan">
       <span class="viewer-line-label">Plán</span>
       <span class="viewer-line-value">${planParts.length ? escapeHtml(planParts.join(' · ')) : '–'}</span>

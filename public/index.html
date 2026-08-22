@@ -96,12 +96,21 @@
 
 <template id="exercise-item-tpl">
   <div class="exercise-item">
-    <div class="exercise-row">
+    <div class="exercise-name-row">
       <input type="text" class="ex-name" placeholder="Cvik (např. Dřep)">
+      <button class="btn-remove" title="Odebrat cvik">✕</button>
+    </div>
+    <div class="exercise-value-row exercise-warmup-row">
+      <span class="row-label">🔥 Rozcvička</span>
+      <input type="number" class="ex-warmup-sets" placeholder="Série" min="0">
+      <input type="number" class="ex-warmup-reps" placeholder="Opakování" min="0">
+      <input type="text" class="ex-warmup-weight" placeholder="Váha rozcvičky">
+    </div>
+    <div class="exercise-value-row exercise-plan-row">
+      <span class="row-label">Plán</span>
       <input type="number" class="ex-sets" placeholder="Série" min="0">
       <input type="number" class="ex-reps" placeholder="Opakování" min="0">
       <input type="text" class="ex-weight" placeholder="Plánovaná váha">
-      <button class="btn-remove" title="Odebrat cvik">✕</button>
     </div>
     <div class="exercise-actual">
       <div class="actual-fields">

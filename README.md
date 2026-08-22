@@ -28,8 +28,10 @@ Struktura je čtyřúrovňová: **cyklus → týden → den → sekce → cvik**
 - **Týden** – uvnitř cyklu je lišta se záložkami (Týden 1, Týden 2, ...) a tlačítko `+ Nový týden`. Název týdne lze přepsat (např. "Týden 1, 12.–18. 8."). Týden lze smazat tlačítkem `🗑 Smazat týden` (musí zůstat aspoň jeden v cyklu).
 - **Den** – týden má výchozí 7 dní (Pondělí–Neděle), ale dny lze libovolně **přidávat** (`+ Přidat den`) i **mazat** (`✕ Den`) – hodí se to třeba pro rozdělení na víc/míň tréninkových dní, než je klasický týden.
 - **Sekce** – uvnitř dne si tlačítkem `+ Přidat sekci` přidáš libovolně pojmenovanou skupinu cviků (např. "Hlavní cviky", "Ramena", "Core", "Kardio" – názvy si voláš sám/sama, nic není přednastavené). Sekci lze smazat tlačítkem `✕ Sekce`.
-- **Cvik** – uvnitř sekce se cviky přidávají a odebírají stejně jako doteď (`+ Přidat cvik` / `✕`). U každého lze zadat počet sérií, opakování a **plánovanou** váhu.
-- Hned pod plánovaným řádkem je vždy vidět (žlutě odlišený) řádek **Realita** – série, opakování, skutečná váha a poznámka (např. "cítila jsem se silná, přidala jsem váhu i opakování"), aniž by se přepsal plán. Nic se nemusí rozbalovat, naplánovaná i skutečná hodnota jsou vidět naráz. Tlačítko `✕` u realitního řádku vše vymaže.
+- **Cvik** – uvnitř sekce se cviky přidávají a odebírají stejně jako doteď (`+ Přidat cvik` / `✕`). Každý cvik má tři řádky pod sebou, ve stejném pořadí v editoru i v Zobrazení:
+  1. **🔥 Rozcvička** (oranžově) – volitelné rozcvičovací série pro tenhle konkrétní cvik (např. lehčí zahřívací série před těžkými dřepy) – série, opakování, váha rozcvičky. Pokud u cviku není vyplněná, v Zobrazení se vůbec nezobrazuje.
+  2. **Plán** (šedě) – série, opakování a plánovaná váha.
+  3. **Realita** (červeně) – hned pod plánovaným řádkem, vždy vidět, nic se nemusí rozbalovat – skutečné série, opakování, váha a poznámka (např. "cítila jsem se silná, přidala jsem váhu i opakování"), aniž by se přepsal plán. Tlačítko `✕` u realitního řádku vše vymaže.
 - Mazání dne/sekce, které už obsahují vyplněné údaje, se ptá na potvrzení; prázdné (právě přidané a nevyplněné) jde smazat rovnou.
 - Tlačítko **Uložit plán** odešle aktuální stav (všechny cykly, týdny, dny, sekce i cviky) na server, který ho uloží do `data/plan.json`.
 - Výchozí (prázdná) šablona s jedním cyklem a jedním týdnem je v `data/default.json` – použije se, dokud nebyl plán poprvé uložen. Starší formáty dat (z dřívějších verzí aplikace) se při načtení automaticky převedou na aktuální strukturu.
