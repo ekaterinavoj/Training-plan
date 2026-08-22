@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  training-plan:
+    build: .
+    container_name: training-plan
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    environment:
+      - PORT=3100
+    volumes:
+      - training_plan_data:/app/data
+
+volumes:
+  training_plan_data:

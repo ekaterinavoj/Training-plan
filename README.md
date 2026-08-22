@@ -48,5 +48,80 @@ training-plan/
 │   ├── style.css
 │   └── app.js
 ├── server.js
-└── package.json
+├── package.json
+├── Dockerfile
+├── docker-compose.yml
+└── .dockerignore
 ```
+
+## Nasazení do produkce (Docker)
+
+Aplikace je bezstavová (celý stav je jen jeden JSON soubor na disku) a nemá žádné závislosti na externí databázi, takže Docker obraz je jednoduchý – `node:20-alpine` + Express.
+
+### Rychlý start přes docker-compose (doporučeno)
+
+```bash
+docker compose up -d --build
+```
+
+Appka poběží na `http://<adresa-serveru>:3100`. `docker-compose.yml` už má nastavené:
+
+- **restart: unless-stopped** – po pádu nebo restartu serveru se kontejner sám znovu spustí,
+- **pojmenovaný volume** `training_plan_data` připojený do `/app/data` – **data přežijí `docker compose down`, rebuild i update image**. Bez tohoto volume by se `data/plan.json` při každém přebuildování kontejneru smazal zpět na prázdnou výchozí šablonu.
+- **HEALTHCHECK** (`GET /health`) – Docker/orchestrátor podle něj pozná, že kontejner skutečně běží a odpovídá, ne jen že proces existuje.
+
+### Ruční build a spuštění (bez compose)
+
+```bash
+docker build -t training-plan .
+docker run -d \
+  --name training-plan \
+  --restart unless-stopped \
+  -p 3100:3100 \
+  -v training_plan_data:/app/data \
+  training-plan
+```
+
+`-v training_plan_data:/app/data` je tu to nejdůležitější – bez pojmenovaného volume (nebo bind mountu na hostitelský adresář) se při každém `docker run`/rebuildu ztratí uložený plán.
+
+### Proměnné prostředí
+
+| Proměnná | Výchozí | Význam |
+|---|---|---|
+| `PORT` | `3100` | Port, na kterém server poslouchá uvnitř kontejneru. Pokud ho měníš, uprav i `EXPOSE`/mapování portu. |
+
+### Zálohování dat
+
+Celý stav appky je jeden soubor, `data/plan.json` uvnitř volume `training_plan_data`. Zálohu uděláš např.:
+
+```bash
+docker run --rm -v training_plan_data:/data -v "$PWD":/backup alpine \
+  cp /data/plan.json /backup/plan-backup-$(date +%F).json
+```
+
+a obnovíš stejně opačným směrem (`cp /backup/plan-backup-XXXX-XX-XX.json /data/plan.json`).
+
+### Reverzní proxy a HTTPS
+
+Server sám o sobě neřeší TLS. Na vlastním serveru appku typicky pustíš za reverzní proxy (nginx, Caddy, Traefik), která:
+
+- terminuje HTTPS (např. přes Let's Encrypt),
+- proxuje na `http://127.0.0.1:3100` (nebo na jméno kontejneru/service, pokud proxy běží ve stejné Docker síti).
+
+Appka za proxy nepotřebuje žádnou speciální konfiguraci (žádné hardcoded absolutní URL, žádné WebSockety).
+
+### ⚠️ Appka nemá žádné přihlašování
+
+Tohle je důležité vzít v úvahu **před** nasazením na veřejně dostupnou adresu: `/api/plan` (načtení i uložení plánu) je úplně otevřené – kdokoliv, kdo se dostane na tu URL, může trénink prohlížet **i přepsat**. Server jen hlídá, aby uložená data měla platný tvar (neprojde prázdný/poškozený požadavek), ale nijak neřeší, *kdo* je posílá.
+
+Než appku pustíš na internet, zvol jednu z variant:
+
+- **Necháš to jen ve svém domácím/interním síťovém rozsahu** (appka není z internetu vůbec dostupná) – nejjednodušší a nejbezpečnější, pokud appku potřebuješ jen ty sama.
+- **Zamkneš přístup na úrovni reverzní proxy** – HTTP Basic Auth v nginx/Caddy/Traefik před celou appkou (pár řádků konfigurace, appku samotnou není třeba upravovat).
+- **Přidáš přihlašování přímo do appky** – dá se udělat podobně jako v sesterském projektu Katalog OOPP (jméno/heslo, session cookie); řekni si o to a doplním to.
+
+### Chybějící kousky, na které je dobré myslet dopředu
+
+- **Logrotate/log limit** – appka loguje jen krátkou zprávu při startu, žádné rotující logy navíc není potřeba řešit.
+- **Limit velikosti requestu** je nastavený na 2 MB (`express.json({ limit: '2mb' })`) – pro čistě textový tréninkový plán víc než dost.
+- **Žádné automatické zálohy** – volume přežije restart/update kontejneru, ale ne smazání volume (`docker volume rm`) ani zničení disku serveru. Pravidelná záloha (viz výše) je na tobě.
