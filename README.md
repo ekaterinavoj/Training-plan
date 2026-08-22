@@ -13,11 +13,13 @@ Aplikace poběží na [http://localhost:3100](http://localhost:3100) (port lze z
 
 ## Jak to funguje
 
-- Týden je rozdělený na 7 dní, každý den má vlastní zaměření (např. "Nohy", "Záda") a seznam cviků.
-- U každého cviku lze zadat počet sérií, opakování a váhu/poznámku.
-- Cviky lze přidávat a odebírat tlačítky `+ Přidat cvik` / `✕`.
-- Tlačítko **Uložit plán** odešle aktuální stav na server, který ho uloží do `data/plan.json`.
-- Výchozí (prázdná) šablona je v `data/default.json` – použije se, dokud nebyl plán poprvé uložen.
+- Plán je rozdělený na **týdny** – nahoře je lišta se záložkami (Týden 1, Týden 2, ...) a tlačítko `+ Nový týden`. Název týdne lze přepsat (např. "Týden 1, 12.–18. 8.").
+- Každý týden má 7 dní, každý den má vlastní zaměření (např. "Nohy", "Záda") a seznam cviků.
+- U každého cviku lze zadat počet sérií, opakování a **plánovanou** váhu.
+- Tlačítkem **📝 Realita** u cviku jde navíc zapsat, jak trénink proběhl doopravdy – **skutečná váha** a **poznámka** (např. "cítila jsem se silná, přidala jsem váhu"), aniž by se přepsal plán. Naplánovaná i skutečná hodnota tak zůstanou vedle sebe.
+- Cviky lze přidávat a odebírat tlačítky `+ Přidat cvik` / `✕`, celý týden lze smazat tlačítkem `🗑 Smazat týden` (musí zůstat aspoň jeden).
+- Tlačítko **Uložit plán** odešle aktuální stav (všechny týdny) na server, který ho uloží do `data/plan.json`.
+- Výchozí (prázdná) šablona s jedním týdnem je v `data/default.json` – použije se, dokud nebyl plán poprvé uložen.
 
 ## Struktura projektu
 
