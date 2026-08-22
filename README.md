@@ -11,7 +11,16 @@ npm start
 
 Aplikace poběží na [http://localhost:3100](http://localhost:3100) (port lze změnit proměnnou prostředí `PORT`).
 
-## Jak to funguje
+## Dva režimy
+
+Nahoře pod hlavičkou jsou dvě velká tlačítka:
+
+- **👁 Zobrazit trénink** – výchozí režim po otevření appky. Slouží k tomu, když jedeš podle plánu: vybereš si cyklus / týden / den (pilulky nahoře) a vidíš čistý přehled dne – naplánované cviky (název, série × opakování, váha) jako obyčejný text, žádné rozklikávání. Editovat jde jen řádek **Realita** u každého cviku (skutečné série, opakování, váha, poznámka) – přesně to, co potřebuješ zapsat za jízdy v posilovně.
+- **✏️ Upravit plán** – plné rozhraní pro tvorbu a úpravu popsané níže (přidávání/mazání cyklů, týdnů, dnů, sekcí, cviků, přejmenovávání...). Sem se přepneš, jen když plán zakládáš nebo v něm něco měníš.
+
+Tlačítko **Uložit** (vpravo nahoře) ukládá aktuální stav bez ohledu na to, ve kterém režimu zrovna jsi – v režimu Zobrazení uloží hlavně nově zapsanou realitu, v režimu Úprava uloží celý plán.
+
+## Jak to funguje (režim Úprava)
 
 Struktura je čtyřúrovňová: **cyklus → týden → den → sekce → cvik**.
 

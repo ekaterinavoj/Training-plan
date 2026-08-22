@@ -9,8 +9,19 @@ const dayTpl     = document.getElementById('day-tpl');
 const sectionTpl = document.getElementById('section-tpl');
 const itemTpl    = document.getElementById('exercise-item-tpl');
 const toast      = document.getElementById('toast');
+const saveBtn    = document.getElementById('save-btn');
+const editorEl   = document.getElementById('editor');
+const viewerEl   = document.getElementById('viewer');
 
 const DAY_NAMES = ['Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota', 'Neděle'];
+
+// ── Mode: "view" (sledování tréninku) vs. "edit" (tvorba/úprava plánu) ──────────
+let mode = localStorage.getItem('trainingPlanMode') === 'edit' ? 'edit' : 'view';
+
+// Which cycle/week/day is picked in view mode (in-memory only, not saved).
+let viewCycleId = null;
+let viewWeekId  = null;
+let viewDayId   = null;
 
 function uid(prefix) {
   return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -34,6 +45,8 @@ async function loadPlan() {
   currentWeekByCycle = {};
   plan.cycles.forEach(c => { currentWeekByCycle[c.id] = c.weeks[0] ? c.weeks[0].id : null; });
   render();
+  renderViewer();
+  applyMode();
 }
 
 function migrate(data) {
@@ -314,14 +327,19 @@ function removeCycle(cycleId) {
 
 // ── Save ─────────────────────────────────────────────────────────────────────
 async function savePlan() {
-  plan.cycles.forEach(c => syncCycleCurrentWeekFromDom(c));
+  // In edit mode the editor's DOM is the source of truth and needs folding
+  // back into `plan`. In view mode, the viewer already writes straight into
+  // `plan` on every keystroke, so there's nothing to sync first.
+  if (mode === 'edit') {
+    plan.cycles.forEach(c => syncCycleCurrentWeekFromDom(c));
+  }
   const res = await fetch('/api/plan', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(plan)
   });
   if (res.ok) {
-    showToast('✓ Plán uložen');
+    showToast('✓ Uloženo');
   } else {
     showToast('⚠️ Uložení se nezdařilo');
   }
@@ -333,7 +351,186 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
+// ── Mode switching ───────────────────────────────────────────────────────────
+function applyMode() {
+  editorEl.hidden = mode !== 'edit';
+  viewerEl.hidden = mode !== 'view';
+  document.getElementById('mode-view-btn').classList.toggle('active', mode === 'view');
+  document.getElementById('mode-edit-btn').classList.toggle('active', mode === 'edit');
+  saveBtn.textContent = mode === 'view' ? 'Uložit zápis' : 'Uložit plán';
+  localStorage.setItem('trainingPlanMode', mode);
+}
+
+function switchMode(newMode) {
+  if (newMode === mode) return;
+  if (mode === 'edit') {
+    // Leaving the editor: fold whatever's on screen back into `plan` first,
+    // so the viewer (and a later save) reflects the latest edits.
+    plan.cycles.forEach(c => syncCycleCurrentWeekFromDom(c));
+  }
+  mode = newMode;
+  applyMode();
+  if (mode === 'view') {
+    renderViewer();
+  } else {
+    render(); // rebuild the editor from `plan`, picking up any viewer edits
+  }
+}
+
+// ── Viewer (read-only plan, editable "reality" fields only) ────────────────────
+function renderViewer() {
+  renderViewerPickers();
+  renderViewerContent();
+}
+
+function renderViewerPickers() {
+  const cyclePills = document.getElementById('viewer-cycle-pills');
+  const weekPills  = document.getElementById('viewer-week-pills');
+  const dayPills   = document.getElementById('viewer-day-pills');
+
+  cyclePills.innerHTML = '';
+  weekPills.innerHTML  = '';
+  dayPills.innerHTML   = '';
+  if (!plan.cycles.length) return;
+
+  if (!plan.cycles.find(c => c.id === viewCycleId)) viewCycleId = plan.cycles[0].id;
+  const cycle = plan.cycles.find(c => c.id === viewCycleId);
+
+  plan.cycles.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'pill' + (c.id === viewCycleId ? ' active' : '');
+    btn.textContent = c.label || ('Cyklus ' + (i + 1));
+    btn.addEventListener('click', () => {
+      viewCycleId = c.id;
+      viewWeekId = null;
+      viewDayId = null;
+      renderViewer();
+    });
+    cyclePills.appendChild(btn);
+  });
+
+  if (!cycle || !cycle.weeks.length) return;
+  if (!cycle.weeks.find(w => w.id === viewWeekId)) viewWeekId = cycle.weeks[0].id;
+
+  cycle.weeks.forEach((w, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'pill' + (w.id === viewWeekId ? ' active' : '');
+    btn.textContent = w.label || ('Týden ' + (i + 1));
+    btn.addEventListener('click', () => {
+      viewWeekId = w.id;
+      viewDayId = null;
+      renderViewer();
+    });
+    weekPills.appendChild(btn);
+  });
+
+  const week = cycle.weeks.find(w => w.id === viewWeekId);
+  if (!week || !week.days.length) return;
+  if (!week.days.find(d => d.id === viewDayId)) viewDayId = week.days[0].id;
+
+  week.days.forEach((d, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'pill' + (d.id === viewDayId ? ' active' : '');
+    btn.textContent = d.name || ('Den ' + (i + 1));
+    btn.addEventListener('click', () => {
+      viewDayId = d.id;
+      renderViewer();
+    });
+    dayPills.appendChild(btn);
+  });
+}
+
+function renderViewerContent() {
+  const box = document.getElementById('viewer-content');
+  box.innerHTML = '';
+
+  const cycle = plan.cycles.find(c => c.id === viewCycleId);
+  const week  = cycle && cycle.weeks.find(w => w.id === viewWeekId);
+  const day   = week && week.days.find(d => d.id === viewDayId);
+
+  if (!day) {
+    box.innerHTML = '<p class="viewer-empty">Zatím tu není žádný trénink k zobrazení.<br>Přepni se do režimu „Upravit plán" a vytvoř ho.</p>';
+    return;
+  }
+
+  if (day.focus) {
+    const note = document.createElement('p');
+    note.className = 'viewer-day-note';
+    note.textContent = day.focus;
+    box.appendChild(note);
+  }
+
+  if (!day.sections || !day.sections.length) {
+    const p = document.createElement('p');
+    p.className = 'viewer-empty';
+    p.textContent = 'Pro tento den nejsou naplánované žádné cviky.';
+    box.appendChild(p);
+    return;
+  }
+
+  day.sections.forEach(section => {
+    const card = document.createElement('section');
+    card.className = 'viewer-section';
+
+    const h = document.createElement('h3');
+    h.textContent = section.name || 'Cviky';
+    card.appendChild(h);
+
+    (section.exercises || []).forEach(ex => card.appendChild(buildViewerExercise(ex)));
+
+    box.appendChild(card);
+  });
+}
+
+function buildViewerExercise(ex) {
+  const card = document.createElement('div');
+  card.className = 'viewer-exercise';
+
+  const planParts = [];
+  if (ex.sets != null || ex.reps != null) planParts.push(`${ex.sets ?? '?'} × ${ex.reps ?? '?'}`);
+  if (ex.weight) planParts.push(ex.weight);
+
+  card.innerHTML = `
+    <div class="viewer-exercise-head">
+      <span class="viewer-ex-name">${escapeHtml(ex.name || '(bez názvu)')}</span>
+      ${planParts.length ? `<span class="viewer-ex-plan">Plán: ${escapeHtml(planParts.join(' · '))}</span>` : ''}
+    </div>
+    <div class="viewer-actual">
+      <span class="viewer-actual-label">Realita</span>
+      <input type="number" class="v-actual-sets" placeholder="Série" min="0">
+      <input type="number" class="v-actual-reps" placeholder="Opakování" min="0">
+      <input type="text" class="v-actual-weight" placeholder="Skutečná váha">
+      <input type="text" class="v-note" placeholder="Poznámka (např. cítila jsem se silná)">
+    </div>
+  `;
+
+  const setsEl   = card.querySelector('.v-actual-sets');
+  const repsEl   = card.querySelector('.v-actual-reps');
+  const weightEl = card.querySelector('.v-actual-weight');
+  const noteEl   = card.querySelector('.v-note');
+
+  setsEl.value   = ex.actualSets   ?? '';
+  repsEl.value   = ex.actualReps   ?? '';
+  weightEl.value = ex.actualWeight || '';
+  noteEl.value   = ex.note         || '';
+
+  // Live-bound: every keystroke writes straight into `plan` (this is the
+  // exact exercise object inside plan.cycles[...]), no separate sync step.
+  setsEl.addEventListener('input',   () => { ex.actualSets = setsEl.value === '' ? null : Number(setsEl.value); });
+  repsEl.addEventListener('input',   () => { ex.actualReps = repsEl.value === '' ? null : Number(repsEl.value); });
+  weightEl.addEventListener('input', () => { ex.actualWeight = weightEl.value; });
+  noteEl.addEventListener('input',   () => { ex.note = noteEl.value; });
+
+  return card;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 document.getElementById('save-btn').addEventListener('click', savePlan);
 document.getElementById('add-cycle-btn').addEventListener('click', addCycle);
+document.getElementById('mode-view-btn').addEventListener('click', () => switchMode('view'));
+document.getElementById('mode-edit-btn').addEventListener('click', () => switchMode('edit'));
 
 loadPlan();

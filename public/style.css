@@ -16,6 +16,9 @@ header {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 header h1 {
@@ -35,6 +38,180 @@ header h1 {
   cursor: pointer;
 }
 .btn-main:hover { background: #e6f5ec; }
+
+/* ── Mode switch (Zobrazit trénink / Upravit plán) ───────────────────────── */
+
+#mode-bar {
+  max-width: 960px;
+  margin: 16px auto 0;
+  padding: 0 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.mode-btn {
+  flex: 1;
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: .95em;
+  font-weight: 700;
+  font-family: inherit;
+  color: #567;
+  cursor: pointer;
+}
+.mode-btn:hover { border-color: #0b7c3f; color: #0b7c3f; }
+.mode-btn.active {
+  background: #0b7c3f;
+  border-color: #0b7c3f;
+  color: #fff;
+}
+
+#editor[hidden], #viewer[hidden] { display: none; }
+
+/* ── Viewer (read-only plan + editable "reality" log) ────────────────────── */
+
+#viewer {
+  max-width: 960px;
+  margin: 14px auto 40px;
+  padding: 0 16px;
+}
+
+#viewer-picker {
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.picker-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.picker-label {
+  font-size: .82em;
+  font-weight: 700;
+  color: #567;
+  min-width: 52px;
+}
+
+.picker-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  background: #f4f7fb;
+  border: 1.5px solid #dde5ef;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: .88em;
+  font-family: inherit;
+  font-weight: 600;
+  color: #567;
+  cursor: pointer;
+}
+.pill:hover { border-color: #0b7c3f; color: #0b7c3f; }
+.pill.active {
+  background: #0b7c3f;
+  border-color: #0b7c3f;
+  color: #fff;
+}
+
+.viewer-day-note {
+  color: #666;
+  font-style: italic;
+  margin: 0 0 14px;
+  padding: 0 2px;
+}
+
+.viewer-empty {
+  color: #888;
+  text-align: center;
+  padding: 40px 16px;
+  line-height: 1.6;
+}
+
+.viewer-section {
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.viewer-section h3 {
+  margin: 0 0 12px;
+  color: #2f6fb0;
+  font-size: 1.05em;
+}
+
+.viewer-exercise {
+  padding: 12px 0;
+  border-top: 1.5px solid #eef2f6;
+}
+.viewer-exercise:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.viewer-exercise-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.viewer-ex-name {
+  font-weight: 700;
+  font-size: 1.05em;
+  color: #1c2733;
+}
+.viewer-ex-plan {
+  font-size: .9em;
+  color: #567;
+  white-space: nowrap;
+}
+
+.viewer-actual {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr 1.3fr;
+  align-items: center;
+  gap: 8px;
+  background: #fffbf0;
+  border: 1.5px solid #f0dba0;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.viewer-actual-label {
+  font-size: .8em;
+  font-weight: 700;
+  color: #9a6b00;
+  white-space: nowrap;
+}
+.viewer-actual input {
+  border: 1.5px solid #f0dba0;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: .92em;
+  font-family: inherit;
+  width: 100%;
+  background: #fff;
+}
+.viewer-actual input:focus {
+  outline: none;
+  border-color: #c99a00;
+  box-shadow: 0 0 0 3px rgba(201,154,0,.12);
+}
+.viewer-actual .v-note { grid-column: 1 / -1; }
 
 /* ── Top bar / add cycle ─────────────────────────────────────────────────── */
 
@@ -506,6 +683,20 @@ header h1 {
   header { padding: 12px 14px; gap: 10px; }
   header h1 { font-size: 1.15em; }
   .btn-main { padding: 11px 18px; font-size: .95em; }
+
+  #mode-bar { padding: 0 10px; margin-top: 12px; }
+  .mode-btn { padding: 12px 10px; font-size: .88em; }
+
+  #viewer { padding: 0 10px; margin: 12px auto 28px; }
+  #viewer-picker { padding: 12px; gap: 8px; }
+  .picker-label { min-width: 0; flex: 1 1 100%; }
+  .pill { padding: 9px 14px; }
+
+  .viewer-section { padding: 12px; margin-bottom: 12px; }
+  .viewer-exercise-head { gap: 6px; }
+  .viewer-actual { grid-template-columns: 1fr 1fr; padding: 10px; }
+  .viewer-actual-label { grid-column: 1 / -1; }
+  .viewer-actual input { font-size: 1em; padding: 10px; }
 
   #top-bar { padding: 0 10px; }
   .btn-add-cycle { width: 100%; padding: 13px 16px; }

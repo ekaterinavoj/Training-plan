@@ -12,11 +12,38 @@
   <button id="save-btn" class="btn-main">Uložit plán</button>
 </header>
 
-<nav id="top-bar">
-  <button id="add-cycle-btn" class="btn-add-cycle">+ Nový cyklus (nový trénink)</button>
+<nav id="mode-bar">
+  <button id="mode-view-btn" class="mode-btn">👁 Zobrazit trénink</button>
+  <button id="mode-edit-btn" class="mode-btn">✏️ Upravit plán</button>
 </nav>
 
-<main id="cycles"></main>
+<!-- ── Zobrazení: sledování tréninku, jen zápis skutečnosti jde editovat ──── -->
+<section id="viewer">
+  <nav id="viewer-picker">
+    <div class="picker-row">
+      <span class="picker-label">Cyklus</span>
+      <div class="picker-pills" id="viewer-cycle-pills"></div>
+    </div>
+    <div class="picker-row">
+      <span class="picker-label">Týden</span>
+      <div class="picker-pills" id="viewer-week-pills"></div>
+    </div>
+    <div class="picker-row">
+      <span class="picker-label">Den</span>
+      <div class="picker-pills" id="viewer-day-pills"></div>
+    </div>
+  </nav>
+  <div id="viewer-content"></div>
+</section>
+
+<!-- ── Úprava: tvorba a editace plánu ──────────────────────────────────────── -->
+<div id="editor">
+  <nav id="top-bar">
+    <button id="add-cycle-btn" class="btn-add-cycle">+ Nový cyklus (nový trénink)</button>
+  </nav>
+
+  <main id="cycles"></main>
+</div>
 
 <div id="toast"></div>
 
