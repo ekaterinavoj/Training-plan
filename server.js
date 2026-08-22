@@ -10,8 +10,8 @@ const DEFAULT_FILE = path.join(__dirname, 'data', 'default.json');
 const AUTH_FILE    = path.join(__dirname, 'data', 'auth.json');
 
 const ADMIN_USERNAME     = process.env.ADMIN_USERNAME     || 'ekaterina';
-const ADMIN_PASSWORD_ENV = process.env.ADMIN_PASSWORD     || 'Rozcvicka2026!';
-const ADMIN_RESET_CODE   = process.env.ADMIN_RESET_CODE   || 'TreninkovyPlan-obnova';
+const ADMIN_PASSWORD_ENV = process.env.ADMIN_PASSWORD     || 'SilaHubnuti-26x!';
+const ADMIN_RESET_CODE   = process.env.ADMIN_RESET_CODE   || 'ObnovaHesla-9427-Trenink';
 
 function getPassword() {
   try {

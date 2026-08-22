@@ -20,8 +20,8 @@ Celá appka je za přihlášením – bez přihlášení tě server přesměruje
 | | |
 |---|---|
 | Uživatelské jméno | `ekaterina` |
-| Heslo | `Rozcvicka2026!` |
-| Záchranný kód (pro obnovení hesla) | `TreninkovyPlan-obnova` |
+| Heslo | `SilaHubnuti-26x!` |
+| Záchranný kód (pro obnovení hesla) | `ObnovaHesla-9427-Trenink` |
 
 ⚠️ **Tohle jsou dočasné výchozí hodnoty – změň si je hned po prvním přihlášení** (viz níže). Nejsou nikde jinde v repozitáři utajené, takže dokud je nezměníš, kdokoliv se čtením tohohle README se může přihlásit.
 
@@ -111,8 +111,8 @@ docker run -d \
 |---|---|---|
 | `PORT` | `3100` | Port, na kterém server poslouchá uvnitř kontejneru. Pokud ho měníš, uprav i `EXPOSE`/mapování portu. |
 | `ADMIN_USERNAME` | `ekaterina` | Přihlašovací jméno. |
-| `ADMIN_PASSWORD` | `Rozcvicka2026!` | Přihlašovací heslo – **změň před nasazením do produkce.** Pokud si heslo později změníš přes appku (🔑) nebo přes záchranný kód, uloží se do `data/auth.json` a od té chvíle má přednost před touhle proměnnou. |
-| `ADMIN_RESET_CODE` | `TreninkovyPlan-obnova` | Záchranný kód pro obnovení zapomenutého hesla na `/login` → "Zapomenuté heslo?". **Změň ho na něco, co nikde jinde nepoužíváš** – kdokoliv tenhle kód zná, může nastavit nové přihlašovací heslo bez znalosti toho starého. |
+| `ADMIN_PASSWORD` | `SilaHubnuti-26x!` | Přihlašovací heslo – **změň před nasazením do produkce.** Pokud si heslo později změníš přes appku (🔑) nebo přes záchranný kód, uloží se do `data/auth.json` a od té chvíle má přednost před touhle proměnnou. |
+| `ADMIN_RESET_CODE` | `ObnovaHesla-9427-Trenink` | Záchranný kód pro obnovení zapomenutého hesla na `/login` → "Zapomenuté heslo?". **Změň ho na něco, co nikde jinde nepoužíváš** – kdokoliv tenhle kód zná, může nastavit nové přihlašovací heslo bez znalosti toho starého. |
 
 `docker-compose.yml` má tyhle proměnné už vyplněné (stejnými výchozími hodnotami) – v produkci je tam rovnou přepiš na vlastní.
 

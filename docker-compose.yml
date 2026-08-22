@@ -10,8 +10,8 @@ services:
     environment:
       - PORT=3100
       - ADMIN_USERNAME=ekaterina
-      - ADMIN_PASSWORD=Rozcvicka2026!
-      - ADMIN_RESET_CODE=TreninkovyPlan-obnova
+      - ADMIN_PASSWORD=SilaHubnuti-26x!
+      - ADMIN_RESET_CODE=ObnovaHesla-9427-Trenink
     volumes:
       - training_plan_data:/app/data
 
