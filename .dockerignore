@@ -3,5 +3,15 @@ node_modules
 .claude
 .gitignore
 *.md
+
+# ── Citlivá data – nikdy nebalit do image ───────────────────────────────────
 data/plan.json
 data/auth.json
+data/*backup*
+*.env
+.env
+.env.*
+*.pem
+*.key
+*secret*
+*credentials*

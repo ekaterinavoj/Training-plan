@@ -1,3 +1,18 @@
 node_modules/
+
+# ── Citlivá data – nikdy necommitovat ───────────────────────────────────────
 data/plan.json
 data/auth.json
+data/*backup*
+*.env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*secret*
+*credentials*
+
+# ── OS / editor smetí ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
