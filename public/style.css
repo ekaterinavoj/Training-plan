@@ -384,13 +384,15 @@ header h1 {
 
 /* ── Exercises (nested inside a section) ──────────────────────────────────── */
 
-.exercise-item.has-actual .exercise-row {
-  border-radius: 8px 8px 0 0;
+.exercise-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .exercise-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.3fr auto auto;
+  grid-template-columns: 2fr 1fr 1fr 1.3fr auto;
   gap: 8px;
 }
 
@@ -418,35 +420,23 @@ header h1 {
 }
 .btn-remove:hover, .btn-clear-actual:hover { background: #ffe0e0; }
 
-.btn-toggle-actual {
-  background: #fff8e6;
-  color: #9a6b00;
-  border: 1.5px solid #f0dba0;
-  border-radius: 6px;
-  padding: 0 10px;
-  font-size: .85em;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.btn-toggle-actual:hover { background: #fff0cc; }
-
+/* Always-visible "what actually happened" block under the planned row —
+   different background so it reads at a glance without expanding anything. */
 .exercise-actual {
-  display: grid;
-  grid-template-columns: auto 1fr 1.4fr auto;
-  align-items: center;
-  gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   background: #fffbf0;
   border: 1.5px solid #f0dba0;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
+  border-radius: 8px;
   padding: 8px 10px;
-  margin-top: -1px;
 }
 
-.exercise-actual[hidden] {
-  display: none;
+.actual-fields {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.3fr auto;
+  align-items: center;
+  gap: 8px;
 }
 
 .actual-label {
@@ -509,8 +499,8 @@ header h1 {
 @media (max-width: 640px) {
   .exercise-row { grid-template-columns: 1fr 1fr; }
   .exercise-row .ex-name { grid-column: 1 / -1; }
-  .exercise-actual { grid-template-columns: 1fr; }
-  .actual-label { grid-column: 1; }
+  .actual-fields { grid-template-columns: 1fr 1fr; }
+  .actual-label { grid-column: 1 / -1; }
   .btn-clear-actual { justify-self: start; }
   .btn-remove-day { margin-left: 0; }
 }

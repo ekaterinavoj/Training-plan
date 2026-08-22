@@ -169,32 +169,23 @@ function buildSectionNode(sec) {
 
 function makeItem(ex) {
   const node = itemTpl.content.firstElementChild.cloneNode(true);
-  const actualBox = node.querySelector('.exercise-actual');
-  const toggleBtn = node.querySelector('.btn-toggle-actual');
 
   if (ex) {
-    node.querySelector('.ex-name').value   = ex.name   || '';
-    node.querySelector('.ex-sets').value   = ex.sets   ?? '';
-    node.querySelector('.ex-reps').value   = ex.reps   ?? '';
-    node.querySelector('.ex-weight').value = ex.weight || '';
-    node.querySelector('.ex-actual-weight').value = ex.actualWeight || '';
-    node.querySelector('.ex-note').value          = ex.note || '';
-    if (ex.actualWeight || ex.note) {
-      actualBox.hidden = false;
-      node.classList.add('has-actual');
-    }
+    node.querySelector('.ex-name').value          = ex.name          || '';
+    node.querySelector('.ex-sets').value          = ex.sets          ?? '';
+    node.querySelector('.ex-reps').value          = ex.reps          ?? '';
+    node.querySelector('.ex-weight').value        = ex.weight        || '';
+    node.querySelector('.ex-actual-sets').value   = ex.actualSets    ?? '';
+    node.querySelector('.ex-actual-reps').value   = ex.actualReps    ?? '';
+    node.querySelector('.ex-actual-weight').value = ex.actualWeight  || '';
+    node.querySelector('.ex-note').value          = ex.note          || '';
   }
 
-  toggleBtn.addEventListener('click', () => {
-    actualBox.hidden = !actualBox.hidden;
-    if (!actualBox.hidden) node.querySelector('.ex-actual-weight').focus();
-  });
-
   node.querySelector('.btn-clear-actual').addEventListener('click', () => {
+    node.querySelector('.ex-actual-sets').value = '';
+    node.querySelector('.ex-actual-reps').value = '';
     node.querySelector('.ex-actual-weight').value = '';
     node.querySelector('.ex-note').value = '';
-    actualBox.hidden = true;
-    node.classList.remove('has-actual');
   });
 
   node.querySelector('.btn-remove').addEventListener('click', () => node.remove());
@@ -211,7 +202,7 @@ function dayHasContent(dayNode) {
 function sectionHasContent(sectionNode) {
   if (sectionNode.querySelector('.section-name').value.trim()) return true;
   return Array.from(sectionNode.querySelectorAll('.exercise-item')).some(item =>
-    ['.ex-name', '.ex-sets', '.ex-reps', '.ex-weight', '.ex-actual-weight', '.ex-note']
+    ['.ex-name', '.ex-sets', '.ex-reps', '.ex-weight', '.ex-actual-sets', '.ex-actual-reps', '.ex-actual-weight', '.ex-note']
       .some(sel => item.querySelector(sel).value.trim())
   );
 }
@@ -250,14 +241,18 @@ function syncCycleCurrentWeekFromDom(cycle) {
         const sets         = item.querySelector('.ex-sets').value;
         const reps         = item.querySelector('.ex-reps').value;
         const weight       = item.querySelector('.ex-weight').value.trim();
+        const actualSets   = item.querySelector('.ex-actual-sets').value;
+        const actualReps   = item.querySelector('.ex-actual-reps').value;
         const actualWeight = item.querySelector('.ex-actual-weight').value.trim();
         const note         = item.querySelector('.ex-note').value.trim();
-        if (exName || sets || reps || weight || actualWeight || note) {
+        if (exName || sets || reps || weight || actualSets || actualReps || actualWeight || note) {
           exercises.push({
             name: exName,
             sets: sets === '' ? null : Number(sets),
             reps: reps === '' ? null : Number(reps),
             weight,
+            actualSets: actualSets === '' ? null : Number(actualSets),
+            actualReps: actualReps === '' ? null : Number(actualReps),
             actualWeight,
             note
           });

@@ -20,7 +20,7 @@ Struktura je čtyřúrovňová: **cyklus → týden → den → sekce → cvik**
 - **Den** – týden má výchozí 7 dní (Pondělí–Neděle), ale dny lze libovolně **přidávat** (`+ Přidat den`) i **mazat** (`✕ Den`) – hodí se to třeba pro rozdělení na víc/míň tréninkových dní, než je klasický týden.
 - **Sekce** – uvnitř dne si tlačítkem `+ Přidat sekci` přidáš libovolně pojmenovanou skupinu cviků (např. "Hlavní cviky", "Ramena", "Core", "Kardio" – názvy si voláš sám/sama, nic není přednastavené). Sekci lze smazat tlačítkem `✕ Sekce`.
 - **Cvik** – uvnitř sekce se cviky přidávají a odebírají stejně jako doteď (`+ Přidat cvik` / `✕`). U každého lze zadat počet sérií, opakování a **plánovanou** váhu.
-- Tlačítkem **📝 Realita** u cviku jde navíc zapsat, jak trénink proběhl doopravdy – **skutečná váha** a **poznámka** (např. "cítila jsem se silná, přidala jsem váhu"), aniž by se přepsal plán. Naplánovaná i skutečná hodnota tak zůstanou vedle sebe.
+- Hned pod plánovaným řádkem je vždy vidět (žlutě odlišený) řádek **Realita** – série, opakování, skutečná váha a poznámka (např. "cítila jsem se silná, přidala jsem váhu i opakování"), aniž by se přepsal plán. Nic se nemusí rozbalovat, naplánovaná i skutečná hodnota jsou vidět naráz. Tlačítko `✕` u realitního řádku vše vymaže.
 - Mazání dne/sekce, které už obsahují vyplněné údaje, se ptá na potvrzení; prázdné (právě přidané a nevyplněné) jde smazat rovnou.
 - Tlačítko **Uložit plán** odešle aktuální stav (všechny cykly, týdny, dny, sekce i cviky) na server, který ho uloží do `data/plan.json`.
 - Výchozí (prázdná) šablona s jedním cyklem a jedním týdnem je v `data/default.json` – použije se, dokud nebyl plán poprvé uložen. Starší formáty dat (z dřívějších verzí aplikace) se při načtení automaticky převedou na aktuální strukturu.

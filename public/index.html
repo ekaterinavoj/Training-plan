@@ -74,14 +74,17 @@
       <input type="number" class="ex-sets" placeholder="Série" min="0">
       <input type="number" class="ex-reps" placeholder="Opakování" min="0">
       <input type="text" class="ex-weight" placeholder="Plánovaná váha">
-      <button class="btn-toggle-actual" title="Zapsat, jak to bylo doopravdy">📝 Realita</button>
       <button class="btn-remove" title="Odebrat cvik">✕</button>
     </div>
-    <div class="exercise-actual" hidden>
-      <span class="actual-label">Skutečnost:</span>
-      <input type="text" class="ex-actual-weight" placeholder="Skutečná váha (např. 65 kg)">
+    <div class="exercise-actual">
+      <div class="actual-fields">
+        <span class="actual-label">Realita:</span>
+        <input type="number" class="ex-actual-sets" placeholder="Série" min="0">
+        <input type="number" class="ex-actual-reps" placeholder="Opakování" min="0">
+        <input type="text" class="ex-actual-weight" placeholder="Skutečná váha">
+        <button class="btn-clear-actual" title="Vymazat zápis skutečnosti">✕</button>
+      </div>
       <input type="text" class="ex-note" placeholder="Poznámka (např. cítila jsem se silná)">
-      <button class="btn-clear-actual" title="Zrušit zápis skutečnosti">✕</button>
     </div>
   </div>
 </template>
