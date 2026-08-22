@@ -9,7 +9,11 @@
 <body>
 <header>
   <h1>💪 Tréninkový plán</h1>
-  <button id="save-btn" class="btn-main">Uložit plán</button>
+  <div class="header-actions">
+    <button id="save-btn" class="btn-main">Uložit plán</button>
+    <button id="change-pw-btn" class="btn-header-icon" title="Změnit heslo">🔑</button>
+    <a id="logout-link" href="/logout" class="btn-header-icon" title="Odhlásit se">⏻</a>
+  </div>
 </header>
 
 <nav id="mode-bar">
@@ -46,6 +50,30 @@
 </div>
 
 <div id="toast"></div>
+
+<!-- ── Změna hesla ──────────────────────────────────────────────────────────── -->
+<div id="change-pw-overlay" class="modal-overlay" hidden>
+  <div class="modal-box">
+    <h2>🔑 Změna hesla</h2>
+    <div class="field">
+      <label>Současné heslo</label>
+      <input type="password" id="cp-current" autocomplete="current-password">
+    </div>
+    <div class="field">
+      <label>Nové heslo</label>
+      <input type="password" id="cp-new" autocomplete="new-password">
+    </div>
+    <div class="field">
+      <label>Nové heslo znovu</label>
+      <input type="password" id="cp-confirm" autocomplete="new-password">
+    </div>
+    <div id="cp-msg"></div>
+    <div class="modal-buttons">
+      <button id="cp-submit" class="btn-main">Změnit heslo</button>
+      <button id="cp-cancel" class="btn-sec">Zrušit</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── Templates ─────────────────────────────────────────────────────────── -->
 

@@ -41,6 +41,7 @@ function defaultCycle(n) {
 // ── Load & migrate ────────────────────────────────────────────────────────────
 async function loadPlan() {
   const res = await fetch('/api/plan');
+  if (res.status === 401) { window.location.href = '/login'; return; }
   const data = await res.json();
   plan = migrate(data);
   currentWeekByCycle = {};
@@ -399,6 +400,7 @@ async function savePlan() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(plan)
   });
+  if (res.status === 401) { window.location.href = '/login'; return; }
   if (res.ok) {
     showToast('✓ Uloženo');
   } else {
@@ -605,5 +607,47 @@ document.getElementById('save-btn').addEventListener('click', savePlan);
 document.getElementById('add-cycle-btn').addEventListener('click', addCycle);
 document.getElementById('mode-view-btn').addEventListener('click', () => switchMode('view'));
 document.getElementById('mode-edit-btn').addEventListener('click', () => switchMode('edit'));
+
+// ── Změna hesla ──────────────────────────────────────────────────────────────
+const pwOverlay  = document.getElementById('change-pw-overlay');
+const pwCurrent  = document.getElementById('cp-current');
+const pwNew      = document.getElementById('cp-new');
+const pwConfirm  = document.getElementById('cp-confirm');
+const pwMsg      = document.getElementById('cp-msg');
+
+function openPwModal() {
+  pwCurrent.value = ''; pwNew.value = ''; pwConfirm.value = '';
+  pwMsg.textContent = ''; pwMsg.className = '';
+  pwOverlay.hidden = false;
+  pwCurrent.focus();
+}
+function closePwModal() { pwOverlay.hidden = true; }
+
+document.getElementById('change-pw-btn').addEventListener('click', openPwModal);
+document.getElementById('cp-cancel').addEventListener('click', closePwModal);
+pwOverlay.addEventListener('click', e => { if (e.target === pwOverlay) closePwModal(); });
+
+document.getElementById('cp-submit').addEventListener('click', async () => {
+  const current = pwCurrent.value;
+  const next    = pwNew.value;
+  const confirm_ = pwConfirm.value;
+  if (!current || !next || !confirm_) { pwMsg.className = 'err'; pwMsg.textContent = 'Vyplňte všechna pole.'; return; }
+  if (next !== confirm_) { pwMsg.className = 'err'; pwMsg.textContent = 'Nová hesla se neshodují.'; return; }
+  if (next.length < 4) { pwMsg.className = 'err'; pwMsg.textContent = 'Heslo musí mít alespoň 4 znaky.'; return; }
+
+  const res = await fetch('/api/change-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ currentPassword: current, newPassword: next })
+  });
+  if (res.status === 401) { window.location.href = '/login'; return; }
+  const j = await res.json();
+  if (j.ok) {
+    pwMsg.className = 'ok'; pwMsg.textContent = '✓ Heslo bylo změněno.';
+    setTimeout(closePwModal, 1500);
+  } else {
+    pwMsg.className = 'err'; pwMsg.textContent = '⚠️ ' + j.error;
+  }
+});
 
 loadPlan();

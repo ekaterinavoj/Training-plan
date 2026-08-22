@@ -9,6 +9,9 @@ services:
       - "3100:3100"
     environment:
       - PORT=3100
+      - ADMIN_USERNAME=ekaterina
+      - ADMIN_PASSWORD=Rozcvicka2026!
+      - ADMIN_RESET_CODE=TreninkovyPlan-obnova
     volumes:
       - training_plan_data:/app/data
 

@@ -11,6 +11,26 @@ npm start
 
 Aplikace poběží na [http://localhost:3100](http://localhost:3100) (port lze změnit proměnnou prostředí `PORT`).
 
+## Přihlášení
+
+Celá appka je za přihlášením – bez přihlášení tě server přesměruje na `/login`.
+
+**Výchozí přihlašovací údaje:**
+
+| | |
+|---|---|
+| Uživatelské jméno | `ekaterina` |
+| Heslo | `Rozcvicka2026!` |
+| Záchranný kód (pro obnovení hesla) | `TreninkovyPlan-obnova` |
+
+⚠️ **Tohle jsou dočasné výchozí hodnoty – změň si je hned po prvním přihlášení** (viz níže). Nejsou nikde jinde v repozitáři utajené, takže dokud je nezměníš, kdokoliv se čtením tohohle README se může přihlásit.
+
+**Změna hesla** (když ho znáš a chceš jiné) – po přihlášení klikni v hlavičce appky na 🔑, zadej současné a nové heslo.
+
+**Zapomenuté heslo** – na přihlašovací stránce klikni na "🔑 Zapomenuté heslo?" a zadej **záchranný kód** (ne heslo!) – ten slouží jen k tomuto účelu a měl by být uložený jinde než v tomto souboru (např. u tebe v poznámkách, ne v gitu). Po zadání kódu si nastavíš nové heslo.
+
+Přihlašovací jméno, heslo i záchranný kód jdou přepsat proměnnými prostředí `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_RESET_CODE` (viz sekce Docker níže) – to je nejlepší způsob, jak výchozí hodnoty změnit natrvalo v produkci, aniž bys je musela pamatovat jako "změněné heslo v appce" (byť obojí funguje zároveň – heslo změněné přes appku/reset kód má vždy přednost před `ADMIN_PASSWORD`, dokud se neodstraní `data/auth.json`).
+
 ## Dva režimy
 
 Nahoře pod hlavičkou jsou dvě velká tlačítka:
@@ -42,7 +62,8 @@ Struktura je čtyřúrovňová: **cyklus → týden → den → sekce → cvik**
 training-plan/
 ├── data/
 │   ├── default.json   # výchozí šablona týdne
-│   └── plan.json       # uložený plán (vzniká po prvním uložení, není v gitu)
+│   ├── plan.json       # uložený plán (vzniká po prvním uložení, není v gitu)
+│   └── auth.json        # heslo změněné přes appku/reset (vzniká při změně, není v gitu)
 ├── public/
 │   ├── index.html
 │   ├── style.css
@@ -89,6 +110,11 @@ docker run -d \
 | Proměnná | Výchozí | Význam |
 |---|---|---|
 | `PORT` | `3100` | Port, na kterém server poslouchá uvnitř kontejneru. Pokud ho měníš, uprav i `EXPOSE`/mapování portu. |
+| `ADMIN_USERNAME` | `ekaterina` | Přihlašovací jméno. |
+| `ADMIN_PASSWORD` | `Rozcvicka2026!` | Přihlašovací heslo – **změň před nasazením do produkce.** Pokud si heslo později změníš přes appku (🔑) nebo přes záchranný kód, uloží se do `data/auth.json` a od té chvíle má přednost před touhle proměnnou. |
+| `ADMIN_RESET_CODE` | `TreninkovyPlan-obnova` | Záchranný kód pro obnovení zapomenutého hesla na `/login` → "Zapomenuté heslo?". **Změň ho na něco, co nikde jinde nepoužíváš** – kdokoliv tenhle kód zná, může nastavit nové přihlašovací heslo bez znalosti toho starého. |
+
+`docker-compose.yml` má tyhle proměnné už vyplněné (stejnými výchozími hodnotami) – v produkci je tam rovnou přepiš na vlastní.
 
 ### Zálohování dat
 
@@ -110,15 +136,15 @@ Server sám o sobě neřeší TLS. Na vlastním serveru appku typicky pustíš z
 
 Appka za proxy nepotřebuje žádnou speciální konfiguraci (žádné hardcoded absolutní URL, žádné WebSockety).
 
-### ⚠️ Appka nemá žádné přihlašování
+### ⚠️ Než appku pustíš na veřejně dostupnou adresu
 
-Tohle je důležité vzít v úvahu **před** nasazením na veřejně dostupnou adresu: `/api/plan` (načtení i uložení plánu) je úplně otevřené – kdokoliv, kdo se dostane na tu URL, může trénink prohlížet **i přepsat**. Server jen hlídá, aby uložená data měla platný tvar (neprojde prázdný/poškozený požadavek), ale nijak neřeší, *kdo* je posílá.
+Appka je celá za přihlášením (viz sekce Přihlášení výše), ale je dobré vědět, jak přesně to funguje, aby ses na tom nespálila:
 
-Než appku pustíš na internet, zvol jednu z variant:
-
-- **Necháš to jen ve svém domácím/interním síťovém rozsahu** (appka není z internetu vůbec dostupná) – nejjednodušší a nejbezpečnější, pokud appku potřebuješ jen ty sama.
-- **Zamkneš přístup na úrovni reverzní proxy** – HTTP Basic Auth v nginx/Caddy/Traefik před celou appkou (pár řádků konfigurace, appku samotnou není třeba upravovat).
-- **Přidáš přihlašování přímo do appky** – dá se udělat podobně jako v sesterském projektu Katalog OOPP (jméno/heslo, session cookie); řekni si o to a doplním to.
+- **Nezapomeň změnit výchozí heslo a záchranný kód** – přes proměnné prostředí (`ADMIN_PASSWORD`, `ADMIN_RESET_CODE` v `docker-compose.yml`) nebo přes appku po prvním přihlášení. Výchozí hodnoty jsou veřejně vidět v tomhle README/gitu.
+- **Přihlášení je jen jeden účet, ne uživatelský systém** – hodí se pro "appka pro mě/rodinu", ne pro víc lidí s různými přístupovými právy.
+- **Session jsou jen v paměti serveru** – při restartu kontejneru (update, redeploy, pád) se všichni odhlásí a musí se přihlásit znovu. To je normální, ne chyba.
+- **`/health` zůstává bez přihlášení schválně** – kvůli Docker healthchecku; nevrací žádná data plánu, jen `ok`.
+- I s přihlášením platí, že appka nemá HTTPS sama o sobě (viz sekce Reverzní proxy výše) – bez HTTPS jde přihlašovací heslo po síti nešifrovaně. Na veřejné adrese appku vždy pouštěj za HTTPS reverzní proxy.
 
 ### Chybějící kousky, na které je dobré myslet dopředu
 

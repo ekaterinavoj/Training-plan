@@ -39,6 +39,117 @@ header h1 {
 }
 .btn-main:hover { background: #e6f5ec; }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-header-icon {
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,.4);
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  font-size: 1.1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1;
+}
+.btn-header-icon:hover { background: rgba(255,255,255,.28); }
+
+/* ── Change-password modal ───────────────────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20,30,25,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+}
+.modal-overlay[hidden] { display: none; }
+
+.modal-box {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 26px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 12px 40px rgba(0,0,0,.25);
+}
+.modal-box h2 {
+  margin: 0 0 18px;
+  font-size: 1.1em;
+  color: #08602f;
+}
+.modal-box .field { margin-bottom: 12px; }
+.modal-box label {
+  display: block;
+  font-size: .82em;
+  font-weight: 700;
+  color: #08602f;
+  margin-bottom: 5px;
+}
+.modal-box input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid rgba(11,124,63,.4);
+  border-radius: 8px;
+  font-size: 1em;
+  font-family: inherit;
+  outline: none;
+}
+.modal-box input:focus {
+  border-color: #0b7c3f;
+  box-shadow: 0 0 0 3px rgba(11,124,63,.15);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+.modal-buttons .btn-main { flex: 1; }
+.btn-sec {
+  flex: 1;
+  background: none;
+  color: #0b7c3f;
+  border: 1.5px solid #0b7c3f;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: .95em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-sec:hover { background: #eaf6ee; }
+
+#cp-msg.err {
+  background: #fff0f0;
+  border: 1.5px solid #fcc;
+  color: #c00;
+  font-size: .86em;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+#cp-msg.ok {
+  background: #f0fff4;
+  border: 1.5px solid #6c6;
+  color: #050;
+  font-size: .86em;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
 /* ── Mode switch (Zobrazit trénink / Upravit plán) ───────────────────────── */
 
 #mode-bar {
