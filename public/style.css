@@ -36,17 +36,118 @@ header h1 {
 }
 .btn-main:hover { background: #e6f5ec; }
 
-#week-bar {
+/* ── Top bar / add cycle ─────────────────────────────────────────────────── */
+
+#top-bar {
   max-width: 960px;
   margin: 18px auto 0;
   padding: 0 16px;
   display: flex;
+  justify-content: flex-end;
+}
+
+.btn-add-cycle {
+  background: #0b7c3f;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: .95em;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-add-cycle:hover { background: #08602f; }
+
+/* ── Cycles ───────────────────────────────────────────────────────────────── */
+
+#cycles {
+  max-width: 960px;
+  margin: 14px auto 40px;
+  padding: 0 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.cycle {
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+}
+
+.cycle-head {
+  display: flex;
   align-items: center;
   gap: 10px;
+  padding: 14px 18px;
+  background: #eef6f0;
+  border-bottom: 1.5px solid #dde5ef;
   flex-wrap: wrap;
 }
 
-#week-tabs {
+.cycle-toggle {
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  font-size: .9em;
+  cursor: pointer;
+  color: #0b7c3f;
+  flex: 0 0 auto;
+}
+.cycle-toggle:hover { border-color: #0b7c3f; }
+
+.cycle-label-input {
+  flex: 1;
+  min-width: 160px;
+  border: 1.5px solid #dde5ef;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 1.05em;
+  font-weight: 700;
+  font-family: inherit;
+  color: #0b7c3f;
+  background: #fff;
+}
+.cycle-label-input:focus {
+  outline: none;
+  border-color: #0b7c3f;
+  box-shadow: 0 0 0 3px rgba(11,124,63,.12);
+}
+
+.btn-remove-cycle {
+  background: #fff0f0;
+  color: #c00;
+  border: 1.5px solid #f3c3c3;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: .85em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-remove-cycle:hover { background: #ffe0e0; }
+
+.cycle-body {
+  padding: 16px 18px 20px;
+}
+.cycle-body[hidden] { display: none; }
+
+/* ── Weeks (nested inside a cycle) ────────────────────────────────────────── */
+
+.week-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.week-tabs {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
@@ -84,12 +185,6 @@ header h1 {
   white-space: nowrap;
 }
 .btn-add-week:hover { background: #f0fbf4; }
-
-main {
-  max-width: 960px;
-  margin: 14px auto 24px;
-  padding: 0 16px 40px;
-}
 
 .week-head {
   display: flex;
@@ -130,47 +225,164 @@ main {
 }
 .btn-remove-week:hover { background: #ffe0e0; }
 
-#days {
+/* ── Days (nested inside a week) ──────────────────────────────────────────── */
+
+.days {
   display: grid;
   gap: 18px;
+  margin-bottom: 14px;
 }
 
 .day-card {
-  background: #fff;
+  background: #fbfdfc;
   border: 1.5px solid #dde5ef;
   border-radius: 12px;
   padding: 16px 18px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.04);
 }
 
 .day-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
 }
 
-.day-head h2 {
-  margin: 0;
-  font-size: 1.1em;
+.day-name-input {
+  font-weight: 700;
+  font-size: 1.05em;
   color: #0b7c3f;
+  border: 1.5px solid #dde5ef;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-family: inherit;
+  min-width: 140px;
+  background: #fff;
+}
+.day-name-input:focus {
+  outline: none;
+  border-color: #0b7c3f;
+  box-shadow: 0 0 0 3px rgba(11,124,63,.12);
 }
 
-.day-head input.focus-input {
+.day-head .focus-input {
+  flex: 1;
+  min-width: 160px;
   border: 1.5px solid rgba(11,124,63,.3);
   border-radius: 6px;
-  padding: 6px 10px;
+  padding: 7px 10px;
   font-size: .9em;
   font-family: inherit;
   color: #555;
-  min-width: 160px;
+  background: #fff;
+}
+.day-head .focus-input:focus {
+  outline: none;
+  border-color: #0b7c3f;
+  box-shadow: 0 0 0 3px rgba(11,124,63,.12);
 }
 
-.exercise-item {
+.btn-remove-day {
+  background: #fff0f0;
+  color: #c00;
+  border: 1.5px solid #f3c3c3;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: .82em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-left: auto;
+}
+.btn-remove-day:hover { background: #ffe0e0; }
+
+.btn-add-day {
+  margin-top: 2px;
+  background: none;
+  border: 1.5px dashed #7a4fb0;
+  color: #7a4fb0;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-size: .9em;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-add-day:hover { background: #f5eefc; }
+
+/* ── Sections (nested inside a day) ───────────────────────────────────────── */
+
+.sections {
+  display: grid;
+  gap: 12px;
   margin-bottom: 10px;
 }
+
+.section-card {
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.section-name {
+  flex: 1;
+  border: 1.5px solid #dde5ef;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: .95em;
+  font-weight: 700;
+  color: #2f6fb0;
+  font-family: inherit;
+}
+.section-name:focus {
+  outline: none;
+  border-color: #2f6fb0;
+  box-shadow: 0 0 0 3px rgba(47,111,176,.14);
+}
+
+.btn-remove-section {
+  background: #fff0f0;
+  color: #c00;
+  border: 1.5px solid #f3c3c3;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: .8em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-remove-section:hover { background: #ffe0e0; }
+
+.btn-add-section {
+  background: none;
+  border: 1.5px dashed #2f6fb0;
+  color: #2f6fb0;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: .85em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-add-section:hover { background: #eef5fc; }
+
+.exercise-items {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* ── Exercises (nested inside a section) ──────────────────────────────────── */
 
 .exercise-item.has-actual .exercise-row {
   border-radius: 8px 8px 0 0;
@@ -260,7 +472,7 @@ main {
 }
 
 .btn-add {
-  margin-top: 6px;
+  margin-top: 2px;
   background: none;
   border: 1.5px dashed #0b7c3f;
   color: #0b7c3f;
@@ -272,6 +484,8 @@ main {
   cursor: pointer;
 }
 .btn-add:hover { background: #f0fbf4; }
+
+/* ── Toast ────────────────────────────────────────────────────────────────── */
 
 #toast {
   position: fixed;
@@ -298,4 +512,5 @@ main {
   .exercise-actual { grid-template-columns: 1fr; }
   .actual-label { grid-column: 1; }
   .btn-clear-actual { justify-self: start; }
+  .btn-remove-day { margin-left: 0; }
 }

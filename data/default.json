@@ -1,16 +1,23 @@
 {
-  "weeks": [
+  "cycles": [
     {
-      "id": "w1",
-      "label": "Týden 1",
-      "days": [
-        { "id": "d1", "name": "Pondělí", "focus": "Nohy",        "exercises": [] },
-        { "id": "d2", "name": "Úterý",   "focus": "Záda",        "exercises": [] },
-        { "id": "d3", "name": "Středa",  "focus": "Odpočinek",   "exercises": [] },
-        { "id": "d4", "name": "Čtvrtek", "focus": "Hrudník",     "exercises": [] },
-        { "id": "d5", "name": "Pátek",   "focus": "Ramena, ruce","exercises": [] },
-        { "id": "d6", "name": "Sobota",  "focus": "Kardio",      "exercises": [] },
-        { "id": "d7", "name": "Neděle",  "focus": "Odpočinek",   "exercises": [] }
+      "id": "cy1",
+      "label": "Cyklus 1",
+      "collapsed": false,
+      "weeks": [
+        {
+          "id": "w1",
+          "label": "Týden 1",
+          "days": [
+            { "id": "d1", "name": "Pondělí", "focus": "", "sections": [] },
+            { "id": "d2", "name": "Úterý",   "focus": "", "sections": [] },
+            { "id": "d3", "name": "Středa",  "focus": "", "sections": [] },
+            { "id": "d4", "name": "Čtvrtek", "focus": "", "sections": [] },
+            { "id": "d5", "name": "Pátek",   "focus": "", "sections": [] },
+            { "id": "d6", "name": "Sobota",  "focus": "", "sections": [] },
+            { "id": "d7", "name": "Neděle",  "focus": "", "sections": [] }
+          ]
+        }
       ]
     }
   ]

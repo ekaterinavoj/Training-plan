@@ -12,18 +12,60 @@
   <button id="save-btn" class="btn-main">Uložit plán</button>
 </header>
 
-<nav id="week-bar">
-  <div id="week-tabs"></div>
-  <button id="add-week-btn" class="btn-add-week">+ Nový týden</button>
+<nav id="top-bar">
+  <button id="add-cycle-btn" class="btn-add-cycle">+ Nový cyklus (nový trénink)</button>
 </nav>
 
-<main>
-  <div class="week-head">
-    <input type="text" id="week-label" class="week-label-input" placeholder="Název týdne (např. Týden 1, 12.–18. 8.)">
-    <button id="remove-week-btn" class="btn-remove-week" title="Smazat tento týden">🗑 Smazat týden</button>
+<main id="cycles"></main>
+
+<div id="toast"></div>
+
+<!-- ── Templates ─────────────────────────────────────────────────────────── -->
+
+<template id="cycle-tpl">
+  <div class="cycle">
+    <div class="cycle-head">
+      <button class="cycle-toggle" title="Sbalit / rozbalit cyklus">▼</button>
+      <input type="text" class="cycle-label-input" placeholder="Název cyklu (např. Cyklus 1 – Síla, 12 týdnů)">
+      <button class="btn-remove-cycle" title="Smazat cyklus">🗑 Cyklus</button>
+    </div>
+    <div class="cycle-body">
+      <nav class="week-bar">
+        <div class="week-tabs"></div>
+        <button class="btn-add-week">+ Nový týden</button>
+      </nav>
+      <div class="week-head">
+        <input type="text" class="week-label-input" placeholder="Název týdne (např. Týden 1, 12.–18. 8.)">
+        <button class="btn-remove-week" title="Smazat tento týden">🗑 Smazat týden</button>
+      </div>
+      <div class="days"></div>
+      <button class="btn-add-day">+ Přidat den</button>
+    </div>
   </div>
-  <div id="days"></div>
-</main>
+</template>
+
+<template id="day-tpl">
+  <section class="day-card">
+    <div class="day-head">
+      <input type="text" class="day-name-input" placeholder="Název dne (např. Pondělí)">
+      <input type="text" class="focus-input" placeholder="Poznámka ke dni (volitelné)">
+      <button class="btn-remove-day" title="Smazat den">✕ Den</button>
+    </div>
+    <div class="sections"></div>
+    <button class="btn-add-section">+ Přidat sekci</button>
+  </section>
+</template>
+
+<template id="section-tpl">
+  <div class="section-card">
+    <div class="section-head">
+      <input type="text" class="section-name" placeholder="Název sekce (např. Hlavní cviky, Ramena, Core...)">
+      <button class="btn-remove-section" title="Smazat sekci">✕ Sekce</button>
+    </div>
+    <div class="exercise-items"></div>
+    <button class="btn-add-exercise">+ Přidat cvik</button>
+  </div>
+</template>
 
 <template id="exercise-item-tpl">
   <div class="exercise-item">
@@ -43,8 +85,6 @@
     </div>
   </div>
 </template>
-
-<div id="toast"></div>
 
 <script src="app.js"></script>
 </body>
