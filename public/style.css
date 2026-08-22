@@ -1,0 +1,147 @@
+* { box-sizing: border-box; }
+
+body {
+  font-family: Calibri, Arial, sans-serif;
+  background: #f4f7fb;
+  margin: 0;
+  color: #1c2733;
+}
+
+header {
+  background: #0b7c3f;
+  color: #fff;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.4em;
+}
+
+.btn-main {
+  background: #fff;
+  color: #0b7c3f;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-main:hover { background: #e6f5ec; }
+
+main {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 0 16px 40px;
+  display: grid;
+  gap: 18px;
+}
+
+.day-card {
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+}
+
+.day-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.day-head h2 {
+  margin: 0;
+  font-size: 1.1em;
+  color: #0b7c3f;
+}
+
+.day-head input.focus-input {
+  border: 1.5px solid rgba(11,124,63,.3);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: .9em;
+  font-family: inherit;
+  color: #555;
+  min-width: 160px;
+}
+
+.exercise-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.4fr auto;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.exercise-row input {
+  border: 1.5px solid #dde5ef;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: .92em;
+  font-family: inherit;
+  width: 100%;
+}
+.exercise-row input:focus {
+  outline: none;
+  border-color: #0b7c3f;
+  box-shadow: 0 0 0 3px rgba(11,124,63,.12);
+}
+
+.btn-remove {
+  background: #fff0f0;
+  color: #c00;
+  border: 1.5px solid #f3c3c3;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .95em;
+}
+.btn-remove:hover { background: #ffe0e0; }
+
+.btn-add {
+  margin-top: 6px;
+  background: none;
+  border: 1.5px dashed #0b7c3f;
+  color: #0b7c3f;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: .9em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-add:hover { background: #f0fbf4; }
+
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #0b7c3f;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: .92em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+}
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 640px) {
+  .exercise-row { grid-template-columns: 1fr 1fr; }
+  .exercise-row .ex-name { grid-column: 1 / -1; }
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tréninkový plán</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>💪 Tréninkový plán</h1>
+  <button id="save-btn" class="btn-main">Uložit plán</button>
+</header>
+
+<main id="days"></main>
+
+<template id="exercise-row-tpl">
+  <div class="exercise-row">
+    <input type="text" class="ex-name" placeholder="Cvik (např. Dřep)">
+    <input type="number" class="ex-sets" placeholder="Série" min="0">
+    <input type="number" class="ex-reps" placeholder="Opakování" min="0">
+    <input type="text" class="ex-weight" placeholder="Váha / poznámka">
+    <button class="btn-remove" title="Odebrat cvik">✕</button>
+  </div>
+</template>
+
+<div id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

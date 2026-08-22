@@ -1,0 +1,11 @@
+{
+  "days": [
+    { "id": "d1", "name": "Pondělí",  "focus": "Nohy",       "exercises": [] },
+    { "id": "d2", "name": "Úterý",    "focus": "Záda",       "exercises": [] },
+    { "id": "d3", "name": "Středa",   "focus": "Odpočinek",  "exercises": [] },
+    { "id": "d4", "name": "Čtvrtek",  "focus": "Hrudník",    "exercises": [] },
+    { "id": "d5", "name": "Pátek",    "focus": "Ramena, ruce","exercises": [] },
+    { "id": "d6", "name": "Sobota",   "focus": "Kardio",     "exercises": [] },
+    { "id": "d7", "name": "Neděle",   "focus": "Odpočinek",  "exercises": [] }
+  ]
+}
