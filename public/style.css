@@ -169,9 +169,25 @@ header h1 {
   margin-bottom: 6px;
 }
 
-/* Plán and Realita read as two matching rows of the same size — only the
-   color tells them apart — instead of one being a tiny label and the other
-   a big boxed form. */
+/* Rozcvička and Plán are rendered identically — a label followed by a
+   stack of set-lines, no icon or color-coding — so the only thing that
+   tells them apart is the label text. */
+.viewer-set-group { margin-bottom: 8px; }
+.viewer-set-group-label {
+  display: block;
+  font-weight: 700;
+  font-size: .8em;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: #7c8794;
+  margin-bottom: 2px;
+}
+.viewer-set-lines { color: #1c2733; }
+.viewer-set-line { line-height: 1.6; }
+.viewer-set-empty { color: #aab2bc; }
+
+/* Realita is read-only here (it's entered in Úprava) — same row style as
+   Rozcvička/Plán, just red, and only shown once something's logged. */
 .viewer-line {
   display: flex;
   align-items: baseline;
@@ -187,69 +203,17 @@ header h1 {
   letter-spacing: .02em;
   min-width: 58px;
 }
-.viewer-line-warmup .viewer-line-label { color: #b35900; }
-.viewer-line-warmup .viewer-line-value { color: #b35900; }
-
-.viewer-line-plan .viewer-line-label { color: #7c8794; }
-.viewer-line-plan .viewer-line-value { color: #1c2733; }
-
-.viewer-line-actual .viewer-line-label { color: #c0392b; }
+.viewer-line-actual .viewer-line-label,
 .viewer-line-actual .viewer-line-value {
   color: #c0392b;
   font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
 }
 
-.viewer-line-actual input {
-  border: none;
-  border-bottom: 1.5px solid #e3b3ac;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-weight: 600;
-  padding: 1px 2px;
-  text-align: center;
-}
-.viewer-line-actual input.v-actual-sets,
-.viewer-line-actual input.v-actual-reps { width: 2.6em; }
-.viewer-line-actual input.v-actual-weight { width: 5.5em; text-align: left; }
-.viewer-line-actual input:focus {
-  outline: none;
-  border-bottom-color: #c0392b;
-}
-.viewer-line-actual input::placeholder { color: #d8a8a2; font-weight: 400; }
-
-.btn-clear-viewer-actual {
-  background: none;
-  border: none;
-  color: #d8a8a2;
-  font-size: .85em;
-  cursor: pointer;
-  padding: 0 2px;
-  line-height: 1;
-}
-.btn-clear-viewer-actual:hover { color: #c0392b; }
-
-.v-note {
-  display: block;
-  width: 100%;
-  border: none;
-  border-bottom: 1.5px solid #eef2f6;
-  background: transparent;
-  color: #888;
-  font: inherit;
+.viewer-actual-note {
+  color: #a15a4f;
   font-size: .88em;
   font-style: italic;
-  padding: 4px 2px;
-  margin-top: 4px;
-}
-.v-note:focus {
-  outline: none;
-  border-bottom-color: #0b7c3f;
-  color: #1c2733;
+  margin-top: -4px;
 }
 
 /* ── Top bar / add cycle ─────────────────────────────────────────────────── */
@@ -626,21 +590,34 @@ header h1 {
   box-shadow: 0 0 0 3px rgba(11,124,63,.12);
 }
 
-/* Rozcvička and Plán share the same row layout — a label plus three value
-   fields — so they read as matching, stacked rows; only the color and the
-   label tell them apart. */
-.exercise-value-row {
-  display: grid;
-  grid-template-columns: 74px 1fr 1fr 1.3fr;
-  align-items: center;
-  gap: 8px;
+/* Rozcvička and Plán share the exact same look — a label followed by a
+   stack of set-lines — so they read as matching groups; only the label
+   text tells them apart, no color-coding or icon. Each line is its own
+   sérií/opakování/váha row, so several warm-up ramps or work sets can be
+   listed without repeating the exercise. */
+.set-group {
+  margin-bottom: 4px;
 }
-.exercise-value-row .row-label {
+.set-group-label {
+  display: block;
   font-size: .78em;
   font-weight: 700;
-  white-space: nowrap;
+  color: #567;
+  margin-bottom: 4px;
 }
-.exercise-value-row input {
+
+.set-lines {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.set-line {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr auto;
+  gap: 8px;
+}
+.set-line input {
   border: 1.5px solid #dde5ef;
   border-radius: 6px;
   padding: 7px 10px;
@@ -648,20 +625,35 @@ header h1 {
   font-family: inherit;
   width: 100%;
 }
-.exercise-value-row input:focus {
+.set-line input:focus {
   outline: none;
   border-color: #0b7c3f;
   box-shadow: 0 0 0 3px rgba(11,124,63,.12);
 }
 
-.exercise-plan-row .row-label { color: #567; }
-
-.exercise-warmup-row .row-label { color: #b35900; }
-.exercise-warmup-row input { border-color: #f0c9a0; }
-.exercise-warmup-row input:focus {
-  border-color: #d97706;
-  box-shadow: 0 0 0 3px rgba(217,119,6,.12);
+.btn-remove-line {
+  background: #fff0f0;
+  color: #c00;
+  border: 1.5px solid #f3c3c3;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .9em;
+  padding: 0 8px;
 }
+.btn-remove-line:hover { background: #ffe0e0; }
+
+.btn-add-line {
+  background: none;
+  border: 1.5px dashed #0b7c3f;
+  color: #0b7c3f;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: .82em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-add-line:hover { background: #f0fbf4; }
 
 .btn-remove, .btn-clear-actual {
   background: #fff0f0;
@@ -772,10 +764,6 @@ header h1 {
 
   .viewer-section { padding: 12px; margin-bottom: 12px; }
   .viewer-line { font-size: 1.02em; }
-  .viewer-line-actual input { font-size: 1em; padding: 4px 3px; }
-  .viewer-line-actual input.v-actual-sets,
-  .viewer-line-actual input.v-actual-reps { width: 2.8em; }
-  .viewer-line-actual input.v-actual-weight { width: 5.5em; }
 
   #top-bar { padding: 0 10px; }
   .btn-add-cycle { width: 100%; padding: 13px 16px; }
@@ -845,21 +833,24 @@ header h1 {
     font-size: 1.1em;
   }
 
-  /* Rozcvička/Plán rows: label on its own line, sets+reps paired, weight
-     full-width — same pattern as the Realita row below it. */
-  .exercise-value-row {
+  /* Each set-line: sets+reps paired, weight next to a fixed-size delete
+     button (not a full-width stretched bar). */
+  .set-line {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
   }
-  .exercise-value-row .row-label { flex: 1 1 100%; }
-  .exercise-value-row input { font-size: 1em; padding: 10px 10px; min-width: 0; }
-  .exercise-value-row .ex-sets,
-  .exercise-value-row .ex-reps,
-  .exercise-value-row .ex-warmup-sets,
-  .exercise-value-row .ex-warmup-reps { flex: 1 1 calc(50% - 4px); }
-  .exercise-value-row .ex-weight,
-  .exercise-value-row .ex-warmup-weight { flex: 1 1 0; }
+  .set-line input { font-size: 1em; padding: 10px 10px; min-width: 0; }
+  .set-line .line-sets,
+  .set-line .line-reps { flex: 1 1 calc(50% - 4px); }
+  .set-line .line-weight { flex: 1 1 0; }
+  .btn-remove-line {
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.05em;
+  }
+  .btn-add-line { width: 100%; padding: 10px 14px; }
 
   .exercise-actual { padding: 10px 12px; }
   .actual-fields {

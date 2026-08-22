@@ -17,7 +17,7 @@
   <button id="mode-edit-btn" class="mode-btn">✏️ Upravit plán</button>
 </nav>
 
-<!-- ── Zobrazení: sledování tréninku, jen zápis skutečnosti jde editovat ──── -->
+<!-- ── Zobrazení: čistě pro čtení, sledování tréninku ──────────────────────── -->
 <section id="viewer">
   <nav id="viewer-picker">
     <div class="picker-row">
@@ -94,23 +94,30 @@
   </div>
 </template>
 
+<template id="set-line-tpl">
+  <div class="set-line">
+    <input type="number" class="line-sets" placeholder="Sérií" min="0">
+    <input type="number" class="line-reps" placeholder="Opakování" min="0">
+    <input type="text" class="line-weight" placeholder="Váha">
+    <button type="button" class="btn-remove-line" title="Odebrat sérii">✕</button>
+  </div>
+</template>
+
 <template id="exercise-item-tpl">
   <div class="exercise-item">
     <div class="exercise-name-row">
       <input type="text" class="ex-name" placeholder="Cvik (např. Dřep)">
       <button class="btn-remove" title="Odebrat cvik">✕</button>
     </div>
-    <div class="exercise-value-row exercise-warmup-row">
-      <span class="row-label">🔥 Rozcvička</span>
-      <input type="number" class="ex-warmup-sets" placeholder="Série" min="0">
-      <input type="number" class="ex-warmup-reps" placeholder="Opakování" min="0">
-      <input type="text" class="ex-warmup-weight" placeholder="Váha rozcvičky">
+    <div class="set-group set-group-warmup">
+      <span class="set-group-label">Rozcvička</span>
+      <div class="set-lines warmup-lines"></div>
+      <button type="button" class="btn-add-line btn-add-warmup-line">+ Přidat sérii rozcvičky</button>
     </div>
-    <div class="exercise-value-row exercise-plan-row">
-      <span class="row-label">Plán</span>
-      <input type="number" class="ex-sets" placeholder="Série" min="0">
-      <input type="number" class="ex-reps" placeholder="Opakování" min="0">
-      <input type="text" class="ex-weight" placeholder="Plánovaná váha">
+    <div class="set-group set-group-plan">
+      <span class="set-group-label">Plán</span>
+      <div class="set-lines plan-lines"></div>
+      <button type="button" class="btn-add-line btn-add-plan-line">+ Přidat sérii</button>
     </div>
     <div class="exercise-actual">
       <div class="actual-fields">

@@ -8,6 +8,7 @@ const cycleTpl   = document.getElementById('cycle-tpl');
 const dayTpl     = document.getElementById('day-tpl');
 const sectionTpl = document.getElementById('section-tpl');
 const itemTpl    = document.getElementById('exercise-item-tpl');
+const lineTpl    = document.getElementById('set-line-tpl');
 const toast      = document.getElementById('toast');
 const saveBtn    = document.getElementById('save-btn');
 const editorEl   = document.getElementById('editor');
@@ -77,7 +78,30 @@ function normalizeDay(d) {
   }
   delete d.exercises;
   delete d.warmup; // moved from day-level to a per-exercise warm-up set
+  d.sections.forEach(s => { s.exercises = (s.exercises || []).map(normalizeExercise); });
   return d;
+}
+
+// Exercises used to carry a single aggregate {sets, reps, weight} for the
+// plan and a single {warmupSets, warmupReps, warmupWeight} for the warm-up.
+// Both are now lists of individual set-lines, so several different warm-up
+// or work sets can be logged without repeating the exercise.
+function normalizeExercise(ex) {
+  if (!Array.isArray(ex.plan)) {
+    const hasPlan = ex.sets != null || ex.reps != null || ex.weight;
+    ex.plan = hasPlan ? [{ sets: ex.sets ?? null, reps: ex.reps ?? null, weight: ex.weight || '' }] : [];
+  }
+  if (!Array.isArray(ex.warmup)) {
+    const hasWarmup = ex.warmupSets != null || ex.warmupReps != null || ex.warmupWeight;
+    ex.warmup = hasWarmup ? [{ sets: ex.warmupSets ?? null, reps: ex.warmupReps ?? null, weight: ex.warmupWeight || '' }] : [];
+  }
+  delete ex.sets; delete ex.reps; delete ex.weight;
+  delete ex.warmupSets; delete ex.warmupReps; delete ex.warmupWeight;
+  if (ex.actualSets === undefined) ex.actualSets = null;
+  if (ex.actualReps === undefined) ex.actualReps = null;
+  if (ex.actualWeight === undefined) ex.actualWeight = '';
+  if (ex.note === undefined) ex.note = '';
+  return ex;
 }
 
 // ── Render ───────────────────────────────────────────────────────────────────
@@ -184,14 +208,21 @@ function buildSectionNode(sec) {
 function makeItem(ex) {
   const node = itemTpl.content.firstElementChild.cloneNode(true);
 
+  const warmupLines = node.querySelector('.warmup-lines');
+  const planLines    = node.querySelector('.plan-lines');
+
+  (ex && ex.warmup || []).forEach(line => warmupLines.appendChild(buildSetLine(line)));
+  (ex && ex.plan    || []).forEach(line => planLines.appendChild(buildSetLine(line)));
+
+  node.querySelector('.btn-add-warmup-line').addEventListener('click', () => {
+    warmupLines.appendChild(buildSetLine());
+  });
+  node.querySelector('.btn-add-plan-line').addEventListener('click', () => {
+    planLines.appendChild(buildSetLine());
+  });
+
   if (ex) {
     node.querySelector('.ex-name').value           = ex.name          || '';
-    node.querySelector('.ex-warmup-sets').value    = ex.warmupSets    ?? '';
-    node.querySelector('.ex-warmup-reps').value    = ex.warmupReps    ?? '';
-    node.querySelector('.ex-warmup-weight').value  = ex.warmupWeight  || '';
-    node.querySelector('.ex-sets').value           = ex.sets          ?? '';
-    node.querySelector('.ex-reps').value           = ex.reps          ?? '';
-    node.querySelector('.ex-weight').value         = ex.weight        || '';
     node.querySelector('.ex-actual-sets').value    = ex.actualSets    ?? '';
     node.querySelector('.ex-actual-reps').value    = ex.actualReps    ?? '';
     node.querySelector('.ex-actual-weight').value  = ex.actualWeight  || '';
@@ -210,6 +241,30 @@ function makeItem(ex) {
   return node;
 }
 
+function buildSetLine(line) {
+  const node = lineTpl.content.firstElementChild.cloneNode(true);
+  if (line) {
+    node.querySelector('.line-sets').value   = line.sets   ?? '';
+    node.querySelector('.line-reps').value   = line.reps   ?? '';
+    node.querySelector('.line-weight').value = line.weight || '';
+  }
+  node.querySelector('.btn-remove-line').addEventListener('click', () => node.remove());
+  return node;
+}
+
+function readSetLines(container) {
+  const lines = [];
+  container.querySelectorAll(':scope > .set-line').forEach(lineNode => {
+    const sets   = lineNode.querySelector('.line-sets').value;
+    const reps   = lineNode.querySelector('.line-reps').value;
+    const weight = lineNode.querySelector('.line-weight').value.trim();
+    if (sets || reps || weight) {
+      lines.push({ sets: sets === '' ? null : Number(sets), reps: reps === '' ? null : Number(reps), weight });
+    }
+  });
+  return lines;
+}
+
 // ── Content checks (used to decide whether a delete needs confirmation) ────────
 function dayHasContent(dayNode) {
   if (dayNode.querySelector('.day-name-input').value.trim()) return true;
@@ -221,12 +276,11 @@ function sectionHasContent(sectionNode) {
   return Array.from(sectionNode.querySelectorAll('.exercise-item')).some(exerciseItemHasContent);
 }
 function exerciseItemHasContent(item) {
-  return ['.ex-name', '.ex-warmup-sets', '.ex-warmup-reps', '.ex-warmup-weight', '.ex-sets', '.ex-reps', '.ex-weight', '.ex-actual-sets', '.ex-actual-reps', '.ex-actual-weight', '.ex-note']
-    .some(sel => item.querySelector(sel).value.trim());
-}
-
-function escapeAttr(str) {
-  return String(str).replace(/"/g, '&quot;');
+  if (['.ex-name', '.ex-actual-sets', '.ex-actual-reps', '.ex-actual-weight', '.ex-note']
+    .some(sel => item.querySelector(sel).value.trim())) return true;
+  if (readSetLines(item.querySelector('.warmup-lines')).length) return true;
+  if (readSetLines(item.querySelector('.plan-lines')).length) return true;
+  return false;
 }
 
 // ── Sync DOM → model ─────────────────────────────────────────────────────────
@@ -269,27 +323,18 @@ function syncCycleCurrentWeekFromDom(cycle) {
 }
 
 function readExerciseItem(item) {
-  const exName        = item.querySelector('.ex-name').value.trim();
-  const warmupSets    = item.querySelector('.ex-warmup-sets').value;
-  const warmupReps    = item.querySelector('.ex-warmup-reps').value;
-  const warmupWeight  = item.querySelector('.ex-warmup-weight').value.trim();
-  const sets          = item.querySelector('.ex-sets').value;
-  const reps          = item.querySelector('.ex-reps').value;
-  const weight        = item.querySelector('.ex-weight').value.trim();
-  const actualSets    = item.querySelector('.ex-actual-sets').value;
-  const actualReps    = item.querySelector('.ex-actual-reps').value;
-  const actualWeight  = item.querySelector('.ex-actual-weight').value.trim();
-  const note          = item.querySelector('.ex-note').value.trim();
-  if (!exName && !warmupSets && !warmupReps && !warmupWeight && !sets && !reps && !weight
-      && !actualSets && !actualReps && !actualWeight && !note) return null;
+  const exName       = item.querySelector('.ex-name').value.trim();
+  const warmup       = readSetLines(item.querySelector('.warmup-lines'));
+  const plan_        = readSetLines(item.querySelector('.plan-lines'));
+  const actualSets   = item.querySelector('.ex-actual-sets').value;
+  const actualReps   = item.querySelector('.ex-actual-reps').value;
+  const actualWeight = item.querySelector('.ex-actual-weight').value.trim();
+  const note         = item.querySelector('.ex-note').value.trim();
+  if (!exName && !warmup.length && !plan_.length && !actualSets && !actualReps && !actualWeight && !note) return null;
   return {
     name: exName,
-    warmupSets: warmupSets === '' ? null : Number(warmupSets),
-    warmupReps: warmupReps === '' ? null : Number(warmupReps),
-    warmupWeight,
-    sets: sets === '' ? null : Number(sets),
-    reps: reps === '' ? null : Number(reps),
-    weight,
+    warmup,
+    plan: plan_,
     actualSets: actualSets === '' ? null : Number(actualSets),
     actualReps: actualReps === '' ? null : Number(actualReps),
     actualWeight,
@@ -373,7 +418,9 @@ function applyMode() {
   viewerEl.hidden = mode !== 'view';
   document.getElementById('mode-view-btn').classList.toggle('active', mode === 'view');
   document.getElementById('mode-edit-btn').classList.toggle('active', mode === 'edit');
-  saveBtn.textContent = mode === 'view' ? 'Uložit zápis' : 'Uložit plán';
+  // Zobrazení is now purely read-only (Rozcvička, Plán and Realita are all
+  // entered in Úprava), so there's nothing to save while looking at it.
+  saveBtn.hidden = mode !== 'edit';
   localStorage.setItem('trainingPlanMode', mode);
 }
 
@@ -502,68 +549,56 @@ function buildViewerExercise(ex) {
   const card = document.createElement('div');
   card.className = 'viewer-exercise';
 
-  const warmupParts = [];
-  if (ex.warmupSets != null || ex.warmupReps != null) warmupParts.push(`${ex.warmupSets ?? '?'} × ${ex.warmupReps ?? '?'}`);
-  if (ex.warmupWeight) warmupParts.push(ex.warmupWeight);
+  card.appendChild(el('div', 'viewer-ex-name', ex.name || '(bez názvu)'));
 
-  const planParts = [];
-  if (ex.sets != null || ex.reps != null) planParts.push(`${ex.sets ?? '?'} × ${ex.reps ?? '?'}`);
-  if (ex.weight) planParts.push(ex.weight);
+  // Rozcvička and Plán are rendered identically (same style, no icon) — only
+  // the label tells them apart — each as a stack of individual set-lines, so
+  // several different warm-up or work sets can be listed without repeating
+  // the exercise. Rozcvička is only shown when it actually has lines.
+  if (ex.warmup && ex.warmup.length) card.appendChild(buildViewerSetGroup('Rozcvička', ex.warmup));
+  card.appendChild(buildViewerSetGroup('Plán', ex.plan || []));
 
-  // Rozcvička, Plán and Realita are matching-size rows, stacked in that
-  // order — only the color tells them apart. Rozcvička only shows up when
-  // it's actually filled in, since not every exercise needs a warm-up set.
-  card.innerHTML = `
-    <div class="viewer-ex-name">${escapeHtml(ex.name || '(bez názvu)')}</div>
-    ${warmupParts.length ? `
-    <div class="viewer-line viewer-line-warmup">
-      <span class="viewer-line-label">🔥 Rozcvička</span>
-      <span class="viewer-line-value">${escapeHtml(warmupParts.join(' · '))}</span>
-    </div>` : ''}
-    <div class="viewer-line viewer-line-plan">
-      <span class="viewer-line-label">Plán</span>
-      <span class="viewer-line-value">${planParts.length ? escapeHtml(planParts.join(' · ')) : '–'}</span>
-    </div>
-    <div class="viewer-line viewer-line-actual">
-      <span class="viewer-line-label">Realita</span>
-      <span class="viewer-line-value">
-        <input type="number" class="v-actual-sets" placeholder="série" min="0"> ×
-        <input type="number" class="v-actual-reps" placeholder="opak." min="0"> ·
-        <input type="text" class="v-actual-weight" placeholder="váha">
-        <button type="button" class="btn-clear-viewer-actual" title="Vymazat zápis skutečnosti">✕</button>
-      </span>
-    </div>
-    <input type="text" class="v-note" placeholder="Poznámka (např. cítila jsem se silná)">
-  `;
+  // Realita is entered only in Úprava; here it's plain read-only text, and
+  // only appears at all once something's actually been logged.
+  const hasActual = ex.actualSets != null || ex.actualReps != null || ex.actualWeight || ex.note;
+  if (hasActual) {
+    const actualParts = [];
+    if (ex.actualSets != null || ex.actualReps != null) actualParts.push(`${ex.actualSets ?? '?'} × ${ex.actualReps ?? '?'}`);
+    if (ex.actualWeight) actualParts.push(ex.actualWeight);
 
-  const setsEl   = card.querySelector('.v-actual-sets');
-  const repsEl   = card.querySelector('.v-actual-reps');
-  const weightEl = card.querySelector('.v-actual-weight');
-  const noteEl   = card.querySelector('.v-note');
-  const clearBtn = card.querySelector('.btn-clear-viewer-actual');
-
-  setsEl.value   = ex.actualSets   ?? '';
-  repsEl.value   = ex.actualReps   ?? '';
-  weightEl.value = ex.actualWeight || '';
-  noteEl.value   = ex.note         || '';
-
-  // Live-bound: every keystroke writes straight into `plan` (this is the
-  // exact exercise object inside plan.cycles[...]), no separate sync step.
-  setsEl.addEventListener('input',   () => { ex.actualSets = setsEl.value === '' ? null : Number(setsEl.value); });
-  repsEl.addEventListener('input',   () => { ex.actualReps = repsEl.value === '' ? null : Number(repsEl.value); });
-  weightEl.addEventListener('input', () => { ex.actualWeight = weightEl.value; });
-  noteEl.addEventListener('input',   () => { ex.note = noteEl.value; });
-
-  clearBtn.addEventListener('click', () => {
-    setsEl.value = ''; repsEl.value = ''; weightEl.value = ''; noteEl.value = '';
-    ex.actualSets = null; ex.actualReps = null; ex.actualWeight = ''; ex.note = '';
-  });
+    const line = el('div', 'viewer-line viewer-line-actual');
+    line.appendChild(el('span', 'viewer-line-label', 'Realita'));
+    line.appendChild(el('span', 'viewer-line-value', actualParts.length ? actualParts.join(' · ') : '–'));
+    card.appendChild(line);
+    if (ex.note) card.appendChild(el('div', 'viewer-actual-note', ex.note));
+  }
 
   return card;
 }
 
-function escapeHtml(str) {
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function buildViewerSetGroup(label, lines) {
+  const group = el('div', 'viewer-set-group');
+  group.appendChild(el('span', 'viewer-set-group-label', label));
+  if (lines.length) {
+    const list = el('div', 'viewer-set-lines');
+    lines.forEach(line => {
+      const parts = [];
+      if (line.sets != null || line.reps != null) parts.push(`${line.sets ?? '?'} × ${line.reps ?? '?'}`);
+      if (line.weight) parts.push(line.weight);
+      list.appendChild(el('div', 'viewer-set-line', parts.length ? parts.join(' · ') : '–'));
+    });
+    group.appendChild(list);
+  } else {
+    group.appendChild(el('div', 'viewer-set-lines viewer-set-empty', '–'));
+  }
+  return group;
+}
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
 }
 
 document.getElementById('save-btn').addEventListener('click', savePlan);
