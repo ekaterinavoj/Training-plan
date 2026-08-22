@@ -490,24 +490,31 @@ function buildViewerExercise(ex) {
   if (ex.sets != null || ex.reps != null) planParts.push(`${ex.sets ?? '?'} × ${ex.reps ?? '?'}`);
   if (ex.weight) planParts.push(ex.weight);
 
+  // Plán and Realita are two matching rows, same size — Realita just in red,
+  // with small inline fields instead of a boxed form, so it doesn't dominate.
   card.innerHTML = `
-    <div class="viewer-exercise-head">
-      <span class="viewer-ex-name">${escapeHtml(ex.name || '(bez názvu)')}</span>
-      ${planParts.length ? `<span class="viewer-ex-plan">Plán: ${escapeHtml(planParts.join(' · '))}</span>` : ''}
+    <div class="viewer-ex-name">${escapeHtml(ex.name || '(bez názvu)')}</div>
+    <div class="viewer-line viewer-line-plan">
+      <span class="viewer-line-label">Plán</span>
+      <span class="viewer-line-value">${planParts.length ? escapeHtml(planParts.join(' · ')) : '–'}</span>
     </div>
-    <div class="viewer-actual">
-      <span class="viewer-actual-label">Realita</span>
-      <input type="number" class="v-actual-sets" placeholder="Série" min="0">
-      <input type="number" class="v-actual-reps" placeholder="Opakování" min="0">
-      <input type="text" class="v-actual-weight" placeholder="Skutečná váha">
-      <input type="text" class="v-note" placeholder="Poznámka (např. cítila jsem se silná)">
+    <div class="viewer-line viewer-line-actual">
+      <span class="viewer-line-label">Realita</span>
+      <span class="viewer-line-value">
+        <input type="number" class="v-actual-sets" placeholder="série" min="0"> ×
+        <input type="number" class="v-actual-reps" placeholder="opak." min="0"> ·
+        <input type="text" class="v-actual-weight" placeholder="váha">
+        <button type="button" class="btn-clear-viewer-actual" title="Vymazat zápis skutečnosti">✕</button>
+      </span>
     </div>
+    <input type="text" class="v-note" placeholder="Poznámka (např. cítila jsem se silná)">
   `;
 
   const setsEl   = card.querySelector('.v-actual-sets');
   const repsEl   = card.querySelector('.v-actual-reps');
   const weightEl = card.querySelector('.v-actual-weight');
   const noteEl   = card.querySelector('.v-note');
+  const clearBtn = card.querySelector('.btn-clear-viewer-actual');
 
   setsEl.value   = ex.actualSets   ?? '';
   repsEl.value   = ex.actualReps   ?? '';
@@ -520,6 +527,11 @@ function buildViewerExercise(ex) {
   repsEl.addEventListener('input',   () => { ex.actualReps = repsEl.value === '' ? null : Number(repsEl.value); });
   weightEl.addEventListener('input', () => { ex.actualWeight = weightEl.value; });
   noteEl.addEventListener('input',   () => { ex.note = noteEl.value; });
+
+  clearBtn.addEventListener('click', () => {
+    setsEl.value = ''; repsEl.value = ''; weightEl.value = ''; noteEl.value = '';
+    ex.actualSets = null; ex.actualReps = null; ex.actualWeight = ''; ex.note = '';
+  });
 
   return card;
 }

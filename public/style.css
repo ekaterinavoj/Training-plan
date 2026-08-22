@@ -162,56 +162,92 @@ header h1 {
   padding-top: 0;
 }
 
-.viewer-exercise-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
-}
 .viewer-ex-name {
   font-weight: 700;
-  font-size: 1.05em;
+  font-size: 1.1em;
   color: #1c2733;
-}
-.viewer-ex-plan {
-  font-size: .9em;
-  color: #567;
-  white-space: nowrap;
+  margin-bottom: 6px;
 }
 
-.viewer-actual {
-  display: grid;
-  grid-template-columns: auto 1fr 1fr 1.3fr;
-  align-items: center;
+/* Plán and Realita read as two matching rows of the same size — only the
+   color tells them apart — instead of one being a tiny label and the other
+   a big boxed form. */
+.viewer-line {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
   gap: 8px;
-  background: #fffbf0;
-  border: 1.5px solid #f0dba0;
-  border-radius: 8px;
-  padding: 10px 12px;
+  font-size: 1em;
+  line-height: 1.7;
 }
-.viewer-actual-label {
-  font-size: .8em;
+.viewer-line-label {
   font-weight: 700;
-  color: #9a6b00;
-  white-space: nowrap;
+  font-size: .8em;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  min-width: 58px;
 }
-.viewer-actual input {
-  border: 1.5px solid #f0dba0;
-  border-radius: 6px;
-  padding: 8px 10px;
-  font-size: .92em;
-  font-family: inherit;
-  width: 100%;
-  background: #fff;
+.viewer-line-plan .viewer-line-label { color: #7c8794; }
+.viewer-line-plan .viewer-line-value { color: #1c2733; }
+
+.viewer-line-actual .viewer-line-label { color: #c0392b; }
+.viewer-line-actual .viewer-line-value {
+  color: #c0392b;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
 }
-.viewer-actual input:focus {
+
+.viewer-line-actual input {
+  border: none;
+  border-bottom: 1.5px solid #e3b3ac;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  padding: 1px 2px;
+  text-align: center;
+}
+.viewer-line-actual input.v-actual-sets,
+.viewer-line-actual input.v-actual-reps { width: 2.6em; }
+.viewer-line-actual input.v-actual-weight { width: 5.5em; text-align: left; }
+.viewer-line-actual input:focus {
   outline: none;
-  border-color: #c99a00;
-  box-shadow: 0 0 0 3px rgba(201,154,0,.12);
+  border-bottom-color: #c0392b;
 }
-.viewer-actual .v-note { grid-column: 1 / -1; }
+.viewer-line-actual input::placeholder { color: #d8a8a2; font-weight: 400; }
+
+.btn-clear-viewer-actual {
+  background: none;
+  border: none;
+  color: #d8a8a2;
+  font-size: .85em;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+.btn-clear-viewer-actual:hover { color: #c0392b; }
+
+.v-note {
+  display: block;
+  width: 100%;
+  border: none;
+  border-bottom: 1.5px solid #eef2f6;
+  background: transparent;
+  color: #888;
+  font: inherit;
+  font-size: .88em;
+  font-style: italic;
+  padding: 4px 2px;
+  margin-top: 4px;
+}
+.v-note:focus {
+  outline: none;
+  border-bottom-color: #0b7c3f;
+  color: #1c2733;
+}
 
 /* ── Top bar / add cycle ─────────────────────────────────────────────────── */
 
@@ -693,10 +729,11 @@ header h1 {
   .pill { padding: 9px 14px; }
 
   .viewer-section { padding: 12px; margin-bottom: 12px; }
-  .viewer-exercise-head { gap: 6px; }
-  .viewer-actual { grid-template-columns: 1fr 1fr; padding: 10px; }
-  .viewer-actual-label { grid-column: 1 / -1; }
-  .viewer-actual input { font-size: 1em; padding: 10px; }
+  .viewer-line { font-size: 1.02em; }
+  .viewer-line-actual input { font-size: 1em; padding: 4px 3px; }
+  .viewer-line-actual input.v-actual-sets,
+  .viewer-line-actual input.v-actual-reps { width: 2.8em; }
+  .viewer-line-actual input.v-actual-weight { width: 5.5em; }
 
   #top-bar { padding: 0 10px; }
   .btn-add-cycle { width: 100%; padding: 13px 16px; }
