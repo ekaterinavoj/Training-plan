@@ -585,7 +585,9 @@ function buildViewerSetGroup(label, lines) {
     const list = el('div', 'viewer-set-lines');
     lines.forEach(line => {
       const parts = [];
-      if (line.sets != null || line.reps != null) parts.push(`${line.sets ?? '?'} × ${line.reps ?? '?'}`);
+      if (line.sets != null && line.reps != null) parts.push(`${line.sets} × ${line.reps}`);
+      else if (line.sets != null) parts.push(`${line.sets} série`);
+      else if (line.reps != null) parts.push(`${line.reps}×`);
       if (line.weight) parts.push(line.weight);
       list.appendChild(el('div', 'viewer-set-line', parts.length ? parts.join(' · ') : '–'));
     });
