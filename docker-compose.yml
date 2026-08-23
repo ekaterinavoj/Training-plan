@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   training-plan:
     build: .
@@ -13,7 +11,4 @@ services:
       - ADMIN_PASSWORD=SilaHubnuti-26x!
       - ADMIN_RESET_CODE=ObnovaHesla-9427-Trenink
     volumes:
-      - training_plan_data:/app/data
-
-volumes:
-  training_plan_data:
+      - ./data:/app/data

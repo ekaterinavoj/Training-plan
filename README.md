@@ -88,8 +88,8 @@ docker compose up -d --build
 Appka poběží na `http://<adresa-serveru>:3100`. `docker-compose.yml` už má nastavené:
 
 - **restart: unless-stopped** – po pádu nebo restartu serveru se kontejner sám znovu spustí,
-- **pojmenovaný volume** `training_plan_data` připojený do `/app/data` – **data přežijí `docker compose down`, rebuild i update image**. Bez tohoto volume by se `data/plan.json` při každém přebuildování kontejneru smazal zpět na prázdnou výchozí šablonu.
-- **HEALTHCHECK** (`GET /health`) – Docker/orchestrátor podle něj pozná, že kontejner skutečně běží a odpovídá, ne jen že proces existuje.
+- **bind mount** `./data:/app/data` – kontejner čte a zapisuje přímo do složky `data/` na hostitelském disku (tam, odkud appku spouštíš), takže vidí tvůj skutečný `data/plan.json` a `docker compose down`/rebuild/update image ho nijak neovlivní. (Pozn.: dřív tu byl pojmenovaný Docker volume – ten při prvním spuštění vznikne prázdný a neobsahuje tvá už uložená data, takže appka běžela s prázdnou výchozí šablonou, dokud jsi ho ručně nenaplnila. Bind mount na `./data` tenhle krok navíc nepotřebuje.)
+- **HEALTHCHECK** (`GET /health` na `127.0.0.1`, ne na `localhost`) – Docker/orchestrátor podle něj pozná, že kontejner skutečně běží a odpovídá, ne jen že proces existuje. (`localhost` uvnitř kontejneru se občas přeloží na IPv6 `::1`, na kterém server neposlouchá – proto vždy `127.0.0.1`.)
 
 ### Ruční build a spuštění (bez compose)
 
@@ -99,11 +99,11 @@ docker run -d \
   --name training-plan \
   --restart unless-stopped \
   -p 3100:3100 \
-  -v training_plan_data:/app/data \
+  -v "$(pwd)/data:/app/data" \
   training-plan
 ```
 
-`-v training_plan_data:/app/data` je tu to nejdůležitější – bez pojmenovaného volume (nebo bind mountu na hostitelský adresář) se při každém `docker run`/rebuildu ztratí uložený plán.
+`-v "$(pwd)/data:/app/data"` je tu to nejdůležitější – bez bind mountu (nebo aspoň pojmenovaného volume) na hostitelský adresář se při každém `docker run`/rebuildu ztratí uložený plán, a s prázdným pojmenovaným volume appka navíc nastartuje s prázdnou šablonou místo tvých dat.
 
 ### Proměnné prostředí
 
@@ -118,14 +118,13 @@ docker run -d \
 
 ### Zálohování dat
 
-Celý stav appky je jeden soubor, `data/plan.json` uvnitř volume `training_plan_data`. Zálohu uděláš např.:
+Celý stav appky je jeden soubor, `data/plan.json`, přímo ve složce `data/` vedle `docker-compose.yml` (díky bind mountu). Zálohu uděláš úplně obyčejným zkopírováním, žádný Docker příkaz není potřeba:
 
 ```bash
-docker run --rm -v training_plan_data:/data -v "$PWD":/backup alpine \
-  cp /data/plan.json /backup/plan-backup-$(date +%F).json
+cp data/plan.json data/plan-backup-$(date +%F).json
 ```
 
-a obnovíš stejně opačným směrem (`cp /backup/plan-backup-XXXX-XX-XX.json /data/plan.json`).
+a obnovíš stejně opačným směrem (`cp data/plan-backup-XXXX-XX-XX.json data/plan.json`). (`data/*backup*` je v `.gitignore`/`.dockerignore`, takže si takhle pojmenované zálohy klidně nech přímo ve složce.)
 
 ### Reverzní proxy a HTTPS
 
