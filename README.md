@@ -75,7 +75,7 @@ Otevře se ikonkou **👤** v hlavičce. Tři karty:
   - Tahle maxima se používají na dvou místech:
     1. Tlačítko **⚡ Doplnit z maxima** u každého cviku v editoru (vedle `+ Přidat sérii`) – když název cviku odpovídá nějakému zapsanému maximu, dopočítá váhu podle pravidla **60 % maxima v 1. týdnu cyklu, +2,5 kg každý další týden** (týden se pozná podle toho, na které záložce týdne zrovna jsi) a doplní ji do prázdných řádků Plánu. Hodí se to i bez šablony, když si trénink píšeš ručně.
     2. Šablony tréninků (viz níž) – ty počítají váhu ze stejného maxima podle procenta, které šablona předepisuje.
-- **Šablony tréninků** – appka se dodává se **7 hotovými, výzkumem podloženými protokoly** (viz níž), každý jako karta se štítky úrovně/frekvence (zeleně zvýrazněné, pokud sedí k tomu, co máš vyplněné v Základních údajích výše, plus štítek "✓ sedí ti", když sedí obojí), krátkým popisem, zdrojem a tlačítkem **⚡ Vygenerovat trénink**, které vytvoří nový cyklus s váhami dopočítanými z maxim výše (a upozorní, pokud pro nějaký hlavní cvik maximum ještě nemáš).
+- **Šablony tréninků** – appka se dodává s **9 hotovými, výzkumem podloženými protokoly** (viz níž), každý jako karta se štítky úrovně/frekvence (zeleně zvýrazněné, pokud sedí k tomu, co máš vyplněné v Základních údajích výše, plus štítek "✓ sedí ti", když sedí obojí), krátkým popisem, zdrojem a tlačítkem **⚡ Vygenerovat trénink**, které vytvoří nový cyklus s váhami dopočítanými z maxim výše (a upozorní, pokud pro nějaký hlavní cvik maximum ještě nemáš).
 
   ### Dodávané protokoly (`data/templates.json`)
 
@@ -88,6 +88,8 @@ Otevře se ikonkou **👤** v hlavičce. Tři karty:
   | **5×5 (Heavy/Light/Medium)** | středně pokročilý | 3× | Klasický systém Billa Starra: stejné hlavní cviky 3×/týden s jinou intenzitou (těžký/lehký/střední den); těžký den se postupně mění z 5×5 na 5×3, jak síla roste. |
   | **Powerliftingový trénink (Wendler 5/3/1)** | středně pokročilý | 4× | Jeden hlavní cvik denně (dřep/bench/mrtvý tah/OHP), čtyřtýdenní vlny 5/5/5+ → 3/3/3+ → 5/3/1+ → deload, poslední série je AMRAP ("+"). Procenta už mají vestavěný polštář tréninkového maxima. |
   | **Silová vytrvalost** | (kterákoli) | 3× | Ne max. síla, ale víc opakování se střední zátěží (40–60 % 1RM, 15–20 opakování, pauzy do 90 s) — čtvrtý typ projevu síly vedle max. síly, výbušnosti a hypertrofie. |
+  | **Push/Pull/Legs (PPL)** | středně pokročilý | 3× | Rozdělení podle pohybového vzoru (tlak/tah/nohy) — jeden ze dvou nejrozšířenějších splitů vedle Upper/Lower. Hlavní cvik dne na nižší opakování (síla), doplňky na víc opakování (hypertrofie). |
+  | **Bloková periodizace** | pokročilý | 3× | Akumulace (objem, 3 týdny) → Transmutace (specifičtější varianty, 3 týdny) → Realizace (soutěžní cviky, 2 týdny) → Deload. Mezi fázemi se mění i výběr cviků (přední dřep → pauzovaný dřep → soutěžní dřep), ne jen váha. Pro pokročilé s konkrétním cílem/testem. |
 
   Zdroje, ze kterých protokoly vycházejí (každý je navíc vypsaný přímo u dané šablony v appce):
   - American College of Sports Medicine. [Progression Models in Resistance Training for Healthy Adults](https://pubmed.ncbi.nlm.nih.gov/19204579/) (2009 Position Stand) — doporučené rozsahy % 1RM a opakování podle úrovně zkušenosti i pro svalovou vytrvalost.
@@ -97,6 +99,7 @@ Otevře se ikonkou **👤** v hlavičce. Tři karty:
   - Princip nováčkovské lineární progrese (Starting Strength / novice linear progression literatura).
   - Bill Starr, *The Strongest Shall Survive* — systém Heavy/Light/Medium.
   - Jim Wendler, *5/3/1: The Simplest and Most Effective Training System for Raw Strength* — princip sdílí (nižší frekvence hlavního cviku, vysoká specifičnost) i s pokročilejšími powerliftingovými metodami jako Sheikův systém nebo Westside Barbell / conjugate metoda, které appka samostatně neimplementuje (jsou hodně specifické na výběr cvičebních variací a vybavení), ale stojí za zmínku, pokud bys chtěla jít touhle cestou dál.
+  - Push/Pull/Legs a Bloková periodizace (akumulace → transmutace → realizace → deload, s délkami fází a chybami, kterým se vyhnout) vycházejí z **Perplexity Deep Research** reportu *"najdi v literatuře a oficiálních zdrojích všechny silové tréninky, co existují"* (2026) — viz sekce [Teorie: jak se sestavuje trénink](#teorie-jak-se-sestavuje-trénink-shrnutí-z-literatury) níž, kde je report podrobněji odcitovaný i s jeho vlastními primárními zdroji (WHO, ACSM 2026, NSCA, PubMed meta-analýzy).
 
   **Doplňky a pořadí cviků:** u všech 7 šablon platí, že hlavní (víceklubové) cviky jsou vždy před doplňky — v souladu s obecným doporučením NSCA řadit velké svalové skupiny/víceklubové cviky před malé svalové skupiny/jednoklubové cviky, dokud jsi ještě čerstvá a formu nezačíná kazit únava. Doplňky navíc běží **celým pracovním blokem** (ne jen první týden) a taktně mizí jen na deload/testovacím týdnu, kdy má mít přednost zotavení nebo čistý test hlavního cviku.
 
@@ -171,6 +174,63 @@ Jeden CSV soubor nese tři druhy řádků, rozlišené prvním sloupcem **Typ**:
 - `PLAN` – řádky s tréninkem samotným; každý odpovídá jedné sérii (rozcvička nebo plán) a nese s sebou celý "rodokmen" (Cyklus/Tyden/Den/Sekce/Cvik) jako sloupce – prázdné dny/sekce/cviky beze všech sérií dostanou vlastní řádek jen s vyplněným rodokmenem, ať se při zpětném importu neztratí.
 
 Starší export bez sloupce Typ (z appky před touhle úpravou) se při importu bere jako čistě `PLAN` (bez profilu), takže funguje i zpětně. Jediné omezení: pokud je ve stejné sekci **dvakrát za sebou cvik se stejným názvem**, import je sloučí do jednoho (v praxi se to skoro neděje).
+
+## Teorie: jak se sestavuje trénink (shrnutí z literatury)
+
+Tahle sekce je shrnutí toho, **z čeho appka vychází** při sestavování šablon výše — ne kompletní učebnice, ale praktický přehled pojmů a čísel, podle kterých jde trénink sama posoudit nebo upravit. Vychází ze zprávy **Perplexity Deep Research** *"Najdi v literatuře a oficiálních zdrojích všechny silové tréninky, co existují... sepiš je s parametry, doplňky i modely"* (2026), která sama cituje především [WHO doporučení k pohybové aktivitě](https://iris.who.int/server/api/core/bitstreams/f3885485-e7eb-4504-8026-edd9bb53a6ee/content), [ACSM 2026 Position Stand on Resistance Training](https://acsm.org/resistance-training-guidelines-update-2026/) (137 systematických review, ~30 000 účastníků) a desítky dalších recenzovaných studií a metaanalýz (NSCA, PubMed) — plný report s kompletním seznamem odkazů máš uložený lokálně jako export z Perplexity; tady je jen destilát, který appka přímo používá.
+
+### Základní cíle a jejich parametry
+
+| Cíl | Zátěž (% 1RM) | Opakování | Série | Pauza | Hlavní důraz |
+|---|--:|--:|--:|--:|---|
+| Maximální síla | ~80–100 % | 1–5 | 2–6 | 3–5 min | těžké vícekloubové cviky |
+| Síla a svalový růst | 70–85 % | 4–10 | 3–5 | 2–4 min | progresivní přetížení |
+| Hypertrofie | ~30–85 % | 5–30 | 2–5 | 1–3 min | dostatečný objem, blízkost selhání |
+| Svalová vytrvalost | 30–60 % | 15–30+ | 2–4 | 30–90 s | delší série |
+| Výkon a explozivita | 30–70 % | 1–6 | 3–6 | 2–5 min | maximální rychlost pohybu |
+
+Vyšší zátěže jsou obecně účinnější pro maximální sílu; svalový růst jde dosáhnout širokým rozmezím zátěží, pokud je série dostatečně náročná (blízko selhání). Pro hypertrofii ACSM doporučuje orientačně **≥10 pracovních sérií týdně na svalovou skupinu**, pro sílu **≥80 % 1RM, 2–3 série, aspoň 2× týdně**.
+
+### Tréninkové proměnné (jimi se dá popsat každý program)
+
+Frekvence · Objem (série × opakování × zátěž) · Intenzita (% 1RM, RPE, RIR) · Úsilí (blízkost selhání) · Výběr cviků (vícekloubové/izolace, volné váhy/stroje/vlastní váha) · **Pořadí cviků** (technicky/nervově náročné první — appka to dodržuje ve všech šablonách, hlavní cvik vždy před doplňky) · Tempo · Pauzy · Rozsah pohybu · Progrese · Periodizace.
+
+### RIR (Reps in Reserve) — kolik opakování zbývá do selhání
+
+| RIR | Význam | Použití |
+|--:|---|---|
+| 4–5 | velmi lehká série | rozcvičení, regenerace, deload |
+| 2–3 | náročná, ale kontrolovaná | většina základních pracovních sérií |
+| 1 | téměř selhání | těžší pracovní série |
+| 0 | momentální selhání | hlavně bezpečné izolace a stroje, ne těžké dřepy/tahy |
+
+### Úrovně cvičenců
+
+- **Začátečník** — 2–3× týdně celé tělo, 5–8 cviků, 1–3 série, 6–15 opakování, RIR 2–4. Přidávat váhu, až jsou všechna opakování technicky čistá.
+- **Středně pokročilý** — 3–5× týdně, objem rozdělený na víc jednotek, ~8–20 sérií týdně na hlavní partie, kombinace těžkých/středních/lehkých dnů, pravidelné odlehčovací týdny.
+- **Pokročilý** — vyšší frekvence nebo specializace, periodizace (akumulace/transmutace/realizace), autoregulace přes RPE/RIR/rychlost činky, deload před testy.
+
+### Hlavní typy rozdělení (splits)
+
+| Model | Frekvence | Pro koho |
+|---|--:|---|
+| Full body | 2–4× | začátečníci, časově vytížení |
+| Upper/Lower | 4× | středně pokročilí |
+| Push/Pull/Legs | 3–6× | středně pokročilí až pokročilí |
+| Bro split (partie/den) | 4–6× | pokročilí, nízká frekvence na sval |
+| Powerlifting split | 3–5× | maximální síla |
+| Circuit training | 2–4× | kondice, časová efektivita |
+
+Rozdělení samo o sobě není "kouzelné" — jeho účelem je rozložit objem tak, aby série byly kvalitní a regenerace zvládnutelná. Appka pokrývá Full body (Nováček), Upper/Lower (Lineární periodizace), Push/Pull/Legs a Powerlifting split (Wendler 5/3/1, Bloková periodizace) jako hotové šablony.
+
+### Progrese, deload a časté chyby
+
+- **Progrese zátěže:** horní tělo obvykle +1–2,5 kg, dolní tělo +2,5–5 kg, jakmile jdou splnit všechny série v cílovém rozsahu.
+- **Progrese objemu** (když nejde přidat váha): +1 opakování, +1 série, lepší rozsah pohybu, kratší pauza (jen u doplňků), náročnější varianta cviku.
+- **Deload** (po ~3–8 týdnech, podle výkonu a únavy, ne podle kalendáře): série −30–50 %, zátěž −5–15 %, ponechat rezervu, zachovat techniku. Varovné signály, že je čas: stagnace/pokles výkonu 2+ týdny, zhoršující se technika, špatný spánek, přetrvávající bolest.
+- **Nejčastější chyby u periodizace:** současné zvyšování objemu i intenzity místo jejich vyvažování; příliš dlouhý objemový blok; příliš rychlé skoky mezi fázemi; testování jiného cviku, než na jaký se trénovalo; ignorování únavy; chybějící nebo příliš pozdní deload.
+
+Nejsilnější evidence podporuje **jednoduchý program s dostatečným objemem, vhodnou intenzitou, plným rozsahem pohybu, konzistentní progresí a dlouhodobou vytrvalostí u programu** — složité periodizační systémy jsou nástroj pro konkrétní potřeby (test, závod, stagnace), ne povinná součást každého tréninku.
 
 ## Struktura projektu
 
