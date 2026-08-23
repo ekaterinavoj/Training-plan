@@ -42,7 +42,13 @@ header h1 {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+}
+
+#save-status {
+  font-size: .85em;
+  color: rgba(255,255,255,.85);
+  white-space: nowrap;
 }
 
 .btn-header-icon {
@@ -273,6 +279,26 @@ header h1 {
   padding-top: 0;
 }
 
+/* Superserie: propojené cviky se v Zobrazení vizuálně spojí, ať je jasné, že
+   jdou hned za sebou. */
+.viewer-exercise.superset-linked-next,
+.viewer-exercise.superset-linked-prev {
+  background: #f5f9fd;
+  border: 1.5px dashed #2f6fb0;
+  border-top: 1.5px dashed #2f6fb0;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 4px 0;
+}
+.viewer-exercise.superset-linked-next { border-radius: 10px 10px 0 0; margin-bottom: -1px; padding-bottom: 4px; }
+.viewer-exercise.superset-linked-prev { border-top: none; border-radius: 0 0 10px 10px; padding-top: 6px; }
+.viewer-superset-tag {
+  font-size: .78em;
+  font-weight: 600;
+  color: #2f6fb0;
+  margin-top: 6px;
+}
+
 .viewer-ex-name {
   font-weight: 700;
   font-size: 1.1em;
@@ -296,6 +322,27 @@ header h1 {
 .viewer-set-lines { color: #1c2733; }
 .viewer-set-line { line-height: 1.6; }
 .viewer-set-empty { color: #aab2bc; }
+
+/* Odškrtnutí odcvičené série — jen vizuální, nikam se neukládá, resetne se
+   při přechodu na jiný den nebo obnovení stránky. */
+.viewer-set-line-checkable {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  padding: 2px 0;
+}
+.viewer-set-line-checkable .set-check {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  accent-color: #0b7c3f;
+  cursor: pointer;
+}
+.viewer-set-line-checkable.done .viewer-set-line-text {
+  color: #9aa4af;
+  text-decoration: line-through;
+}
 
 /* Realita is read-only here (it's entered in Úprava) — same row style as
    Rozcvička/Plán, just red, and only shown once something's logged. */
@@ -477,6 +524,20 @@ header h1 {
 }
 .btn-add-week:hover { background: #f0fbf4; }
 
+.btn-copy-week {
+  background: none;
+  border: 1.5px dashed #2f6fb0;
+  color: #2f6fb0;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: .9em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-copy-week:hover { background: #eef5fc; }
+
 .week-head {
   display: flex;
   align-items: center;
@@ -520,16 +581,30 @@ header h1 {
 
 .days {
   display: grid;
-  gap: 18px;
+  gap: 24px;
   margin-bottom: 14px;
 }
 
+/* Each day gets its own accent color (cycles every 7) so it's obvious at a
+   glance where one day ends and the next begins, instead of every day-card
+   looking identical. */
 .day-card {
+  --day-accent: #0b7c3f;
+  --day-accent-bg: #eaf6ee;
   background: #fbfdfc;
   border: 1.5px solid #dde5ef;
+  border-left: 6px solid var(--day-accent);
   border-radius: 12px;
   padding: 16px 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
 }
+.days > .day-card:nth-child(7n+1) { --day-accent: #0b7c3f; --day-accent-bg: #eaf6ee; }
+.days > .day-card:nth-child(7n+2) { --day-accent: #2f6fb0; --day-accent-bg: #eaf2fb; }
+.days > .day-card:nth-child(7n+3) { --day-accent: #b35900; --day-accent-bg: #fff3e8; }
+.days > .day-card:nth-child(7n+4) { --day-accent: #7a4fb0; --day-accent-bg: #f5eefc; }
+.days > .day-card:nth-child(7n+5) { --day-accent: #c0392b; --day-accent-bg: #fdeeec; }
+.days > .day-card:nth-child(7n+6) { --day-accent: #0f9b8e; --day-accent-bg: #e8f8f6; }
+.days > .day-card:nth-child(7n+7) { --day-accent: #6b7280; --day-accent-bg: #f0f1f3; }
 
 .day-head {
   display: flex;
@@ -541,19 +616,18 @@ header h1 {
 
 .day-name-input {
   font-weight: 700;
-  font-size: 1.05em;
-  color: #0b7c3f;
-  border: 1.5px solid #dde5ef;
+  font-size: 1.1em;
+  color: var(--day-accent);
+  border: 1.5px solid var(--day-accent);
   border-radius: 6px;
   padding: 7px 10px;
   font-family: inherit;
   min-width: 140px;
-  background: #fff;
+  background: var(--day-accent-bg);
 }
 .day-name-input:focus {
   outline: none;
-  border-color: #0b7c3f;
-  box-shadow: 0 0 0 3px rgba(11,124,63,.12);
+  box-shadow: 0 0 0 3px rgba(0,0,0,.12);
 }
 
 .day-head .focus-input {
@@ -699,6 +773,45 @@ header h1 {
   outline: none;
   border-color: #0b7c3f;
   box-shadow: 0 0 0 3px rgba(11,124,63,.12);
+}
+
+.btn-move-up, .btn-move-down, .btn-superset-toggle {
+  background: #f4f7fb;
+  color: #567;
+  border: 1.5px solid #dde5ef;
+  border-radius: 6px;
+  width: 32px;
+  flex: 0 0 32px;
+  font-size: .85em;
+  cursor: pointer;
+}
+.btn-move-up:hover, .btn-move-down:hover { background: #eef2f6; }
+.btn-superset-toggle:hover { border-color: #2f6fb0; }
+.btn-superset-toggle.active {
+  background: #2f6fb0;
+  border-color: #2f6fb0;
+  color: #fff;
+}
+
+/* Superserie: propojené cviky se vizuálně spojí do jednoho přerušovaného
+   modrého bloku, ať je jasné, že se mají cvičit hned za sebou. */
+.exercise-item.superset-linked-next,
+.exercise-item.superset-linked-prev {
+  background: #eef5fc;
+  border: 1.5px dashed #2f6fb0;
+  border-radius: 10px;
+  padding: 10px;
+}
+.exercise-item.superset-linked-next { border-radius: 10px 10px 0 0; margin-bottom: -1px; padding-bottom: 4px; }
+.exercise-item.superset-linked-prev { border-top: none; border-radius: 0 0 10px 10px; padding-top: 4px; }
+.exercise-item.superset-linked-next.superset-linked-prev { border-radius: 0; }
+.exercise-item.superset-linked-next:not(.superset-linked-prev)::before {
+  content: "🔗 Superserie";
+  display: block;
+  font-size: .78em;
+  font-weight: 700;
+  color: #2f6fb0;
+  margin-bottom: 6px;
 }
 
 /* Rozcvička and Plán share the exact same look — a label followed by a
@@ -888,7 +1001,7 @@ header h1 {
   .cycle-body { padding: 12px 12px 16px; }
 
   .week-bar { gap: 8px; margin-bottom: 10px; }
-  .week-tab, .btn-add-week { padding: 10px 14px; font-size: .88em; }
+  .week-tab, .btn-add-week, .btn-copy-week { padding: 10px 14px; font-size: .88em; }
   .week-head { margin-bottom: 12px; }
   .week-label-input { min-width: 0; font-size: 1em; padding: 10px 12px; }
   .btn-remove-week { padding: 10px 12px; }
@@ -937,11 +1050,14 @@ header h1 {
   .exercise-items { gap: 10px; }
 
   .exercise-name-row .ex-name { font-size: 1em; padding: 10px 10px; }
-  .exercise-name-row .btn-remove {
-    flex: 0 0 44px;
-    width: 44px;
-    height: 44px;
-    font-size: 1.1em;
+  .exercise-name-row .btn-remove,
+  .exercise-name-row .btn-move-up,
+  .exercise-name-row .btn-move-down,
+  .exercise-name-row .btn-superset-toggle {
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.05em;
   }
 
   /* Each set-line: sets+reps paired, weight next to a fixed-size delete

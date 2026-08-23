@@ -10,6 +10,7 @@
 <header>
   <h1>💪 Tréninkový plán</h1>
   <div class="header-actions">
+    <span id="save-status"></span>
     <button id="save-btn" class="btn-main">Uložit plán</button>
     <button id="change-pw-btn" class="btn-header-icon" title="Změnit heslo">🔑</button>
     <a id="logout-link" href="/logout" class="btn-header-icon" title="Odhlásit se">⏻</a>
@@ -87,7 +88,8 @@
     <div class="cycle-body">
       <nav class="week-bar">
         <div class="week-tabs"></div>
-        <button class="btn-add-week">+ Nový týden</button>
+        <button class="btn-copy-week" title="Vytvoří nový týden se stejnými cviky, jen doplníš/uprav váhy">📋 Duplikovat týden</button>
+        <button class="btn-add-week">+ Nový prázdný týden</button>
       </nav>
       <div class="week-head">
         <input type="text" class="week-label-input" placeholder="Název týdne (např. Týden 1, 12.–18. 8.)">
@@ -125,7 +127,7 @@
 <template id="set-line-tpl">
   <div class="set-line">
     <input type="number" class="line-sets" placeholder="Sérií" min="0">
-    <input type="number" class="line-reps" placeholder="Opakování" min="0">
+    <input type="text" class="line-reps" placeholder="Opakování (číslo nebo text, např. 8–10)">
     <input type="text" class="line-weight" placeholder="Váha">
     <button type="button" class="btn-remove-line" title="Odebrat sérii">✕</button>
   </div>
@@ -134,7 +136,10 @@
 <template id="exercise-item-tpl">
   <div class="exercise-item">
     <div class="exercise-name-row">
+      <button type="button" class="btn-move-up" title="Posunout výš">▲</button>
+      <button type="button" class="btn-move-down" title="Posunout níž">▼</button>
       <input type="text" class="ex-name" placeholder="Cvik (např. Dřep)">
+      <button type="button" class="btn-superset-toggle" title="Spojit s dalším cvikem do superserie">🔗</button>
       <button class="btn-remove" title="Odebrat cvik">✕</button>
     </div>
     <div class="set-group set-group-warmup">
@@ -151,7 +156,7 @@
       <div class="actual-fields">
         <span class="actual-label">Realita:</span>
         <input type="number" class="ex-actual-sets" placeholder="Série" min="0">
-        <input type="number" class="ex-actual-reps" placeholder="Opakování" min="0">
+        <input type="text" class="ex-actual-reps" placeholder="Opakování">
         <input type="text" class="ex-actual-weight" placeholder="Skutečná váha">
         <button class="btn-clear-actual" title="Vymazat zápis skutečnosti">✕</button>
       </div>

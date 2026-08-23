@@ -90,18 +90,25 @@ function normalizeDay(d) {
 function normalizeExercise(ex) {
   if (!Array.isArray(ex.plan)) {
     const hasPlan = ex.sets != null || ex.reps != null || ex.weight;
-    ex.plan = hasPlan ? [{ sets: ex.sets ?? null, reps: ex.reps ?? null, weight: ex.weight || '' }] : [];
+    ex.plan = hasPlan ? [{ sets: ex.sets ?? null, reps: ex.reps ?? '', weight: ex.weight || '' }] : [];
   }
   if (!Array.isArray(ex.warmup)) {
     const hasWarmup = ex.warmupSets != null || ex.warmupReps != null || ex.warmupWeight;
-    ex.warmup = hasWarmup ? [{ sets: ex.warmupSets ?? null, reps: ex.warmupReps ?? null, weight: ex.warmupWeight || '' }] : [];
+    ex.warmup = hasWarmup ? [{ sets: ex.warmupSets ?? null, reps: ex.warmupReps ?? '', weight: ex.warmupWeight || '' }] : [];
   }
   delete ex.sets; delete ex.reps; delete ex.weight;
   delete ex.warmupSets; delete ex.warmupReps; delete ex.warmupWeight;
+  // Opakování (reps) je teď volný text, ne jen číslo (např. "8–10", "30 s") —
+  // normalizuj i starší data, kde to bylo číslo nebo null.
+  [...ex.plan, ...ex.warmup].forEach(line => {
+    line.reps = line.reps == null ? '' : String(line.reps);
+  });
   if (ex.actualSets === undefined) ex.actualSets = null;
-  if (ex.actualReps === undefined) ex.actualReps = null;
+  if (ex.actualReps == null) ex.actualReps = '';
+  ex.actualReps = String(ex.actualReps);
   if (ex.actualWeight === undefined) ex.actualWeight = '';
   if (ex.note === undefined) ex.note = '';
+  if (typeof ex.supersetWithNext !== 'boolean') ex.supersetWithNext = false;
   return ex;
 }
 
@@ -128,6 +135,7 @@ function buildCycleNode(cycle) {
   toggleBtn.addEventListener('click', () => {
     cycle.collapsed = !cycle.collapsed;
     render();
+    scheduleAutoSave();
   });
   node.querySelector('.btn-remove-cycle').addEventListener('click', () => removeCycle(cycle.id));
 
@@ -150,6 +158,7 @@ function buildCycleNode(cycle) {
 
   node.querySelector('.btn-add-week').addEventListener('click', () => addWeek(cycle));
   node.querySelector('.btn-remove-week').addEventListener('click', () => removeWeek(cycle));
+  node.querySelector('.btn-copy-week').addEventListener('click', () => duplicateWeek(cycle));
 
   weekLabel.value = curWeek ? (curWeek.label || '') : '';
 
@@ -161,6 +170,7 @@ function buildCycleNode(cycle) {
     const newDay = { id: uid('d'), name: '', focus: '', sections: [] };
     curWeek.days.push(newDay);
     daysBox.appendChild(buildDayNode(newDay));
+    scheduleAutoSave();
   });
 
   return node;
@@ -177,11 +187,13 @@ function buildDayNode(day) {
 
   node.querySelector('.btn-add-section').addEventListener('click', () => {
     sectionsBox.appendChild(buildSectionNode());
+    scheduleAutoSave();
   });
 
   node.querySelector('.btn-remove-day').addEventListener('click', () => {
     if (dayHasContent(node) && !confirm('Tento den obsahuje vyplněné údaje. Opravdu ho smazat i s obsahem?')) return;
     node.remove();
+    scheduleAutoSave();
   });
 
   return node;
@@ -192,21 +204,39 @@ function buildSectionNode(sec) {
   node.querySelector('.section-name').value = sec ? (sec.name || '') : '';
 
   const itemsBox = node.querySelector('.exercise-items');
-  if (sec) (sec.exercises || []).forEach(ex => itemsBox.appendChild(makeItem(ex)));
+  if (sec) (sec.exercises || []).forEach(ex => itemsBox.appendChild(makeItem(ex, itemsBox)));
+  refreshSupersetVisuals(itemsBox);
 
   node.querySelector('.btn-add-exercise').addEventListener('click', () => {
-    itemsBox.appendChild(makeItem());
+    itemsBox.appendChild(makeItem(null, itemsBox));
+    refreshSupersetVisuals(itemsBox);
+    scheduleAutoSave();
   });
 
   node.querySelector('.btn-remove-section').addEventListener('click', () => {
     if (sectionHasContent(node) && !confirm('Tato sekce obsahuje cviky. Opravdu ji smazat i s obsahem?')) return;
     node.remove();
+    scheduleAutoSave();
   });
 
   return node;
 }
 
-function makeItem(ex) {
+// Visually brackets consecutive exercises marked "spojit do superserie" so
+// they read as one linked block instead of separate cards.
+function refreshSupersetVisuals(itemsBox) {
+  const items = Array.from(itemsBox.children);
+  items.forEach((item, i) => {
+    const btn = item.querySelector('.btn-superset-toggle');
+    const linked = !!(btn && btn.classList.contains('active'));
+    item.classList.toggle('superset-linked-next', linked);
+    const next = items[i + 1];
+    if (next) next.classList.toggle('superset-linked-prev', linked);
+    else item.classList.remove('superset-linked-next'); // last item can't link forward
+  });
+}
+
+function makeItem(ex, itemsBox) {
   const node = itemTpl.content.firstElementChild.cloneNode(true);
 
   const warmupLines = node.querySelector('.warmup-lines');
@@ -217,17 +247,20 @@ function makeItem(ex) {
 
   node.querySelector('.btn-add-warmup-line').addEventListener('click', () => {
     warmupLines.appendChild(buildSetLine());
+    scheduleAutoSave();
   });
   node.querySelector('.btn-add-plan-line').addEventListener('click', () => {
     planLines.appendChild(buildSetLine());
+    scheduleAutoSave();
   });
 
   if (ex) {
     node.querySelector('.ex-name').value           = ex.name          || '';
     node.querySelector('.ex-actual-sets').value    = ex.actualSets    ?? '';
-    node.querySelector('.ex-actual-reps').value    = ex.actualReps    ?? '';
+    node.querySelector('.ex-actual-reps').value    = ex.actualReps    || '';
     node.querySelector('.ex-actual-weight').value  = ex.actualWeight  || '';
     node.querySelector('.ex-note').value           = ex.note          || '';
+    if (ex.supersetWithNext) node.querySelector('.btn-superset-toggle').classList.add('active');
   }
 
   node.querySelector('.btn-clear-actual').addEventListener('click', () => {
@@ -235,9 +268,36 @@ function makeItem(ex) {
     node.querySelector('.ex-actual-reps').value = '';
     node.querySelector('.ex-actual-weight').value = '';
     node.querySelector('.ex-note').value = '';
+    scheduleAutoSave();
   });
 
-  node.querySelector('.btn-remove').addEventListener('click', () => node.remove());
+  node.querySelector('.btn-remove').addEventListener('click', () => {
+    node.remove();
+    if (itemsBox) refreshSupersetVisuals(itemsBox);
+    scheduleAutoSave();
+  });
+
+  node.querySelector('.btn-move-up').addEventListener('click', () => {
+    const prev = node.previousElementSibling;
+    if (prev && itemsBox) {
+      itemsBox.insertBefore(node, prev);
+      refreshSupersetVisuals(itemsBox);
+      scheduleAutoSave();
+    }
+  });
+  node.querySelector('.btn-move-down').addEventListener('click', () => {
+    const next = node.nextElementSibling;
+    if (next && itemsBox) {
+      itemsBox.insertBefore(next, node);
+      refreshSupersetVisuals(itemsBox);
+      scheduleAutoSave();
+    }
+  });
+  node.querySelector('.btn-superset-toggle').addEventListener('click', () => {
+    node.querySelector('.btn-superset-toggle').classList.toggle('active');
+    if (itemsBox) refreshSupersetVisuals(itemsBox);
+    scheduleAutoSave();
+  });
 
   return node;
 }
@@ -246,10 +306,13 @@ function buildSetLine(line) {
   const node = lineTpl.content.firstElementChild.cloneNode(true);
   if (line) {
     node.querySelector('.line-sets').value   = line.sets   ?? '';
-    node.querySelector('.line-reps').value   = line.reps   ?? '';
+    node.querySelector('.line-reps').value   = line.reps   || '';
     node.querySelector('.line-weight').value = line.weight || '';
   }
-  node.querySelector('.btn-remove-line').addEventListener('click', () => node.remove());
+  node.querySelector('.btn-remove-line').addEventListener('click', () => {
+    node.remove();
+    scheduleAutoSave();
+  });
   return node;
 }
 
@@ -257,10 +320,10 @@ function readSetLines(container) {
   const lines = [];
   container.querySelectorAll(':scope > .set-line').forEach(lineNode => {
     const sets   = lineNode.querySelector('.line-sets').value;
-    const reps   = lineNode.querySelector('.line-reps').value;
+    const reps   = lineNode.querySelector('.line-reps').value.trim();
     const weight = lineNode.querySelector('.line-weight').value.trim();
     if (sets || reps || weight) {
-      lines.push({ sets: sets === '' ? null : Number(sets), reps: reps === '' ? null : Number(reps), weight });
+      lines.push({ sets: sets === '' ? null : Number(sets), reps, weight });
     }
   });
   return lines;
@@ -324,22 +387,24 @@ function syncCycleCurrentWeekFromDom(cycle) {
 }
 
 function readExerciseItem(item) {
-  const exName       = item.querySelector('.ex-name').value.trim();
-  const warmup       = readSetLines(item.querySelector('.warmup-lines'));
-  const plan_        = readSetLines(item.querySelector('.plan-lines'));
-  const actualSets   = item.querySelector('.ex-actual-sets').value;
-  const actualReps   = item.querySelector('.ex-actual-reps').value;
-  const actualWeight = item.querySelector('.ex-actual-weight').value.trim();
-  const note         = item.querySelector('.ex-note').value.trim();
+  const exName            = item.querySelector('.ex-name').value.trim();
+  const warmup            = readSetLines(item.querySelector('.warmup-lines'));
+  const plan_             = readSetLines(item.querySelector('.plan-lines'));
+  const actualSets        = item.querySelector('.ex-actual-sets').value;
+  const actualReps        = item.querySelector('.ex-actual-reps').value.trim();
+  const actualWeight      = item.querySelector('.ex-actual-weight').value.trim();
+  const note              = item.querySelector('.ex-note').value.trim();
+  const supersetWithNext  = item.querySelector('.btn-superset-toggle').classList.contains('active');
   if (!exName && !warmup.length && !plan_.length && !actualSets && !actualReps && !actualWeight && !note) return null;
   return {
     name: exName,
     warmup,
     plan: plan_,
     actualSets: actualSets === '' ? null : Number(actualSets),
-    actualReps: actualReps === '' ? null : Number(actualReps),
+    actualReps,
     actualWeight,
-    note
+    note,
+    supersetWithNext
   };
 }
 
@@ -350,6 +415,39 @@ function addWeek(cycle) {
   cycle.weeks.push(newWeek);
   currentWeekByCycle[cycle.id] = newWeek.id;
   render();
+  scheduleAutoSave();
+}
+
+// Nový týden se stejnými cviky/sériemi jako aktuální — hodí se, protože trénink
+// bývá týden od týdne stejný, mění se hlavně váhy. Realita (co bylo odcvičeno)
+// se do nového týdne nekopíruje, tu si zapíšeš znovu, až budeš mít odcvičeno.
+function duplicateWeek(cycle) {
+  syncCycleCurrentWeekFromDom(cycle);
+  const curWeekId = currentWeekByCycle[cycle.id];
+  const curWeek = cycle.weeks.find(w => w.id === curWeekId);
+  if (!curWeek) return;
+
+  const cloned = JSON.parse(JSON.stringify(curWeek));
+  cloned.id = uid('w');
+  cloned.label = 'Týden ' + (cycle.weeks.length + 1);
+  cloned.days.forEach(d => {
+    d.id = uid('d');
+    d.sections.forEach(s => {
+      s.id = uid('s');
+      s.exercises.forEach(ex => {
+        ex.actualSets = null;
+        ex.actualReps = '';
+        ex.actualWeight = '';
+        ex.note = '';
+      });
+    });
+  });
+
+  cycle.weeks.push(cloned);
+  currentWeekByCycle[cycle.id] = cloned.id;
+  render();
+  scheduleAutoSave();
+  showToast('✓ Týden zkopírován — uprav váhy podle potřeby');
 }
 
 function removeWeek(cycle) {
@@ -363,6 +461,7 @@ function removeWeek(cycle) {
   cycle.weeks = cycle.weeks.filter(w => w.id !== curWeekId);
   currentWeekByCycle[cycle.id] = cycle.weeks[0].id;
   render();
+  scheduleAutoSave();
 }
 
 function addCycle() {
@@ -371,6 +470,7 @@ function addCycle() {
   plan.cycles.push(newCycle);
   currentWeekByCycle[newCycle.id] = newCycle.weeks[0].id;
   render();
+  scheduleAutoSave();
   const node = cyclesEl.querySelector(`.cycle[data-cycle-id="${newCycle.id}"]`);
   if (node) node.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -385,10 +485,14 @@ function removeCycle(cycleId) {
   plan.cycles = plan.cycles.filter(c => c.id !== cycleId);
   delete currentWeekByCycle[cycleId];
   render();
+  scheduleAutoSave();
 }
 
 // ── Save ─────────────────────────────────────────────────────────────────────
-async function savePlan() {
+// auto=true -> triggered by autosave (no toast spam, just the small status
+// text next to the header buttons); auto=false -> the manual "Uložit plán"
+// click, which also pops the toast for a clearer confirmation.
+async function savePlan(auto) {
   // In edit mode the editor's DOM is the source of truth and needs folding
   // back into `plan`. In view mode, the viewer already writes straight into
   // `plan` on every keystroke, so there's nothing to sync first.
@@ -402,8 +506,10 @@ async function savePlan() {
   });
   if (res.status === 401) { window.location.href = '/login'; return; }
   if (res.ok) {
-    showToast('✓ Uloženo');
+    setSaveStatus('✓ Uloženo');
+    if (!auto) showToast('✓ Uloženo');
   } else {
+    setSaveStatus('⚠️ Neuloženo');
     showToast('⚠️ Uložení se nezdařilo');
   }
 }
@@ -414,6 +520,24 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
+// ── Auto-save (edit mode) ───────────────────────────────────────────────────────
+// Every change in Úprava saves itself a moment after you stop typing/clicking,
+// so there's nothing to remember to press.
+const saveStatusEl = document.getElementById('save-status');
+let autoSaveTimer = null;
+function setSaveStatus(text) {
+  if (saveStatusEl) saveStatusEl.textContent = text;
+}
+function scheduleAutoSave() {
+  if (mode !== 'edit') return;
+  setSaveStatus('Ukládání…');
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => savePlan(true), 900);
+}
+// Any typing anywhere in the editor (name, sets, reps, weight, notes,
+// labels...) counts as a change worth auto-saving.
+editorEl.addEventListener('input', scheduleAutoSave);
+
 // ── Mode switching ───────────────────────────────────────────────────────────
 function applyMode() {
   editorEl.hidden = mode !== 'edit';
@@ -423,6 +547,7 @@ function applyMode() {
   // Zobrazení is now purely read-only (Rozcvička, Plán and Realita are all
   // entered in Úprava), so there's nothing to save while looking at it.
   saveBtn.hidden = mode !== 'edit';
+  setSaveStatus(mode === 'edit' ? '✓ Uloženo' : '');
   localStorage.setItem('trainingPlanMode', mode);
 }
 
@@ -430,8 +555,11 @@ function switchMode(newMode) {
   if (newMode === mode) return;
   if (mode === 'edit') {
     // Leaving the editor: fold whatever's on screen back into `plan` first,
-    // so the viewer (and a later save) reflects the latest edits.
+    // so the viewer (and a later save) reflects the latest edits, and flush
+    // any autosave that was still debouncing.
     plan.cycles.forEach(c => syncCycleCurrentWeekFromDom(c));
+    clearTimeout(autoSaveTimer);
+    savePlan(true);
   }
   mode = newMode;
   applyMode();
@@ -541,7 +669,14 @@ function renderViewerContent() {
     h.textContent = section.name || 'Cviky';
     card.appendChild(h);
 
-    (section.exercises || []).forEach(ex => card.appendChild(buildViewerExercise(ex)));
+    const exercises = section.exercises || [];
+    exercises.forEach((ex, i) => {
+      const exCard = buildViewerExercise(ex);
+      // Superserie: propojené cviky se vizuálně spojí do jednoho bloku.
+      if (ex.supersetWithNext) exCard.classList.add('superset-linked-next');
+      if (i > 0 && exercises[i - 1].supersetWithNext) exCard.classList.add('superset-linked-prev');
+      card.appendChild(exCard);
+    });
 
     box.appendChild(card);
   });
@@ -556,16 +691,20 @@ function buildViewerExercise(ex) {
   // Rozcvička and Plán are rendered identically (same style, no icon) — only
   // the label tells them apart — each as a stack of individual set-lines, so
   // several different warm-up or work sets can be listed without repeating
-  // the exercise. Rozcvička is only shown when it actually has lines.
-  if (ex.warmup && ex.warmup.length) card.appendChild(buildViewerSetGroup('Rozcvička', ex.warmup));
-  card.appendChild(buildViewerSetGroup('Plán', ex.plan || []));
+  // the exercise. Rozcvička is only shown when it actually has lines. Every
+  // line gets a checkbox so it's clear how many sets are done and which is
+  // next — purely visual, not saved anywhere.
+  if (ex.warmup && ex.warmup.length) card.appendChild(buildViewerSetGroup('Rozcvička', ex.warmup, true));
+  card.appendChild(buildViewerSetGroup('Plán', ex.plan || [], true));
 
   // Realita is entered only in Úprava; here it's plain read-only text, and
   // only appears at all once something's actually been logged.
-  const hasActual = ex.actualSets != null || ex.actualReps != null || ex.actualWeight || ex.note;
+  const hasActual = ex.actualSets != null || ex.actualReps || ex.actualWeight || ex.note;
   if (hasActual) {
     const actualParts = [];
-    if (ex.actualSets != null || ex.actualReps != null) actualParts.push(`${ex.actualSets ?? '?'} × ${ex.actualReps ?? '?'}`);
+    if (ex.actualSets != null && ex.actualReps) actualParts.push(`${ex.actualSets} × ${ex.actualReps}`);
+    else if (ex.actualSets != null) actualParts.push(`${ex.actualSets} série`);
+    else if (ex.actualReps) actualParts.push(`${ex.actualReps}×`);
     if (ex.actualWeight) actualParts.push(ex.actualWeight);
 
     const line = el('div', 'viewer-line viewer-line-actual');
@@ -575,21 +714,37 @@ function buildViewerExercise(ex) {
     if (ex.note) card.appendChild(el('div', 'viewer-actual-note', ex.note));
   }
 
+  if (ex.supersetWithNext) card.appendChild(el('div', 'viewer-superset-tag', '🔗 pokračuje superserií →'));
+
   return card;
 }
 
-function buildViewerSetGroup(label, lines) {
+function buildViewerSetGroup(label, lines, checkable) {
   const group = el('div', 'viewer-set-group');
   group.appendChild(el('span', 'viewer-set-group-label', label));
   if (lines.length) {
     const list = el('div', 'viewer-set-lines');
     lines.forEach(line => {
       const parts = [];
-      if (line.sets != null && line.reps != null) parts.push(`${line.sets} × ${line.reps}`);
+      if (line.sets != null && line.reps) parts.push(`${line.sets} × ${line.reps}`);
       else if (line.sets != null) parts.push(`${line.sets} série`);
-      else if (line.reps != null) parts.push(`${line.reps}×`);
+      else if (line.reps) parts.push(`${line.reps}×`);
       if (line.weight) parts.push(line.weight);
-      list.appendChild(el('div', 'viewer-set-line', parts.length ? parts.join(' · ') : '–'));
+      const text = parts.length ? parts.join(' · ') : '–';
+
+      if (checkable) {
+        const row = document.createElement('label');
+        row.className = 'viewer-set-line viewer-set-line-checkable';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'set-check';
+        cb.addEventListener('change', () => row.classList.toggle('done', cb.checked));
+        row.appendChild(cb);
+        row.appendChild(el('span', 'viewer-set-line-text', text));
+        list.appendChild(row);
+      } else {
+        list.appendChild(el('div', 'viewer-set-line', text));
+      }
     });
     group.appendChild(list);
   } else {
@@ -605,7 +760,7 @@ function el(tag, className, text) {
   return node;
 }
 
-document.getElementById('save-btn').addEventListener('click', savePlan);
+document.getElementById('save-btn').addEventListener('click', () => savePlan(false));
 document.getElementById('add-cycle-btn').addEventListener('click', addCycle);
 document.getElementById('mode-view-btn').addEventListener('click', () => switchMode('view'));
 document.getElementById('mode-edit-btn').addEventListener('click', () => switchMode('edit'));
