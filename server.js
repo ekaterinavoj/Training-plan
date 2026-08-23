@@ -59,23 +59,23 @@ app.get('/login', (req, res) => {
 <title>Přihlášení – Tréninkový plán</title>
 <style>
   *{box-sizing:border-box}
-  body{font-family:Calibri,Arial,sans-serif;background:#eaf6ee;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:16px}
-  .box{background:#fff;border-radius:16px;border:2px solid #0b7c3f;padding:36px 32px;max-width:380px;width:100%;box-shadow:0 6px 32px rgba(0,0,0,.12)}
-  .logo{text-align:center;margin-bottom:18px;color:#0b7c3f;font-size:1.4em;font-weight:700}
+  body{font-family:Calibri,Arial,sans-serif;background:#e7f0fb;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:16px}
+  .box{background:#fff;border-radius:16px;border:2px solid #1565c0;padding:36px 32px;max-width:380px;width:100%;box-shadow:0 6px 32px rgba(0,0,0,.12)}
+  .logo{text-align:center;margin-bottom:18px;color:#1565c0;font-size:1.4em;font-weight:700}
   h2{margin:0 0 20px;color:#333;font-size:1.05em;text-align:center;font-weight:600}
   .field{margin-bottom:12px}
-  label{display:block;font-size:.82em;font-weight:700;color:#08602f;margin-bottom:5px}
-  input{width:100%;padding:10px 12px;border:1.5px solid rgba(11,124,63,.4);border-radius:8px;font-size:1em;font-family:inherit;outline:none}
-  input:focus{border-color:#0b7c3f;box-shadow:0 0 0 3px rgba(11,124,63,.15)}
-  .btn-main{width:100%;margin-top:8px;background:#0b7c3f;color:#fff;border:none;border-radius:8px;padding:12px;font-size:1em;font-weight:700;font-family:inherit;cursor:pointer}
-  .btn-main:hover{background:#08602f}
-  .btn-sec{width:100%;margin-top:6px;background:none;color:#0b7c3f;border:1.5px solid #0b7c3f;border-radius:8px;padding:10px;font-size:.92em;font-weight:600;font-family:inherit;cursor:pointer}
-  .btn-sec:hover{background:#eaf6ee}
+  label{display:block;font-size:.82em;font-weight:700;color:#0d47a1;margin-bottom:5px}
+  input{width:100%;padding:10px 12px;border:1.5px solid rgba(21,101,192,.4);border-radius:8px;font-size:1em;font-family:inherit;outline:none}
+  input:focus{border-color:#1565c0;box-shadow:0 0 0 3px rgba(21,101,192,.15)}
+  .btn-main{width:100%;margin-top:8px;background:#1565c0;color:#fff;border:none;border-radius:8px;padding:12px;font-size:1em;font-weight:700;font-family:inherit;cursor:pointer}
+  .btn-main:hover{background:#0d47a1}
+  .btn-sec{width:100%;margin-top:6px;background:none;color:#1565c0;border:1.5px solid #1565c0;border-radius:8px;padding:10px;font-size:.92em;font-weight:600;font-family:inherit;cursor:pointer}
+  .btn-sec:hover{background:#e7f0fb}
   .err{background:#fff0f0;border:1.5px solid #fcc;color:#c00;font-size:.86em;padding:10px 14px;border-radius:8px;margin-top:12px}
   .ok{background:#f0fff4;border:1.5px solid #6c6;color:#050;font-size:.86em;padding:10px 14px;border-radius:8px;margin-top:12px}
   .divider{border:0;border-top:1.5px solid #dde5ef;margin:20px 0}
-  .reset-box{background:#f5faf7;border:1.5px solid rgba(11,124,63,.25);border-radius:10px;padding:18px 16px;margin-top:4px}
-  .reset-title{font-weight:700;color:#08602f;font-size:.95em;margin-bottom:14px}
+  .reset-box{background:#f2f7fd;border:1.5px solid rgba(21,101,192,.25);border-radius:10px;padding:18px 16px;margin-top:4px}
+  .reset-title{font-weight:700;color:#0d47a1;font-size:.95em;margin-bottom:14px}
   .hint{font-size:.78em;color:#888;margin-top:4px;line-height:1.4}
 </style></head><body>
 <div class="box">

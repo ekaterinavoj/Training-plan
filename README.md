@@ -117,6 +117,15 @@ Otevře se ikonkou **👤** v hlavičce. Tři karty:
   ```
   `cycle` má úplně stejnou strukturu jako cyklus v `data/plan.json` (týdny → dny → sekce → cviky → `warmup`/`plan` řádky), akorát pole **`weight`** může být místo pevné hodnoty i **procento maxima** zapsané jako text končící `%` (např. `"60%"`, `"75 %"`) – při generování se dopočítá z posledního zapsaného maxima pro cvik se stejným **`name`** (musí se shodovat přesně) a zaokrouhlí na 2,5 kg/lb. Pokud maximum pro daný cvik chybí, pole zůstane prázdné a appka po vygenerování upozorní, u kterých cviků je potřeba váhu doplnit ručně. Statický text (např. `"prázdná osa"`, `"vlastní váha"`) se propíše beze změny.
 
+## Export a import CSV
+
+V režimu Úprava jsou nahoře vedle `+ Nový cyklus` dvě tlačítka:
+
+- **⬇️ Export CSV** – stáhne **celý** aktuální trénink (všechny cykly, týdny, dny, sekce, cviky, rozcvičku, plán i Realitu) jako jeden `.csv` soubor, čitelný a upravitelný v Excelu/Google Sheets (oddělovač `;`, kódování UTF-8, jde tedy rovnou otevřít i s českými znaky).
+- **⬆️ Import CSV** – nahraje trénink zpátky ze souboru ve stejném formátu. **Import nahradí celý aktuální trénink** (appka se před tím zeptá na potvrzení) – hodí se to jako záloha/obnova, přesun mezi zařízeními, nebo hromadná úprava v Excelu (např. přepsání vah pro celý týden najednou) s následným zpětným nahráním.
+
+Export i import jsou tedy vzájemné – co appka vyexportuje, to i sama zpátky bezezbytku naimportuje (obousměrně, včetně diakritiky, čárek/středníků v poznámkách i víceřádkových poznámek). Každý řádek CSV odpovídá jedné sérii (rozcvička nebo plán) a nese s sebou celý "rodokmen" (Cyklus/Tyden/Den/Sekce/Cvik) jako sloupce – prázdné dny/sekce/cviky beze všech sérií dostanou vlastní řádek jen s vyplněným rodokmenem, ať se při zpětném importu neztratí. Jediné omezení: pokud je ve stejné sekci **dvakrát za sebou cvik se stejným názvem**, import je sloučí do jednoho (v praxi se to skoro neděje).
+
 ## Struktura projektu
 
 ```

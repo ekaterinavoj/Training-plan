@@ -601,6 +601,222 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
+// ── CSV export / import (celý trénink, obousměrně) ──────────────────────────
+// Plán je stromová struktura (cyklus → týden → den → sekce → cvik → série),
+// CSV je plochá tabulka — každý řádek je jedna série (rozcvička nebo plán) a
+// nese s sebou celý "rodokmen" (cyklus/týden/den/sekce/cvik) jako sloupce,
+// aby šlo z tabulky zpětně poskládat stejný strom. Prázdné dny/sekce/cviky
+// (bez jediné série) dostanou vlastní řádek jen s vyplněným rodokmenem, ať se
+// při zpětném importu neztratí.
+const CSV_DELIM = ';';
+const CSV_COLUMNS = [
+  'Cyklus', 'Tyden', 'Den', 'Den_poznamka', 'Sekce', 'Cvik', 'Superserie', 'Typ_serie',
+  'Serie', 'Opakovani', 'Vaha', 'Realita_serie', 'Realita_opakovani', 'Realita_vaha', 'Realita_poznamka'
+];
+
+function csvEscapeField(value) {
+  const s = value == null ? '' : String(value);
+  if (s.indexOf(CSV_DELIM) !== -1 || s.indexOf('"') !== -1 || s.indexOf('\n') !== -1 || s.indexOf('\r') !== -1) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+function csvEncodeRow(fields) {
+  return fields.map(csvEscapeField).join(CSV_DELIM);
+}
+
+function planToCsvRows() {
+  const rows = [CSV_COLUMNS.slice()];
+  plan.cycles.forEach(cycle => {
+    const cy = cycle.label || '';
+    if (!cycle.weeks.length) { rows.push([cy, '', '', '', '', '', '', '', '', '', '', '', '', '', '']); return; }
+    cycle.weeks.forEach(week => {
+      const w = week.label || '';
+      if (!week.days.length) { rows.push([cy, w, '', '', '', '', '', '', '', '', '', '', '', '', '']); return; }
+      week.days.forEach(day => {
+        const d = day.name || '';
+        const dFocus = day.focus || '';
+        const sections = day.sections || [];
+        if (!sections.length) { rows.push([cy, w, d, dFocus, '', '', '', '', '', '', '', '', '', '', '']); return; }
+        sections.forEach(section => {
+          const s = section.name || '';
+          const exercises = section.exercises || [];
+          if (!exercises.length) { rows.push([cy, w, d, dFocus, s, '', '', '', '', '', '', '', '', '', '']); return; }
+          exercises.forEach(ex => {
+            const superset = ex.supersetWithNext ? 'ano' : '';
+            const realita = [ex.actualSets ?? '', ex.actualReps || '', ex.actualWeight || '', ex.note || ''];
+            const lines = [
+              ...(ex.warmup || []).map(l => Object.assign({}, l, { typ: 'rozcvicka' })),
+              ...(ex.plan    || []).map(l => Object.assign({}, l, { typ: 'plan' }))
+            ];
+            if (!lines.length) {
+              rows.push([cy, w, d, dFocus, s, ex.name || '', superset, '', '', '', ''].concat(realita));
+            } else {
+              lines.forEach(l => {
+                rows.push([cy, w, d, dFocus, s, ex.name || '', superset, l.typ, l.sets ?? '', l.reps || '', l.weight || ''].concat(realita));
+              });
+            }
+          });
+        });
+      });
+    });
+  });
+  return rows;
+}
+
+function exportPlanCsv() {
+  const rows = planToCsvRows();
+  const csv = rows.map(csvEncodeRow).join('\r\n');
+  // BOM na začátku, ať to Excel spolehlivě otevře jako UTF-8 (jinak by hlásky
+  // typu "ř", "ě", "š" mohly vyjít rozbité).
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `treninkovy-plan-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  showToast('✓ CSV export stažen');
+}
+
+// Ručně napsaný CSV parser (podporuje uvozovky, escapované uvozovky "" a
+// víceřádkové poznámky uvnitř uvozovek) — appka nemá žádné externí knihovny,
+// tak ani tady žádnou nepřidáváme.
+function csvParse(text) {
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else { inQuotes = false; }
+      } else {
+        field += c;
+      }
+      continue;
+    }
+    if (c === '"') { inQuotes = true; }
+    else if (c === CSV_DELIM) { row.push(field); field = ''; }
+    else if (c === '\r') { /* \n (pokud následuje) uzavře řádek */ }
+    else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+    else { field += c; }
+  }
+  if (field !== '' || row.length) { row.push(field); rows.push(row); }
+  return rows.filter(r => !(r.length === 1 && r[0].trim() === ''));
+}
+
+function toNumOrNull(s) {
+  if (s === '' || s == null) return null;
+  const n = Number(String(s).replace(',', '.'));
+  return isNaN(n) ? null : n;
+}
+
+// Poskládá strom cyklus→týden→den→sekce→cvik zpátky z plochých CSV řádků.
+// Nový uzel na dané úrovni se založí, kdykoliv se hodnota v jejím sloupci
+// liší od předchozího řádku (viz komentář nad CSV_COLUMNS); změna na vyšší
+// úrovni vždy vynutí nový uzel i na všech úrovních pod ní.
+function csvRowsToPlan(rows) {
+  if (!rows.length) throw new Error('Soubor je prázdný.');
+  const header = rows[0].map(h => (h || '').trim());
+  const idx = {};
+  CSV_COLUMNS.forEach(col => { idx[col] = header.indexOf(col); });
+  if (idx.Cyklus === -1 || idx.Cvik === -1) {
+    throw new Error('Soubor neobsahuje očekávané sloupce (např. "Cyklus", "Cvik") — jde o export z téhle appky?');
+  }
+  const get = (r, col) => {
+    const i = idx[col];
+    return (i == null || i < 0 || r[i] == null) ? '' : String(r[i]).trim();
+  };
+
+  const newPlan = { cycles: [] };
+  let curCycle = null, curWeek = null, curDay = null, curSection = null, curExercise = null;
+  let last = { cy: null, w: null, d: null, s: null, ex: null };
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r.length || (r.length === 1 && r[0].trim() === '')) continue;
+
+    const cy = get(r, 'Cyklus'), w = get(r, 'Tyden'), d = get(r, 'Den'), dFocus = get(r, 'Den_poznamka'),
+          s = get(r, 'Sekce'), exName = get(r, 'Cvik');
+
+    if (!curCycle || cy !== last.cy) {
+      curCycle = { id: uid('cy'), label: cy, collapsed: false, weeks: [] };
+      newPlan.cycles.push(curCycle);
+      last = { cy, w: null, d: null, s: null, ex: null };
+      curWeek = curDay = curSection = curExercise = null;
+    }
+    if (!curWeek || w !== last.w) {
+      curWeek = { id: uid('w'), label: w, days: [] };
+      curCycle.weeks.push(curWeek);
+      last.w = w; last.d = null; last.s = null; last.ex = null;
+      curDay = curSection = curExercise = null;
+    }
+    if (!curDay || d !== last.d) {
+      curDay = { id: uid('d'), name: d, focus: dFocus, sections: [] };
+      curWeek.days.push(curDay);
+      last.d = d; last.s = null; last.ex = null;
+      curSection = curExercise = null;
+    }
+    if (!s && !exName) continue; // řádek jen jako "placeholder" pro prázdný den
+
+    if (!curSection || s !== last.s) {
+      curSection = { id: uid('s'), name: s, exercises: [] };
+      curDay.sections.push(curSection);
+      last.s = s; last.ex = null;
+      curExercise = null;
+    }
+    if (!exName) continue; // placeholder pro prázdnou sekci
+
+    if (!curExercise || exName !== last.ex) {
+      curExercise = {
+        name: exName,
+        warmup: [],
+        plan: [],
+        actualSets: toNumOrNull(get(r, 'Realita_serie')),
+        actualReps: get(r, 'Realita_opakovani'),
+        actualWeight: get(r, 'Realita_vaha'),
+        note: get(r, 'Realita_poznamka'),
+        supersetWithNext: get(r, 'Superserie').toLowerCase() === 'ano'
+      };
+      curSection.exercises.push(curExercise);
+      last.ex = exName;
+    }
+
+    const typ = get(r, 'Typ_serie'), setsRaw = get(r, 'Serie'), reps = get(r, 'Opakovani'), weight = get(r, 'Vaha');
+    if (typ || setsRaw || reps || weight) {
+      const line = { sets: toNumOrNull(setsRaw), reps, weight };
+      if (typ === 'rozcvicka') curExercise.warmup.push(line);
+      else curExercise.plan.push(line);
+    }
+  }
+
+  if (!newPlan.cycles.length) throw new Error('V souboru nebyl nalezen žádný cyklus.');
+  return newPlan;
+}
+
+async function importPlanCsv(file) {
+  if (!confirm('Import nahradí CELÝ aktuální trénink obsahem CSV souboru (nedá se vzít zpět). Pokračovat?')) return;
+  try {
+    const text = await file.text();
+    const newPlan = csvRowsToPlan(csvParse(text));
+    plan = newPlan;
+    currentWeekByCycle = {};
+    plan.cycles.forEach(c => { currentWeekByCycle[c.id] = c.weeks[0] ? c.weeks[0].id : null; });
+    render();
+    renderViewer();
+    await savePlan(true);
+    showToast('✓ Trénink importován z CSV');
+  } catch (err) {
+    showToast('⚠️ Import selhal: ' + err.message);
+  }
+}
+
 // ── Auto-save (edit mode) ───────────────────────────────────────────────────────
 // Every change in Úprava saves itself a moment after you stop typing/clicking,
 // so there's nothing to remember to press.
@@ -860,6 +1076,15 @@ function el(tag, className, text) {
 
 document.getElementById('save-btn').addEventListener('click', () => savePlan(false));
 document.getElementById('add-cycle-btn').addEventListener('click', addCycle);
+document.getElementById('csv-export-btn').addEventListener('click', exportPlanCsv);
+document.getElementById('csv-import-btn').addEventListener('click', () => {
+  document.getElementById('csv-import-input').click();
+});
+document.getElementById('csv-import-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  e.target.value = ''; // reset, ať jde vybrat i ten samý soubor znovu
+  if (file) importPlanCsv(file);
+});
 document.getElementById('mode-view-btn').addEventListener('click', () => switchMode('view'));
 document.getElementById('mode-edit-btn').addEventListener('click', () => switchMode('edit'));
 document.getElementById('profile-btn').addEventListener('click', () => {

@@ -45,6 +45,9 @@
 <!-- ── Úprava: tvorba a editace plánu ──────────────────────────────────────── -->
 <div id="editor">
   <nav id="top-bar">
+    <button id="csv-export-btn" class="btn-csv" title="Stáhne celý trénink (všechny cykly, týdny, dny, cviky i realitu) jako CSV soubor">⬇️ Export CSV</button>
+    <button id="csv-import-btn" class="btn-csv" title="Nahraje trénink ze CSV souboru — nahradí aktuální plán">⬆️ Import CSV</button>
+    <input type="file" id="csv-import-input" accept=".csv,text/csv" hidden>
     <button id="add-cycle-btn" class="btn-add-cycle">+ Nový cyklus (nový trénink)</button>
   </nav>
 
