@@ -5,9 +5,11 @@ const crypto  = require('crypto');
 
 const app  = express();
 const PORT = process.env.PORT || 3100;
-const DATA_FILE    = path.join(__dirname, 'data', 'plan.json');
-const DEFAULT_FILE = path.join(__dirname, 'data', 'default.json');
-const AUTH_FILE    = path.join(__dirname, 'data', 'auth.json');
+const DATA_FILE      = path.join(__dirname, 'data', 'plan.json');
+const DEFAULT_FILE   = path.join(__dirname, 'data', 'default.json');
+const AUTH_FILE      = path.join(__dirname, 'data', 'auth.json');
+const PROFILE_FILE   = path.join(__dirname, 'data', 'profile.json');
+const TEMPLATES_FILE = path.join(__dirname, 'data', 'templates.json');
 
 const ADMIN_USERNAME     = process.env.ADMIN_USERNAME     || 'trainer936499';
 const ADMIN_PASSWORD_ENV = process.env.ADMIN_PASSWORD     || 'SilaHubnuti-26x!';
@@ -221,6 +223,47 @@ app.post('/api/plan', (req, res) => {
   }
   try { savePlan(req.body); res.json({ ok: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Profil (výška, váha) a historie maximálních vah ───────────────────────────
+// Maxima jsou historie záznamů (ne jen jedno číslo přepsané pokaždé), takže jde
+// zpětně vidět zlepšení/zhoršení v čase.
+function loadProfile() {
+  if (!fs.existsSync(PROFILE_FILE)) return { height: null, weight: null, units: 'kg', maxima: [] };
+  const p = JSON.parse(fs.readFileSync(PROFILE_FILE, 'utf8'));
+  if (!Array.isArray(p.maxima)) p.maxima = [];
+  if (p.units !== 'lb') p.units = 'kg';
+  return p;
+}
+function saveProfile(profile) {
+  fs.writeFileSync(PROFILE_FILE, JSON.stringify(profile, null, 2), 'utf8');
+}
+
+app.get('/api/profile', (req, res) => {
+  try { res.json(loadProfile()); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/profile', (req, res) => {
+  if (!req.body || !Array.isArray(req.body.maxima)) {
+    return res.status(400).json({ error: 'Neplatná data profilu (chybí maxima).' });
+  }
+  try { saveProfile(req.body); res.json({ ok: true }); }
+  catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── Šablony tréninků ─────────────────────────────────────────────────────────
+// Zatím jen ke čtení – databázi šablon budeme plnit později (soubor
+// data/templates.json, formát je popsaný v README). Dokud soubor
+// neexistuje, appka to bere jako "zatím žádné šablony", ne jako chybu.
+app.get('/api/templates', (req, res) => {
+  try {
+    if (!fs.existsSync(TEMPLATES_FILE)) return res.json({ templates: [] });
+    const t = JSON.parse(fs.readFileSync(TEMPLATES_FILE, 'utf8'));
+    res.json({ templates: Array.isArray(t.templates) ? t.templates : [] });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────

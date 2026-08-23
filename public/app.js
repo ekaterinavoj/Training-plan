@@ -13,11 +13,23 @@ const toast      = document.getElementById('toast');
 const saveBtn    = document.getElementById('save-btn');
 const editorEl   = document.getElementById('editor');
 const viewerEl   = document.getElementById('viewer');
+const profileEl  = document.getElementById('profile');
 
 const DAY_NAMES = ['Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota', 'Neděle'];
 
-// ── Mode: "view" (sledování tréninku) vs. "edit" (tvorba/úprava plánu) ──────────
-let mode = localStorage.getItem('trainingPlanMode') === 'edit' ? 'edit' : 'view';
+// ── Mode: "view" (sledování tréninku) / "edit" (tvorba/úprava plánu) /
+// "profile" (výška, váha, historie maxim, šablony) ───────────────────────────
+const VALID_MODES = ['view', 'edit', 'profile'];
+let mode = VALID_MODES.includes(localStorage.getItem('trainingPlanMode')) ? localStorage.getItem('trainingPlanMode') : 'view';
+
+// Profil + historie maxim + šablony (načtené odděleně od `plan`).
+let profile   = { height: null, weight: null, units: 'kg', maxima: [] };
+let templates = [];
+
+// Mode is 2-way now (view/edit) plus a "profile" overlay opened from the
+// header's 👤 icon — this remembers which of the two to return to when it
+// closes again.
+let lastNonProfileMode = 'view';
 
 // Which cycle/week/day is picked in view mode (in-memory only, not saved).
 let viewCycleId = null;
@@ -49,6 +61,27 @@ async function loadPlan() {
   render();
   renderViewer();
   applyMode();
+}
+
+async function loadProfile() {
+  const res = await fetch('/api/profile');
+  if (res.status === 401) { window.location.href = '/login'; return; }
+  const data = await res.json();
+  profile = {
+    height: data.height ?? null,
+    weight: data.weight ?? null,
+    units: data.units === 'lb' ? 'lb' : 'kg',
+    maxima: Array.isArray(data.maxima) ? data.maxima : []
+  };
+  renderProfile();
+}
+
+async function loadTemplates() {
+  const res = await fetch('/api/templates');
+  if (res.status === 401) { window.location.href = '/login'; return; }
+  const data = await res.json();
+  templates = Array.isArray(data.templates) ? data.templates : [];
+  renderTemplateList();
 }
 
 function migrate(data) {
@@ -116,6 +149,7 @@ function normalizeExercise(ex) {
 function render() {
   cyclesEl.innerHTML = '';
   plan.cycles.forEach(cycle => cyclesEl.appendChild(buildCycleNode(cycle)));
+  refreshAllWeightBadges();
 }
 
 function buildCycleNode(cycle) {
@@ -299,7 +333,54 @@ function makeItem(ex, itemsBox) {
     scheduleAutoSave();
   });
 
+  // Ruční zadávání (bez šablony): pro cvik, u kterého máš v Profilu zapsané
+  // maximum, dopočítá váhu podle stejného pravidla jako šablony — 60 %
+  // maxima v 1. týdnu cyklu, +2,5 kg každý další týden — a doplní ji do
+  // prázdných řádků Plánu.
+  node.querySelector('.btn-fill-from-max').addEventListener('click', () => {
+    const exName = node.querySelector('.ex-name').value.trim();
+    if (!exName) { showToast('⚠️ Nejdřív vyplň název cviku.'); return; }
+    const max = latestMaxFor(exName);
+    if (max == null) { showToast(`⚠️ Pro „${exName}" zatím nemáš v Profilu zapsané maximum.`); return; }
+
+    const weekIndex = findWeekIndexForNode(node); // 0-based
+    const raw = max * 0.6 + 2.5 * weekIndex;
+    const rounded = Math.round(raw / 2.5) * 2.5;
+    const weightStr = trimZero(rounded) + ' ' + unitLabel();
+
+    const planLinesBox = node.querySelector('.plan-lines');
+    if (!planLinesBox.children.length) planLinesBox.appendChild(buildSetLine());
+    let filled = 0;
+    planLinesBox.querySelectorAll('.set-line').forEach(lineNode => {
+      const w = lineNode.querySelector('.line-weight');
+      if (!w.value.trim()) {
+        w.value = weightStr;
+        updateWeightBadge(w, lineNode.querySelector('.weight-unit-badge'));
+        filled++;
+      }
+    });
+    if (filled) {
+      showToast(`✓ Doplněno ${weightStr} (týden ${weekIndex + 1}, 60 % + progrese)`);
+      scheduleAutoSave();
+    } else {
+      showToast('ℹ️ Všechny série už mají vyplněnou váhu.');
+    }
+  });
+
   return node;
+}
+
+// Podle DOM ancestor zjistí, kolikátý (0-based) je aktuálně zobrazený týden
+// v cyklu, do kterého daná exercise-item karta patří — použito pro
+// progresivní dopočet váhy z maxima (60 % + 2,5 kg/týden).
+function findWeekIndexForNode(node) {
+  const cycleNode = node.closest('.cycle');
+  if (!cycleNode) return 0;
+  const cycle = plan.cycles.find(c => c.id === cycleNode.dataset.cycleId);
+  if (!cycle) return 0;
+  const curWeekId = currentWeekByCycle[cycle.id];
+  const idx = cycle.weeks.findIndex(w => w.id === curWeekId);
+  return idx >= 0 ? idx : 0;
 }
 
 function buildSetLine(line) {
@@ -540,12 +621,14 @@ editorEl.addEventListener('input', scheduleAutoSave);
 
 // ── Mode switching ───────────────────────────────────────────────────────────
 function applyMode() {
-  editorEl.hidden = mode !== 'edit';
-  viewerEl.hidden = mode !== 'view';
+  editorEl.hidden  = mode !== 'edit';
+  viewerEl.hidden  = mode !== 'view';
+  profileEl.hidden = mode !== 'profile';
   document.getElementById('mode-view-btn').classList.toggle('active', mode === 'view');
   document.getElementById('mode-edit-btn').classList.toggle('active', mode === 'edit');
-  // Zobrazení is now purely read-only (Rozcvička, Plán and Realita are all
-  // entered in Úprava), so there's nothing to save while looking at it.
+  document.getElementById('profile-btn').classList.toggle('active', mode === 'profile');
+  // Zobrazení and Profil are read-only-ish (Profil autosaves its own fields
+  // separately), so the plan Save button is only relevant in Úprava.
   saveBtn.hidden = mode !== 'edit';
   setSaveStatus(mode === 'edit' ? '✓ Uloženo' : '');
   localStorage.setItem('trainingPlanMode', mode);
@@ -553,6 +636,7 @@ function applyMode() {
 
 function switchMode(newMode) {
   if (newMode === mode) return;
+  if (mode !== 'profile') lastNonProfileMode = mode;
   if (mode === 'edit') {
     // Leaving the editor: fold whatever's on screen back into `plan` first,
     // so the viewer (and a later save) reflects the latest edits, and flush
@@ -565,8 +649,10 @@ function switchMode(newMode) {
   applyMode();
   if (mode === 'view') {
     renderViewer();
-  } else {
+  } else if (mode === 'edit') {
     render(); // rebuild the editor from `plan`, picking up any viewer edits
+  } else {
+    renderProfile();
   }
 }
 
@@ -701,15 +787,12 @@ function buildViewerExercise(ex) {
   // only appears at all once something's actually been logged.
   const hasActual = ex.actualSets != null || ex.actualReps || ex.actualWeight || ex.note;
   if (hasActual) {
-    const actualParts = [];
-    if (ex.actualSets != null && ex.actualReps) actualParts.push(`${ex.actualSets} × ${ex.actualReps}`);
-    else if (ex.actualSets != null) actualParts.push(`${ex.actualSets} série`);
-    else if (ex.actualReps) actualParts.push(`${ex.actualReps}×`);
-    if (ex.actualWeight) actualParts.push(ex.actualWeight);
-
     const line = el('div', 'viewer-line viewer-line-actual');
     line.appendChild(el('span', 'viewer-line-label', 'Realita'));
-    line.appendChild(el('span', 'viewer-line-value', actualParts.length ? actualParts.join(' · ') : '–'));
+    const hasActualValue = ex.actualSets != null || ex.actualReps || ex.actualWeight;
+    line.appendChild(hasActualValue
+      ? buildSetLineChips({ sets: ex.actualSets, reps: ex.actualReps, weight: ex.actualWeight })
+      : el('span', 'viewer-line-value', '–'));
     card.appendChild(line);
     if (ex.note) card.appendChild(el('div', 'viewer-actual-note', ex.note));
   }
@@ -725,13 +808,6 @@ function buildViewerSetGroup(label, lines, checkable) {
   if (lines.length) {
     const list = el('div', 'viewer-set-lines');
     lines.forEach(line => {
-      const parts = [];
-      if (line.sets != null && line.reps) parts.push(`${line.sets} × ${line.reps}`);
-      else if (line.sets != null) parts.push(`${line.sets} série`);
-      else if (line.reps) parts.push(`${line.reps}×`);
-      if (line.weight) parts.push(line.weight);
-      const text = parts.length ? parts.join(' · ') : '–';
-
       if (checkable) {
         const row = document.createElement('label');
         row.className = 'viewer-set-line viewer-set-line-checkable';
@@ -740,10 +816,12 @@ function buildViewerSetGroup(label, lines, checkable) {
         cb.className = 'set-check';
         cb.addEventListener('change', () => row.classList.toggle('done', cb.checked));
         row.appendChild(cb);
-        row.appendChild(el('span', 'viewer-set-line-text', text));
+        row.appendChild(buildSetLineChips(line));
         list.appendChild(row);
       } else {
-        list.appendChild(el('div', 'viewer-set-line', text));
+        const lineEl = el('div', 'viewer-set-line');
+        lineEl.appendChild(buildSetLineChips(line));
+        list.appendChild(lineEl);
       }
     });
     group.appendChild(list);
@@ -751,6 +829,26 @@ function buildViewerSetGroup(label, lines, checkable) {
     group.appendChild(el('div', 'viewer-set-lines viewer-set-empty', '–'));
   }
   return group;
+}
+
+// Sérií / opakování / váha jako tři samostatné barevně odlišené "pilulky"
+// místo jednoho splihlého textu spojeného tečkami — čitelnější na první
+// pohled, hlavně v Zobrazení při cvičení.
+function buildSetLineChips(line) {
+  const wrap = el('span', 'viewer-set-line-text');
+  const hasSets   = line.sets != null && line.sets !== '';
+  const hasReps   = !!line.reps;
+  const hasWeight = !!line.weight;
+  if (!hasSets && !hasReps && !hasWeight) {
+    wrap.appendChild(el('span', 'chip chip-empty', '–'));
+    return wrap;
+  }
+  if (hasSets) wrap.appendChild(el('span', 'chip chip-sets', hasReps ? String(line.sets) : `${line.sets} série`));
+  if (hasSets && hasReps) wrap.appendChild(el('span', 'set-sep', '×'));
+  if (hasReps) wrap.appendChild(el('span', 'chip chip-reps', line.reps));
+  if ((hasSets || hasReps) && hasWeight) wrap.appendChild(el('span', 'set-sep', '@'));
+  if (hasWeight) wrap.appendChild(el('span', 'chip chip-weight', line.weight));
+  return wrap;
 }
 
 function el(tag, className, text) {
@@ -764,6 +862,299 @@ document.getElementById('save-btn').addEventListener('click', () => savePlan(fal
 document.getElementById('add-cycle-btn').addEventListener('click', addCycle);
 document.getElementById('mode-view-btn').addEventListener('click', () => switchMode('view'));
 document.getElementById('mode-edit-btn').addEventListener('click', () => switchMode('edit'));
+document.getElementById('profile-btn').addEventListener('click', () => {
+  switchMode(mode === 'profile' ? lastNonProfileMode : 'profile');
+});
+
+// ── Profil, historie maxim a šablony ─────────────────────────────────────────
+let profileAutoSaveTimer = null;
+function scheduleProfileAutoSave() {
+  setSaveStatus('Ukládání…');
+  clearTimeout(profileAutoSaveTimer);
+  profileAutoSaveTimer = setTimeout(saveProfileNow, 700);
+}
+async function saveProfileNow() {
+  const res = await fetch('/api/profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(profile)
+  });
+  if (res.status === 401) { window.location.href = '/login'; return; }
+  setSaveStatus(res.ok ? '✓ Uloženo' : '⚠️ Neuloženo');
+}
+
+// ── Jednotky vah (kg / lb) ───────────────────────────────────────────────────
+// Nastavuje se jednou v Profilu a odtud se používá všude — u váhových polí se
+// jednotka jen zobrazuje jako značka vedle pole (nepíše se ručně dokola).
+function unitLabel() {
+  return profile.units === 'lb' ? 'lb' : 'kg';
+}
+
+// Značka jednotky se zobrazí, jen když pole obsahuje čisté číslo (nebo je
+// prázdné) — u volného textu jako "prázdná osa" nebo rozsahu "67,5–70 kg"
+// by se jen pletla, takže tam zůstane skrytá.
+function updateWeightBadge(input, badge) {
+  if (!badge) return;
+  const val = input.value.trim();
+  const isPureNumber = /^\d+([.,]\d+)?$/.test(val);
+  badge.textContent = (val === '' || isPureNumber) ? unitLabel() : '';
+}
+
+function refreshAllWeightBadges() {
+  document.querySelectorAll('.line-weight, .ex-actual-weight').forEach(input => {
+    const badge = input.parentElement.querySelector('.weight-unit-badge');
+    updateWeightBadge(input, badge);
+  });
+  const maxWeightBadge = document.getElementById('max-weight-unit');
+  if (maxWeightBadge) maxWeightBadge.textContent = unitLabel();
+}
+
+// Kdykoliv se v editoru píše do váhového pole, jednotková značka se hned
+// přepočítá (schová se, jakmile přestane jít o čisté číslo, a naopak).
+editorEl.addEventListener('input', e => {
+  if (e.target.classList.contains('line-weight') || e.target.classList.contains('ex-actual-weight')) {
+    updateWeightBadge(e.target, e.target.parentElement.querySelector('.weight-unit-badge'));
+  }
+});
+
+function renderProfile() {
+  document.getElementById('profile-height').value = profile.height ?? '';
+  document.getElementById('profile-weight').value = profile.weight ?? '';
+  document.getElementById('profile-units').value = profile.units || 'kg';
+  refreshAllWeightBadges();
+
+  const datalist = document.getElementById('max-exercise-list');
+  datalist.innerHTML = '';
+  collectExerciseNames().forEach(name => {
+    const opt = document.createElement('option');
+    opt.value = name;
+    datalist.appendChild(opt);
+  });
+
+  renderMaxList();
+  renderTemplateList();
+}
+
+// Cviky pro nápovědu v poli "Cvik" – ze všech tréninkových dní i z toho, co už
+// bylo dřív zapsané jako maximum.
+function collectExerciseNames() {
+  const names = new Set();
+  plan.cycles.forEach(cy => (cy.weeks || []).forEach(w => (w.days || []).forEach(d =>
+    (d.sections || []).forEach(s => (s.exercises || []).forEach(ex => { if (ex.name) names.add(ex.name); }))
+  )));
+  profile.maxima.forEach(m => { if (m.exercise) names.add(m.exercise); });
+  return Array.from(names).sort((a, b) => a.localeCompare(b, 'cs'));
+}
+
+function renderMaxList() {
+  const box = document.getElementById('max-list');
+  box.innerHTML = '';
+  if (!profile.maxima.length) {
+    box.appendChild(el('p', 'profile-hint', 'Zatím žádné záznamy — přidej první nahoře.'));
+    return;
+  }
+
+  const byExercise = {};
+  profile.maxima.forEach(m => {
+    (byExercise[m.exercise] = byExercise[m.exercise] || []).push(m);
+  });
+
+  Object.keys(byExercise).sort((a, b) => a.localeCompare(b, 'cs')).forEach(name => {
+    const entries = byExercise[name].slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const latest = entries[0];
+
+    const group = el('div', 'max-group');
+    const header = el('div', 'max-group-header');
+    header.appendChild(el('span', 'max-group-name', name));
+
+    const latestSpan = el('span', 'max-group-latest', latest.weight != null ? `${latest.weight} ${unitLabel()}` : '–');
+    if (entries.length > 1 && entries[1].weight != null && latest.weight != null) {
+      const diff = latest.weight - entries[1].weight;
+      if (diff !== 0) {
+        const diffText = (diff > 0 ? '▲ +' : '▼ ') + trimZero(diff) + ' ' + unitLabel();
+        latestSpan.appendChild(el('span', 'max-trend ' + (diff > 0 ? 'up' : 'down'), diffText));
+      }
+    }
+    header.appendChild(latestSpan);
+    group.appendChild(header);
+
+    const histBtn = document.createElement('button');
+    histBtn.type = 'button';
+    histBtn.className = 'btn-toggle-history';
+    histBtn.textContent = `Historie (${entries.length})`;
+    const histBox = el('div', 'max-history');
+    histBox.hidden = true;
+    histBtn.addEventListener('click', () => { histBox.hidden = !histBox.hidden; });
+    group.appendChild(histBtn);
+
+    entries.forEach(entry => {
+      const row = el('div', 'max-entry');
+      row.appendChild(el('span', 'max-entry-date', entry.date ? formatDateCz(entry.date) : ''));
+      row.appendChild(el('span', 'max-entry-weight', entry.weight != null ? `${entry.weight} ${unitLabel()}` : '–'));
+      if (entry.note) row.appendChild(el('span', 'max-entry-note', entry.note));
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'btn-remove-line';
+      delBtn.title = 'Smazat záznam';
+      delBtn.textContent = '✕';
+      delBtn.addEventListener('click', () => {
+        profile.maxima = profile.maxima.filter(m => m.id !== entry.id);
+        renderProfile();
+        scheduleProfileAutoSave();
+      });
+      row.appendChild(delBtn);
+      histBox.appendChild(row);
+    });
+    group.appendChild(histBox);
+
+    box.appendChild(group);
+  });
+}
+
+function trimZero(n) {
+  return (Math.round(n * 10) / 10).toString().replace(/\.0$/, '');
+}
+function formatDateCz(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric', year: 'numeric' });
+}
+
+document.getElementById('profile-height').addEventListener('input', e => {
+  profile.height = e.target.value === '' ? null : Number(e.target.value);
+  scheduleProfileAutoSave();
+});
+document.getElementById('profile-weight').addEventListener('input', e => {
+  profile.weight = e.target.value === '' ? null : Number(e.target.value);
+  scheduleProfileAutoSave();
+});
+document.getElementById('profile-units').addEventListener('change', e => {
+  profile.units = e.target.value === 'lb' ? 'lb' : 'kg';
+  scheduleProfileAutoSave();
+  refreshAllWeightBadges();
+  renderMaxList();
+});
+
+document.getElementById('max-add-btn').addEventListener('click', () => {
+  const exerciseInput = document.getElementById('max-exercise');
+  const weightInput   = document.getElementById('max-weight');
+  const dateInput     = document.getElementById('max-date');
+  const noteInput     = document.getElementById('max-note');
+
+  const exercise = exerciseInput.value.trim();
+  const weight   = weightInput.value;
+  if (!exercise || weight === '') { showToast('⚠️ Vyplň cvik a váhu.'); return; }
+
+  profile.maxima.push({
+    id: uid('max'),
+    exercise,
+    weight: Number(weight),
+    date: dateInput.value || new Date().toISOString().slice(0, 10),
+    note: noteInput.value.trim()
+  });
+
+  weightInput.value = '';
+  noteInput.value = '';
+  // Cvik i datum necháme vyplněné — hodí se, když zapisuješ víc cviků ze
+  // stejného dne za sebou.
+  renderProfile();
+  scheduleProfileAutoSave();
+  showToast('✓ Záznam přidán');
+});
+
+// ── Šablony tréninků (zatím jen ke čtení — databáze se doplní později) ────────
+function renderTemplateList() {
+  const box = document.getElementById('template-list');
+  box.innerHTML = '';
+  if (!templates.length) {
+    box.appendChild(el('p', 'profile-hint', 'Zatím tu nejsou žádné šablony. Až databázi připravíš, objeví se tu a půjde z nich rovnou vygenerovat trénink podle tvých maxim výše.'));
+    return;
+  }
+  templates.forEach(t => {
+    const card = el('div', 'template-card');
+    card.appendChild(el('div', 'template-name', t.label || 'Šablona bez názvu'));
+    if (t.description) card.appendChild(el('div', 'template-desc', t.description));
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-main';
+    btn.textContent = '⚡ Vygenerovat trénink';
+    btn.addEventListener('click', () => generateFromTemplate(t));
+    card.appendChild(btn);
+    box.appendChild(card);
+  });
+}
+
+// Nejnovější (podle data) záznam maxima pro daný cvik, nebo null.
+function latestMaxFor(exerciseName) {
+  const entries = profile.maxima.filter(m => m.exercise === exerciseName);
+  if (!entries.length) return null;
+  entries.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  return entries[0].weight;
+}
+
+// Šablona zapisuje váhu buď jako obyčejný text (např. "vlastní váha"), nebo
+// jako procento z posledního maxima daného cviku (např. "60%"). Tohle druhé
+// se tady dopočítá na konkrétní kg a zaokrouhlí na 2,5 kg.
+function resolveTemplateWeight(weightStr, exerciseName) {
+  const m = /^(\d+(?:[.,]\d+)?)\s*%$/.exec((weightStr || '').trim());
+  if (!m) return { weight: weightStr || '', missing: false };
+  const pct = parseFloat(m[1].replace(',', '.'));
+  const max = latestMaxFor(exerciseName);
+  if (max == null) return { weight: '', missing: true };
+  const rounded = Math.round((max * pct / 100) / 2.5) * 2.5;
+  return { weight: trimZero(rounded) + ' ' + unitLabel(), missing: false };
+}
+
+function generateFromTemplate(template) {
+  if (!template.cycle) { showToast('⚠️ Šablona nemá definovaný cyklus.'); return; }
+
+  const cloned = JSON.parse(JSON.stringify(template.cycle));
+  cloned.id = uid('cy');
+  cloned.collapsed = false;
+  cloned.label = cloned.label || template.label || 'Nový cyklus ze šablony';
+
+  const missing = new Set();
+  (cloned.weeks || []).forEach(w => {
+    w.id = uid('w');
+    (w.days || []).forEach(d => {
+      d.id = uid('d');
+      (d.sections || []).forEach(s => {
+        s.id = uid('s');
+        (s.exercises || []).forEach(ex => {
+          ['warmup', 'plan'].forEach(key => {
+            (ex[key] || []).forEach(line => {
+              const r = resolveTemplateWeight(line.weight, ex.name);
+              line.weight = r.weight;
+              if (r.missing) missing.add(ex.name);
+            });
+          });
+          if (ex.actualSets === undefined) ex.actualSets = null;
+          if (ex.actualReps === undefined) ex.actualReps = '';
+          if (ex.actualWeight === undefined) ex.actualWeight = '';
+          if (ex.note === undefined) ex.note = '';
+          if (typeof ex.supersetWithNext !== 'boolean') ex.supersetWithNext = false;
+        });
+      });
+    });
+  });
+
+  plan.cycles.forEach(c => { c.collapsed = true; });
+  plan.cycles.push(cloned);
+  currentWeekByCycle[cloned.id] = cloned.weeks[0] ? cloned.weeks[0].id : null;
+
+  savePlan(true);
+  switchMode('edit');
+  const node = cyclesEl.querySelector(`.cycle[data-cycle-id="${cloned.id}"]`);
+  if (node) node.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  if (missing.size) {
+    showToast('⚠️ Chybí maximum pro: ' + Array.from(missing).join(', '));
+  } else {
+    showToast('✓ Trénink vygenerován ze šablony');
+  }
+}
+
+document.getElementById('max-date').value = new Date().toISOString().slice(0, 10);
 
 // ── Změna hesla ──────────────────────────────────────────────────────────────
 const pwOverlay  = document.getElementById('change-pw-overlay');
@@ -808,3 +1199,5 @@ document.getElementById('cp-submit').addEventListener('click', async () => {
 });
 
 loadPlan();
+loadProfile();
+loadTemplates();

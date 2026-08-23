@@ -12,6 +12,7 @@
   <div class="header-actions">
     <span id="save-status"></span>
     <button id="save-btn" class="btn-main">Uložit plán</button>
+    <button id="profile-btn" class="btn-header-icon" title="Profil a maxima">👤</button>
     <button id="change-pw-btn" class="btn-header-icon" title="Změnit heslo">🔑</button>
     <a id="logout-link" href="/logout" class="btn-header-icon" title="Odhlásit se">⏻</a>
   </div>
@@ -50,6 +51,55 @@
   <main id="cycles"></main>
 </div>
 
+<!-- ── Profil, historie maxim a šablony tréninků ───────────────────────────── -->
+<div id="profile">
+  <section class="profile-card">
+    <h2>Základní údaje</h2>
+    <div class="profile-fields">
+      <div class="field">
+        <label>Výška (cm)</label>
+        <input type="number" id="profile-height" min="0" placeholder="např. 160" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Váha</label>
+        <input type="number" id="profile-weight" min="0" step="0.1" placeholder="např. 66" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Jednotky vah</label>
+        <select id="profile-units">
+          <option value="kg">Kilogramy (kg)</option>
+          <option value="lb">Libry (lb)</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section class="profile-card">
+    <h2>Maximální váhy</h2>
+    <p class="profile-hint">Zapiš si nový záznam pokaždé, když zlepšíš (nebo změříš) maximum u nějakého cviku — staré záznamy zůstanou jako historie, takže uvidíš vývoj v čase.</p>
+
+    <div class="max-add-form">
+      <input type="text" id="max-exercise" list="max-exercise-list" placeholder="Cvik (např. Zadní dřep)" autocomplete="off">
+      <datalist id="max-exercise-list"></datalist>
+      <span class="weight-input-wrap">
+        <input type="number" id="max-weight" step="0.5" min="0" placeholder="Váha" autocomplete="off">
+        <span class="weight-unit-badge" id="max-weight-unit"></span>
+      </span>
+      <input type="date" id="max-date" autocomplete="off">
+      <input type="text" id="max-note" placeholder="Poznámka (volitelné)" autocomplete="off">
+      <button id="max-add-btn" class="btn-add">+ Přidat záznam</button>
+    </div>
+
+    <div id="max-list"></div>
+  </section>
+
+  <section class="profile-card">
+    <h2>Šablony tréninků</h2>
+    <p class="profile-hint">Až bude připravená databáze šablon, vyberou se odtud a trénink se vygeneruje s váhami dopočítanými z tvých maxim výše.</p>
+    <div id="template-list"></div>
+  </section>
+</div>
+
 <div id="toast"></div>
 
 <!-- ── Změna hesla ──────────────────────────────────────────────────────────── -->
@@ -82,7 +132,7 @@
   <div class="cycle">
     <div class="cycle-head">
       <button class="cycle-toggle" title="Sbalit / rozbalit cyklus">▼</button>
-      <input type="text" class="cycle-label-input" placeholder="Název cyklu (např. Cyklus 1 – Síla, 12 týdnů)">
+      <input type="text" class="cycle-label-input" placeholder="Název cyklu (např. Cyklus 1 – Síla, 12 týdnů)" autocomplete="off">
       <button class="btn-remove-cycle" title="Smazat cyklus">🗑 Cyklus</button>
     </div>
     <div class="cycle-body">
@@ -92,7 +142,7 @@
         <button class="btn-add-week">+ Nový prázdný týden</button>
       </nav>
       <div class="week-head">
-        <input type="text" class="week-label-input" placeholder="Název týdne (např. Týden 1, 12.–18. 8.)">
+        <input type="text" class="week-label-input" placeholder="Název týdne (např. Týden 1, 12.–18. 8.)" autocomplete="off">
         <button class="btn-remove-week" title="Smazat tento týden">🗑 Smazat týden</button>
       </div>
       <div class="days"></div>
@@ -104,8 +154,8 @@
 <template id="day-tpl">
   <section class="day-card">
     <div class="day-head">
-      <input type="text" class="day-name-input" placeholder="Název dne (např. Pondělí)">
-      <input type="text" class="focus-input" placeholder="Poznámka ke dni (volitelné)">
+      <input type="text" class="day-name-input" placeholder="Název dne (např. Pondělí)" autocomplete="off">
+      <input type="text" class="focus-input" placeholder="Poznámka ke dni (volitelné)" autocomplete="off">
       <button class="btn-remove-day" title="Smazat den">✕ Den</button>
     </div>
     <div class="sections"></div>
@@ -116,7 +166,7 @@
 <template id="section-tpl">
   <div class="section-card">
     <div class="section-head">
-      <input type="text" class="section-name" placeholder="Název sekce (např. Hlavní cviky, Ramena, Core...)">
+      <input type="text" class="section-name" placeholder="Název sekce (např. Hlavní cviky, Ramena, Core...)" autocomplete="off">
       <button class="btn-remove-section" title="Smazat sekci">✕ Sekce</button>
     </div>
     <div class="exercise-items"></div>
@@ -126,9 +176,12 @@
 
 <template id="set-line-tpl">
   <div class="set-line">
-    <input type="number" class="line-sets" placeholder="Sérií" min="0">
-    <input type="text" class="line-reps" placeholder="Opakování (číslo nebo text, např. 8–10)">
-    <input type="text" class="line-weight" placeholder="Váha">
+    <input type="number" class="line-sets" placeholder="Sérií" min="0" autocomplete="off">
+    <input type="text" class="line-reps" placeholder="Opakování (např. 8–10)" autocomplete="off">
+    <span class="weight-input-wrap">
+      <input type="text" class="line-weight" placeholder="Váha" autocomplete="off">
+      <span class="weight-unit-badge"></span>
+    </span>
     <button type="button" class="btn-remove-line" title="Odebrat sérii">✕</button>
   </div>
 </template>
@@ -138,29 +191,37 @@
     <div class="exercise-name-row">
       <button type="button" class="btn-move-up" title="Posunout výš">▲</button>
       <button type="button" class="btn-move-down" title="Posunout níž">▼</button>
-      <input type="text" class="ex-name" placeholder="Cvik (např. Dřep)">
+      <input type="text" class="ex-name" placeholder="Cvik (např. Dřep)" autocomplete="off">
       <button type="button" class="btn-superset-toggle" title="Spojit s dalším cvikem do superserie">🔗</button>
       <button class="btn-remove" title="Odebrat cvik">✕</button>
     </div>
     <div class="set-group set-group-warmup">
       <span class="set-group-label">Rozcvička</span>
+      <div class="set-lines-header"><span>Série</span><span>Opakování</span><span>Váha</span><span></span></div>
       <div class="set-lines warmup-lines"></div>
       <button type="button" class="btn-add-line btn-add-warmup-line">+ Přidat sérii rozcvičky</button>
     </div>
     <div class="set-group set-group-plan">
       <span class="set-group-label">Plán</span>
+      <div class="set-lines-header"><span>Série</span><span>Opakování</span><span>Váha</span><span></span></div>
       <div class="set-lines plan-lines"></div>
-      <button type="button" class="btn-add-line btn-add-plan-line">+ Přidat sérii</button>
+      <div class="plan-actions">
+        <button type="button" class="btn-add-line btn-add-plan-line">+ Přidat sérii</button>
+        <button type="button" class="btn-fill-from-max" title="Doplní váhu podle maxima: 60 % v 1. týdnu cyklu, +2,5 kg každý další týden">⚡ Doplnit z maxima</button>
+      </div>
     </div>
     <div class="exercise-actual">
       <div class="actual-fields">
         <span class="actual-label">Realita:</span>
-        <input type="number" class="ex-actual-sets" placeholder="Série" min="0">
-        <input type="text" class="ex-actual-reps" placeholder="Opakování">
-        <input type="text" class="ex-actual-weight" placeholder="Skutečná váha">
+        <input type="number" class="ex-actual-sets" placeholder="Série" min="0" autocomplete="off">
+        <input type="text" class="ex-actual-reps" placeholder="Opakování" autocomplete="off">
+        <span class="weight-input-wrap">
+          <input type="text" class="ex-actual-weight" placeholder="Skutečná váha" autocomplete="off">
+          <span class="weight-unit-badge"></span>
+        </span>
         <button class="btn-clear-actual" title="Vymazat zápis skutečnosti">✕</button>
       </div>
-      <input type="text" class="ex-note" placeholder="Poznámka (např. cítila jsem se silná)">
+      <input type="text" class="ex-note" placeholder="Poznámka (např. cítila jsem se silná)" autocomplete="off">
     </div>
   </div>
 </template>

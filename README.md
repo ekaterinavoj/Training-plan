@@ -40,6 +40,8 @@ Nahoře pod hlavičkou jsou dvě velká tlačítka:
 
 V režimu Úprava se **ukládá automaticky** – každá změna (psaní, přidání/smazání/přesun cviku...) se sama uloží ~1 sekundu po tom, co přestaneš psát/klikat. Vedle hlavičky vidíš stav ("Ukládání…" / "✓ Uloženo"). Tlačítko **Uložit plán** zůstává pro jistotu jako ruční záloha, ale běžně ho nepotřebuješ mačkat.
 
+Vedle těch dvou tlačítek je v hlavičce ještě ikonka **👤** – otevře **Profil a maxima** (výška/váha, jednotky, historie maximálních vah, šablony – viz níž). Není to třetí rovnocenný režim, spíš přehled/nastavení nad plánem: klikni na ikonku znovu (nebo přepni na Zobrazit/Upravit) a vrátíš se tam, kde jsi skončil/a.
+
 ## Jak to funguje (režim Úprava)
 
 Struktura je čtyřúrovňová: **cyklus → týden → den → sekce → cvik**.
@@ -56,22 +58,75 @@ Struktura je čtyřúrovňová: **cyklus → týden → den → sekce → cvik**
   - Šipkami **▲ ▼** vedle jména cviku ho posuneš výš/níž v pořadí v rámci sekce.
   - Tlačítkem **🔗** (vedle jména cviku) spojíš cvik s **dalším cvikem pod ním** do superserie – oba se pak vizuálně spojí do jednoho přerušovaného rámečku, v Úpravě i v Zobrazení, ať je jasné, že jdou hned za sebou.
   - Každý cvik má tři skupiny pod sebou, ve stejném pořadí v editoru i v Zobrazení:
-    1. **Rozcvička** – volitelný seznam rozcvičovacích sérií pro tenhle konkrétní cvik. Každá série je vlastní řádek (série × opakování × váha), takže jde zapsat celý rozcvičovací žebřík (např. `1×20×20 kg`, `1×15×30 kg`, `1×10×40 kg`, `1×8×50 kg`) tlačítkem `+ Přidat sérii rozcvičky`, aniž by se cvik musel opakovat. Pokud u cviku není žádná vyplněná, v Zobrazení se vůbec nezobrazuje.
-    2. **Plán** – stejným způsobem seznam pracovních sérií (`+ Přidat sérii`), např. tři řádky `1×5×60 kg` pro tři pracovní série s různou váhou/opakováním, pokud se liší. Rozcvička i Plán vypadají stejně (žádná ikonka, žádné barevné odlišení) – pozná se to jen podle nadpisu. **Opakování** je teď volný text, ne jen číslo – klidně `8–10`, `30 s` nebo `AMRAP`, ne všude jde napsat pevné číslo.
+    1. **Rozcvička** – volitelný seznam rozcvičovacích sérií pro tenhle konkrétní cvik. Nad seznamem je malý popisek sloupců (Série / Opakování / Váha), pod ním pak vlastní řádky – jde tak zapsat celý rozcvičovací žebřík (např. `1×20×20 kg`, `1×15×30 kg`, `1×10×40 kg`, `1×8×50 kg`) tlačítkem `+ Přidat sérii rozcvičky`, aniž by se cvik musel opakovat. Pokud u cviku není žádná vyplněná, v Zobrazení se vůbec nezobrazuje.
+    2. **Plán** – stejným způsobem seznam pracovních sérií (`+ Přidat sérii`), např. tři řádky `1×5×60 kg` pro tři pracovní série s různou váhou/opakováním, pokud se liší. Rozcvička i Plán vypadají stejně (žádná ikonka, žádné barevné odlišení) – pozná se to jen podle nadpisu. **Opakování** je teď volný text, ne jen číslo – klidně `8–10`, `30 s` nebo `AMRAP`, ne všude jde napsat pevné číslo. Do pole váhy stačí napsat číslo – jednotka (kg/lb podle Profilu, viz níž) se k němu automaticky přidá jako značka v poli, není potřeba ji psát ručně; u volného textu (rozsahy, "prázdná osa" apod.) se značka schová, aby se s textem nepletla. Vedle `+ Přidat sérii` je i tlačítko **⚡ Doplnit z maxima** – viz sekce Profil a maxima níž.
     3. **Realita** – zadává a upravuje se výhradně v režimu Úprava (série, opakování, skutečná váha a poznámka, např. "cítila jsem se silná, přidala jsem váhu i opakování"), aniž by se přepsal plán. V Zobrazení je vidět jen jako prostý červený text pod Plánem – a jen tehdy, když je něco vyplněné; jinak se nezobrazuje vůbec. Tlačítko `✕` u realitního řádku v editoru vše vymaže.
-  - V **Zobrazení** má navíc každá série (Rozcvička i Plán) checkbox – odškrtneš ji, jakmile ji odcvičíš, a hned vidíš, kolik sérií máš za sebou a která je další na řadě. Odškrtávání je jen vizuální (nikam se neukládá) a resetne se při přechodu na jiný den nebo obnovení stránky.
+  - V **Zobrazení** je série/opakování/váha každého řádku vidět jako tři barevně odlišené "pilulky" (ne jeden splihlý text spojený tečkami), takže je na první pohled jasné, co je co. Každá série (Rozcvička i Plán) má navíc checkbox – odškrtneš ji, jakmile ji odcvičíš, a hned vidíš, kolik sérií máš za sebou a která je další na řadě. Odškrtávání je jen vizuální (nikam se neukládá) a resetne se při přechodu na jiný den nebo obnovení stránky.
 - Mazání dne/sekce, které už obsahují vyplněné údaje, se ptá na potvrzení; prázdné (právě přidané a nevyplněné) jde smazat rovnou.
 - Tlačítko **Uložit plán** odešle aktuální stav (všechny cykly, týdny, dny, sekce i cviky) na server, který ho uloží do `data/plan.json`.
 - Výchozí (prázdná) šablona s jedním cyklem a jedním týdnem je v `data/default.json` – použije se, dokud nebyl plán poprvé uložen. Starší formáty dat (z dřívějších verzí aplikace) se při načtení automaticky převedou na aktuální strukturu.
+
+## Profil, maximální váhy a šablony tréninků
+
+Otevře se ikonkou **👤** v hlavičce. Tři karty:
+
+- **Základní údaje** – výška, váha, a **jednotky vah** (kg / lb). Přepnutí jednotky se hned projeví u váhové značky ve všech polích (editor i tady) – nejde o přepočet starých čísel, jen o to, jaká jednotka se od teď automaticky nabízí.
+- **Maximální váhy** – u každého cviku (dřep, bench, mrtvý tah...) si zapíšeš aktuální maximum. Není to jedno přepisované číslo – každý zápis zůstává v **historii**, takže je u cviku vidět poslední hodnota, trend oproti minulému záznamu (▲/▼) a po rozkliknutí "Historie (N)" celý vývoj v čase i s daty a poznámkami. Jednotlivé záznamy jde smazat tlačítkem ✕.
+  - Tahle maxima se používají na dvou místech:
+    1. Tlačítko **⚡ Doplnit z maxima** u každého cviku v editoru (vedle `+ Přidat sérii`) – když název cviku odpovídá nějakému zapsanému maximu, dopočítá váhu podle pravidla **60 % maxima v 1. týdnu cyklu, +2,5 kg každý další týden** (týden se pozná podle toho, na které záložce týdne zrovna jsi) a doplní ji do prázdných řádků Plánu. Hodí se to i bez šablony, když si trénink píšeš ručně.
+    2. Šablony tréninků (viz níž) – ty počítají váhu ze stejného maxima podle procenta, které šablona předepisuje.
+- **Šablony tréninků** – zatím prázdné, čeká se na databázi šablon (bude doplněna později). Až tam nějaká šablona bude, objeví se tu jako karta s tlačítkem **⚡ Vygenerovat trénink**, které vytvoří nový cyklus s váhami dopočítanými z maxim výše.
+
+  Formát `data/templates.json` (soubor je gitignored, protože jde o osobní data stejně jako plán):
+  ```json
+  {
+    "templates": [
+      {
+        "id": "libovolné-id",
+        "label": "Název šablony (např. Síla 8 týdnů)",
+        "description": "Volitelný krátký popis, zobrazí se pod názvem.",
+        "cycle": {
+          "label": "Název cyklu, který šablona vytvoří",
+          "weeks": [
+            {
+              "label": "Týden 1",
+              "days": [
+                {
+                  "name": "Pondělí",
+                  "focus": "Volitelná poznámka ke dni",
+                  "sections": [
+                    {
+                      "name": "Hlavní cviky",
+                      "exercises": [
+                        {
+                          "name": "Zadní dřep",
+                          "warmup": [{ "sets": 1, "reps": "8", "weight": "prázdná osa" }],
+                          "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+  ```
+  `cycle` má úplně stejnou strukturu jako cyklus v `data/plan.json` (týdny → dny → sekce → cviky → `warmup`/`plan` řádky), akorát pole **`weight`** může být místo pevné hodnoty i **procento maxima** zapsané jako text končící `%` (např. `"60%"`, `"75 %"`) – při generování se dopočítá z posledního zapsaného maxima pro cvik se stejným **`name`** (musí se shodovat přesně) a zaokrouhlí na 2,5 kg/lb. Pokud maximum pro daný cvik chybí, pole zůstane prázdné a appka po vygenerování upozorní, u kterých cviků je potřeba váhu doplnit ručně. Statický text (např. `"prázdná osa"`, `"vlastní váha"`) se propíše beze změny.
 
 ## Struktura projektu
 
 ```
 training-plan/
 ├── data/
-│   ├── default.json   # výchozí šablona týdne
-│   ├── plan.json       # uložený plán (vzniká po prvním uložení, není v gitu)
-│   └── auth.json        # heslo změněné přes appku/reset (vzniká při změně, není v gitu)
+│   ├── default.json     # výchozí šablona týdne
+│   ├── plan.json        # uložený plán (vzniká po prvním uložení, není v gitu)
+│   ├── auth.json        # heslo změněné přes appku/reset (vzniká při změně, není v gitu)
+│   ├── profile.json     # výška/váha/jednotky + historie maxim (vzniká při prvním uložení, není v gitu)
+│   └── templates.json   # databáze šablon tréninků (doplníš později, není v gitu)
 ├── public/
 │   ├── index.html
 │   ├── style.css

@@ -67,6 +67,11 @@ header h1 {
   line-height: 1;
 }
 .btn-header-icon:hover { background: rgba(255,255,255,.28); }
+.btn-header-icon.active {
+  background: #fff;
+  color: #0b7c3f;
+  border-color: #fff;
+}
 
 /* ── Change-password modal ───────────────────────────────────────────────── */
 
@@ -322,6 +327,36 @@ header h1 {
 .viewer-set-lines { color: #1c2733; }
 .viewer-set-line { line-height: 1.6; }
 .viewer-set-empty { color: #aab2bc; }
+
+/* Nicer, distinctly-colored separation of sets / reps / weight than one
+   plain run of text — each part is its own small pill. */
+.viewer-set-line-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: .92em;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.chip-sets   { background: #eef5fc; color: #2f6fb0; }
+.chip-reps   { background: #f5eefc; color: #7a4fb0; }
+.chip-weight { background: #eaf6ee; color: #0b7c3f; font-weight: 700; }
+.chip-empty  { background: #f0f1f3; color: #aab2bc; font-weight: 400; }
+.set-sep { color: #aab2bc; font-weight: 700; font-size: .9em; }
+
+/* Realita re-uses the same chip layout, tinted red to keep its own identity. */
+.viewer-line-actual .chip-sets,
+.viewer-line-actual .chip-reps,
+.viewer-line-actual .chip-weight {
+  background: #fdeeec;
+  color: #c0392b;
+}
 
 /* Odškrtnutí odcvičené série — jen vizuální, nikam se neukládá, resetne se
    při přechodu na jiný den nebo obnovení stránky. */
@@ -830,6 +865,23 @@ header h1 {
   margin-bottom: 4px;
 }
 
+/* Small column-header row above each stack of set-lines, so "Série / Opakování
+   / Váha" only has to be spelled out once instead of on every single row. */
+.set-lines-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr auto;
+  gap: 8px;
+  padding: 0 2px;
+  margin-bottom: 2px;
+}
+.set-lines-header span {
+  font-size: .72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: #9aa4af;
+}
+
 .set-lines {
   display: grid;
   gap: 6px;
@@ -854,6 +906,42 @@ header h1 {
   border-color: #0b7c3f;
   box-shadow: 0 0 0 3px rgba(11,124,63,.12);
 }
+
+/* Auto unit badge (kg/lb) shown inside the weight field, driven by the
+   profile's unit setting — only visible while the field holds a plain
+   number, so it doesn't collide with free text like "prázdná osa". */
+.weight-input-wrap { position: relative; display: block; }
+.weight-input-wrap input { padding-right: 32px; }
+.weight-unit-badge {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: .78em;
+  font-weight: 700;
+  color: #9aa4af;
+  pointer-events: none;
+}
+
+.plan-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-fill-from-max {
+  background: none;
+  border: 1.5px dashed #c99a00;
+  color: #9a6b00;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: .82em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-fill-from-max:hover { background: #fff8e6; }
 
 .btn-remove-line {
   background: #fff0f0;
@@ -967,6 +1055,150 @@ header h1 {
   transform: translateX(-50%) translateY(0);
 }
 
+/* ── Profil, historie maxim, šablony ─────────────────────────────────────── */
+
+#profile {
+  max-width: 720px;
+  margin: 14px auto 40px;
+  padding: 0 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.profile-card {
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+}
+.profile-card h2 {
+  margin: 0 0 12px;
+  color: #0b7c3f;
+  font-size: 1.1em;
+}
+.profile-hint {
+  color: #7c8794;
+  font-size: .88em;
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.profile-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+.profile-fields .field label,
+.max-add-form label {
+  display: block;
+  font-size: .82em;
+  font-weight: 700;
+  color: #567;
+  margin-bottom: 5px;
+}
+.profile-fields input,
+.profile-fields select,
+.max-add-form input {
+  width: 100%;
+  border: 1.5px solid #dde5ef;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 1em;
+  font-family: inherit;
+  background: #fff;
+}
+.profile-fields input:focus,
+.profile-fields select:focus,
+.max-add-form input:focus {
+  outline: none;
+  border-color: #0b7c3f;
+  box-shadow: 0 0 0 3px rgba(11,124,63,.12);
+}
+
+.max-add-form {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.4fr auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 16px;
+}
+.max-add-form .btn-add { white-space: nowrap; }
+
+.max-group {
+  border-top: 1.5px solid #eef2f6;
+  padding: 12px 0;
+}
+.max-group:first-child { border-top: none; padding-top: 0; }
+
+.max-group-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.max-group-name {
+  font-weight: 700;
+  font-size: 1.02em;
+  color: #1c2733;
+}
+.max-group-latest {
+  font-weight: 700;
+  font-size: 1.1em;
+  color: #0b7c3f;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.max-trend {
+  font-size: .68em;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.max-trend.up { background: #eaf6ee; color: #0b7c3f; }
+.max-trend.down { background: #fdeeec; color: #c0392b; }
+
+.btn-toggle-history {
+  background: none;
+  border: none;
+  color: #2f6fb0;
+  font-size: .82em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.btn-toggle-history:hover { text-decoration: underline; }
+
+.max-history {
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
+  padding-left: 4px;
+}
+.max-entry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .9em;
+  color: #567;
+}
+.max-entry-date { min-width: 90px; color: #aab2bc; }
+.max-entry-weight { font-weight: 700; color: #1c2733; min-width: 60px; }
+.max-entry-note { flex: 1; font-style: italic; color: #7c8794; }
+
+.template-card {
+  border: 1.5px solid #dde5ef;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.template-card:last-child { margin-bottom: 0; }
+.template-name { font-weight: 700; color: #1c2733; margin-bottom: 4px; }
+.template-desc { color: #7c8794; font-size: .9em; margin-bottom: 10px; }
+
 /* ── Mobile (phones, e.g. Samsung S24 ~412px wide) ──────────────────────────
    Goal: comfortable one-thumb data entry — full-width text fields that don't
    need horizontal scrolling, ≥44px tap targets, and no controls that stretch
@@ -978,8 +1210,8 @@ header h1 {
   header h1 { font-size: 1.15em; }
   .btn-main { padding: 11px 18px; font-size: .95em; }
 
-  #mode-bar { padding: 0 10px; margin-top: 12px; }
-  .mode-btn { padding: 12px 10px; font-size: .88em; }
+  #mode-bar { padding: 0 10px; margin-top: 12px; flex-wrap: wrap; }
+  .mode-btn { padding: 12px 10px; font-size: .88em; flex: 1 1 calc(50% - 4px); }
 
   #viewer { padding: 0 10px; margin: 12px auto 28px; }
   #viewer-picker { padding: 12px; gap: 8px; }
@@ -1060,6 +1292,10 @@ header h1 {
     font-size: 1.05em;
   }
 
+  /* Column-header labels only make sense with the desktop grid layout —
+     mobile falls back to descriptive placeholders instead. */
+  .set-lines-header { display: none; }
+
   /* Each set-line: sets+reps paired, weight next to a fixed-size delete
      button (not a full-width stretched bar). */
   .set-line {
@@ -1070,7 +1306,7 @@ header h1 {
   .set-line input { font-size: 1em; padding: 10px 10px; min-width: 0; }
   .set-line .line-sets,
   .set-line .line-reps { flex: 1 1 calc(50% - 4px); }
-  .set-line .line-weight { flex: 1 1 0; }
+  .set-line .weight-input-wrap { flex: 1 1 0; min-width: 0; }
   .btn-remove-line {
     flex: 0 0 40px;
     width: 40px;
@@ -1078,6 +1314,9 @@ header h1 {
     font-size: 1.05em;
   }
   .btn-add-line { width: 100%; padding: 10px 14px; }
+  .plan-actions { flex-direction: column; }
+  .plan-actions .btn-add-line,
+  .plan-actions .btn-fill-from-max { width: 100%; padding: 10px 14px; }
 
   .exercise-actual { padding: 10px 12px; }
   .actual-fields {
@@ -1088,7 +1327,7 @@ header h1 {
   .actual-label { flex: 1 1 100%; }
   .actual-fields .ex-actual-sets,
   .actual-fields .ex-actual-reps { flex: 1 1 calc(50% - 4px); min-width: 0; }
-  .actual-fields .ex-actual-weight { flex: 1 1 0; min-width: 0; }
+  .actual-fields .weight-input-wrap { flex: 1 1 0; min-width: 0; }
   .exercise-actual input { font-size: 1em; padding: 10px 10px; }
   .btn-clear-actual {
     flex: 0 0 44px;
@@ -1096,4 +1335,15 @@ header h1 {
     height: 44px;
     font-size: 1.1em;
   }
+
+  #profile { padding: 0 10px; margin: 12px auto 28px; gap: 12px; }
+  .profile-card { padding: 14px; }
+  .profile-fields { grid-template-columns: 1fr; }
+  .max-add-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  #max-exercise, #max-note { grid-column: 1 / -1; }
+  .max-add-form .btn-add { grid-column: 1 / -1; width: 100%; padding: 12px 14px; }
+  .max-add-form input { padding: 10px 12px; font-size: 1em; }
+  .max-entry { flex-wrap: wrap; }
 }
