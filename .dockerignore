@@ -8,6 +8,9 @@ node_modules
 data/plan.json
 data/auth.json
 data/profile.json
+data/users.json
+data/plan-*.json
+data/profile-*.json
 data/*backup*
 # data/templates.json NENÍ vyloučen — dodává se s appkou stejně jako
 # data/default.json (obecné protokoly, ne osobní data).

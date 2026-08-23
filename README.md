@@ -25,11 +25,29 @@ Celá appka je za přihlášením – bez přihlášení tě server přesměruje
 
 ⚠️ **Tohle jsou dočasné výchozí hodnoty – změň si je hned po prvním přihlášení** (viz níže). Nejsou nikde jinde v repozitáři utajené, takže dokud je nezměníš, kdokoliv se čtením tohohle README se může přihlásit.
 
-**Změna hesla** (když ho znáš a chceš jiné) – po přihlášení klikni v hlavičce appky na 🔑, zadej současné a nové heslo.
+**Změna hesla** (když ho znáš a chceš jiné) – po přihlášení klikni v hlavičce appky na **Heslo**, zadej současné a nové heslo. Funguje pro každého přihlášeného, na svůj vlastní účet.
 
-**Zapomenuté heslo** – na přihlašovací stránce klikni na "🔑 Zapomenuté heslo?" a zadej **záchranný kód** (ne heslo!) – ten slouží jen k tomuto účelu a měl by být uložený jinde než v tomto souboru (např. u tebe v poznámkách, ne v gitu). Po zadání kódu si nastavíš nové heslo.
+**Zapomenuté heslo** jde změnit dvěma způsoby, oba přes stejný **záchranný kód** (společný pro všechny účty, ne totéž co heslo):
+- **Před přihlášením** – na přihlašovací stránce klikni na "🔑 Zapomenuté heslo?", zadej uživatelské jméno a záchranný kód.
+- **Po přihlášení, pro sebe** – v **Profilu** dole je karta "Zapomenuté heslo (změna záchranným kódem)" – zadáš tam jen kód a nové heslo (jméno se doplní samo, vždy jde jen o tvůj vlastní účet).
 
-Přihlašovací jméno, heslo i záchranný kód jdou přepsat proměnnými prostředí `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_RESET_CODE` (viz sekce Docker níže) – to je nejlepší způsob, jak výchozí hodnoty změnit natrvalo v produkci, aniž bys je musela pamatovat jako "změněné heslo v appce" (byť obojí funguje zároveň – heslo změněné přes appku/reset kód má vždy přednost před `ADMIN_PASSWORD`, dokud se neodstraní `data/auth.json`).
+Záchranný kód by měl být uložený jinde než v tomhle souboru (např. u tebe v poznámkách, ne v gitu).
+
+Přihlašovací jméno hlavního účtu, jeho heslo i záchranný kód jdou přepsat proměnnými prostředí `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_RESET_CODE` (viz sekce Docker níže) – to je nejlepší způsob, jak výchozí hodnoty změnit natrvalo v produkci, aniž bys je musela pamatovat jako "změněné heslo v appce" (byť obojí funguje zároveň – heslo změněné přes appku/reset kód má vždy přednost před `ADMIN_PASSWORD`, dokud se neodstraní `data/users.json`).
+
+## Víc uživatelů (samostatné účty)
+
+Appka umí víc než jeden účet – hodí se, když ji chce používat i někdo další (partner/ka, kamarád/ka). Každý účet má **vlastní trénink i profil** (samostatná data, jeden druhého nevidí ani nepřepíše), ale **stejné šablony a doplňky** (ty jsou sdílené pro všechny, viz [Profil, maximální váhy a šablony tréninků](#profil-maximální-váhy-a-šablony-tréninků)) – takže nový člověk má hned po založení účtu k dispozici všech 9 šablon stejně jako ty.
+
+**Přístup je jednosměrný – jen hlavní účet vidí a spravuje ostatní.** Tlačítko **Uživatelé** v hlavičce se zobrazí jen tobě (hlavnímu účtu); ostatní uživatelé ho vůbec nevidí a o sobě navzájem nevědí – neuvidí seznam jmen, nemůžou založit další účet ani sáhnout na cizí heslo (appka to hlídá i na serveru, ne jen schováním tlačítka).
+
+**Založení nového účtu** – po přihlášení klikni v hlavičce na **Uživatelé**, vyplň nové uživatelské jméno (jen písmena bez diakritiky, čísla, tečka, pomlčka, podtržítko) a heslo. Účet je hned aktivní, nový člověk se s ním může rovnou přihlásit na `/login`. Odsud appku i nasdílíš – stačí poslat adresu (`http://<tvoje-IP-nebo-doména>:3100`) a přihlašovací údaje, které jsi právě založila.
+
+Ve stejném okně vidíš i seznam existujících účtů (hlavní účet má štítek "Hlavní účet") a u každého tlačítko **nastavit heslo** – jako hlavní účet můžeš **kdykoli nastavit nové heslo komukoli** (bez znalosti jeho současného), pro případ že si někdo zapomene heslo i záchranný kód. Kterýkoli uživatel navíc může sám měnit svoje vlastní heslo běžně (**Heslo** v hlavičce) i záchranným kódem (karta v **Profilu**, viz [Přihlášení](#přihlášení) výše) – nepotřebuje k tomu tebe.
+
+Appka zatím neumí účty mazat přes rozhraní – kdybys chtěla nějaký odebrat, napiš mi, uděláme to napřímo v `data/users.json` (a smažeme jeho `data/plan-<jméno>.json`/`data/profile-<jméno>.json`).
+
+Technicky: hlavní účet (ten, co appka měla odjakživa) dál používá stejné soubory jako dřív – `data/plan.json` a `data/profile.json` – takže upgrade na víc uživatelů nijak nenarušil existující data. Každý další účet dostane vlastní `data/plan-<jméno>.json` a `data/profile-<jméno>.json` (založí se automaticky při prvním uložení). Všechny tyhle soubory jsou gitignored stejně jako dřív – žádná osobní data žádného účtu se necommitují.
 
 ## Dva režimy
 
@@ -40,7 +58,9 @@ Nahoře pod hlavičkou jsou dvě velká tlačítka:
 
 V režimu Úprava se **ukládá automaticky** – každá změna (psaní, přidání/smazání/přesun cviku...) se sama uloží ~1 sekundu po tom, co přestaneš psát/klikat. Vedle hlavičky vidíš stav ("Ukládání…" / "✓ Uloženo"). Tlačítko **Uložit plán** zůstává pro jistotu jako ruční záloha, ale běžně ho nepotřebuješ mačkat.
 
-Vedle těch dvou tlačítek je v hlavičce ještě ikonka **👤** – otevře **Profil a maxima** (výška/váha, jednotky, historie maximálních vah, šablony – viz níž). Není to třetí rovnocenný režim, spíš přehled/nastavení nad plánem: klikni na ikonku znovu (nebo přepni na Zobrazit/Upravit) a vrátíš se tam, kde jsi skončil/a.
+Vedle těch dvou tlačítek je v hlavičce ještě tlačítko **Profil** – otevře **Profil a maxima** (výška/váha, jednotky, historie maximálních vah, šablony – viz níž). Není to třetí rovnocenný režim, spíš přehled/nastavení nad plánem: klikni na tlačítko znovu (nebo přepni na Zobrazit/Upravit) a vrátíš se tam, kde jsi skončil/a.
+
+Tlačítko **Uživatelé** vedle něj otevře správu uživatelů – viz [Víc uživatelů](#víc-uživatelů-samostatné-účty) výš (vidí ho jen hlavní účet). Poslední dvě tlačítka jsou **Heslo** (změna vlastního hesla) a **Odhlásit**.
 
 ## Jak to funguje (režim Úprava)
 
@@ -59,8 +79,8 @@ Struktura je čtyřúrovňová: **cyklus → týden → den → sekce → cvik**
   - Tlačítkem **🔗** (vedle jména cviku) spojíš cvik s **dalším cvikem pod ním** do superserie – oba se pak vizuálně spojí do jednoho přerušovaného rámečku, v Úpravě i v Zobrazení, ať je jasné, že jdou hned za sebou.
   - Každý cvik má tři skupiny pod sebou, ve stejném pořadí v editoru i v Zobrazení:
     1. **Rozcvička** – volitelný seznam rozcvičovacích sérií pro tenhle konkrétní cvik. Nad seznamem je malý popisek sloupců (Série / Opakování / Váha), pod ním pak vlastní řádky – jde tak zapsat celý rozcvičovací žebřík (např. `1×20×20 kg`, `1×15×30 kg`, `1×10×40 kg`, `1×8×50 kg`) tlačítkem `+ Přidat sérii rozcvičky`, aniž by se cvik musel opakovat. Pokud u cviku není žádná vyplněná, v Zobrazení se vůbec nezobrazuje.
-    2. **Plán** – stejným způsobem seznam pracovních sérií (`+ Přidat sérii`), např. tři řádky `1×5×60 kg` pro tři pracovní série s různou váhou/opakováním, pokud se liší. Rozcvička i Plán vypadají stejně (žádná ikonka, žádné barevné odlišení) – pozná se to jen podle nadpisu. **Opakování** je teď volný text, ne jen číslo – klidně `8–10`, `30 s` nebo `AMRAP`, ne všude jde napsat pevné číslo. Do pole váhy stačí napsat číslo – jednotka (kg/lb podle Profilu, viz níž) se k němu automaticky přidá jako značka v poli, není potřeba ji psát ručně; u volného textu (rozsahy, "prázdná osa" apod.) se značka schová, aby se s textem nepletla. Vedle `+ Přidat sérii` je i tlačítko **⚡ Doplnit z maxima** – viz sekce Profil a maxima níž.
-    3. **Realita** – zadává a upravuje se výhradně v režimu Úprava (série, opakování, skutečná váha a poznámka, např. "cítila jsem se silná, přidala jsem váhu i opakování"), aniž by se přepsal plán. V Zobrazení je vidět jen jako prostý červený text pod Plánem – a jen tehdy, když je něco vyplněné; jinak se nezobrazuje vůbec. Tlačítko `✕` u realitního řádku v editoru vše vymaže.
+    2. **Plán** – stejným způsobem seznam pracovních sérií (`+ Přidat sérii`), např. tři řádky `1×5×60 kg` pro tři pracovní série s různou váhou/opakováním, pokud se liší. Rozcvička i Plán vypadají stejně (žádná ikonka, žádné barevné odlišení) – pozná se to jen podle nadpisu. **Opakování** je teď volný text, ne jen číslo – klidně `8–10`, `30 s` nebo `AMRAP`, ne všude jde napsat pevné číslo. Do pole váhy stačí napsat číslo – jednotka (kg/lb podle Profilu, viz níž) se k němu automaticky přidá jako značka v poli, není potřeba ji psát ručně; u volného textu (rozsahy, "prázdná osa" apod.) se značka schová, aby se s textem nepletla. Vedle `+ Přidat sérii` je i tlačítko **⚡ Doplnit z maxima** – viz sekce Profil a maxima níž. Pod sériemi je ještě volitelná **poznámka k plánu** (v šedomodrém rámečku, kurzívou), na cíl/techniku/RIR apod. (např. "Cíl 75–80 % 1RM, RIR 2–3") – v Zobrazení se ukáže rovnou pod Plánem, ne pod Realitou (je to komentář k tomu, co *máš* dělat, ne k tomu, co se doopravdy stalo).
+    3. **Realita** – zadává a upravuje se výhradně v režimu Úprava (série, opakování, skutečná váha a **poznámka k realitě**, např. "cítila jsem se silná, přidala jsem váhu i opakování"), aniž by se přepsal plán. Má vlastní pole odděleně od poznámky k plánu výš – ať nejde splést, co je cíl/instrukce a co skutečný zápis po tréninku. V Zobrazení je vidět jen jako prostý červený text pod Plánem (a pod poznámkou k plánu, pokud tam nějaká je) – a jen tehdy, když je něco vyplněné; jinak se nezobrazuje vůbec. Tlačítko `✕` u realitního řádku v editoru vše vymaže (poznámku k plánu nechá být, ta se maže zvlášť).
   - V **Zobrazení** je série/opakování/váha každého řádku vidět jako tři barevně odlišené "pilulky" (ne jeden splihlý text spojený tečkami), takže je na první pohled jasné, co je co. Každá série (Rozcvička i Plán) má navíc checkbox – odškrtneš ji, jakmile ji odcvičíš, a hned vidíš, kolik sérií máš za sebou a která je další na řadě. Odškrtávání je jen vizuální (nikam se neukládá) a resetne se při přechodu na jiný den nebo obnovení stránky.
 - Mazání dne/sekce, které už obsahují vyplněné údaje, se ptá na potvrzení; prázdné (právě přidané a nevyplněné) jde smazat rovnou.
 - Tlačítko **Uložit plán** odešle aktuální stav (všechny cykly, týdny, dny, sekce i cviky) na server, který ho uloží do `data/plan.json`.
@@ -68,7 +88,7 @@ Struktura je čtyřúrovňová: **cyklus → týden → den → sekce → cvik**
 
 ## Profil, maximální váhy a šablony tréninků
 
-Otevře se ikonkou **👤** v hlavičce. Tři karty:
+Otevře se tlačítkem **Profil** v hlavičce. Karty:
 
 - **Základní údaje** – výška, váha, **jednotky vah** (kg / lb), **tréninková zkušenost** (začátečník / středně pokročilý / pokročilý) a **tréninkové dny v týdnu**. Jednotka se hned projeví u váhové značky ve všech polích (editor i tady) – nejde o přepočet starých čísel, jen o to, jaká jednotka se od teď automaticky nabízí. Zkušenost a dny v týdnu se nikam jinam nepromítají než do doporučení u šablon níž (žádné pole není povinné).
 - **Maximální váhy** – u každého cviku (dřep, bench, mrtvý tah...) si zapíšeš aktuální maximum. Není to jedno přepisované číslo – každý zápis zůstává v **historii**, takže je u cviku vidět poslední hodnota, trend oproti minulému záznamu (▲/▼) a po rozkliknutí "Historie (N)" celý vývoj v čase i s daty a poznámkami. Jednotlivé záznamy jde smazat tlačítkem ✕.
@@ -99,13 +119,13 @@ Otevře se ikonkou **👤** v hlavičce. Tři karty:
   - Princip nováčkovské lineární progrese (Starting Strength / novice linear progression literatura).
   - Bill Starr, *The Strongest Shall Survive* — systém Heavy/Light/Medium.
   - Jim Wendler, *5/3/1: The Simplest and Most Effective Training System for Raw Strength* — princip sdílí (nižší frekvence hlavního cviku, vysoká specifičnost) i s pokročilejšími powerliftingovými metodami jako Sheikův systém nebo Westside Barbell / conjugate metoda, které appka samostatně neimplementuje (jsou hodně specifické na výběr cvičebních variací a vybavení), ale stojí za zmínku, pokud bys chtěla jít touhle cestou dál.
-  - Push/Pull/Legs a Bloková periodizace (akumulace → transmutace → realizace → deload, s délkami fází a chybami, kterým se vyhnout) vycházejí z **Perplexity Deep Research** reportu *"najdi v literatuře a oficiálních zdrojích všechny silové tréninky, co existují"* (2026) — viz sekce [Teorie: jak se sestavuje trénink](#teorie-jak-se-sestavuje-trénink-shrnutí-z-literatury) níž, kde je report podrobněji odcitovaný i s jeho vlastními primárními zdroji (WHO, ACSM 2026, NSCA, PubMed meta-analýzy).
+  - Push/Pull/Legs a Bloková periodizace (akumulace → transmutace → realizace → deload, s délkami fází a chybami, kterým se vyhnout) vycházejí z **Perplexity Deep Research** reportu *"najdi v literatuře a oficiálních zdrojích všechny silové tréninky, co existují"* (2026) — konkrétní primární zdroje, ze kterých report v těchto pasážích čerpal, jsou vypsané přímo u obou šablon v `data/templates.json` (pole `source`): přehled konceptu blokové periodizace ([PMC4637911](https://pmc.ncbi.nlm.nih.gov/articles/PMC4637911/)), NSCA JSCR 2021 [Periodization and Block Periodization in Sports](https://journals.lww.com/nsca-jscr/Fulltext/2021/08000/Periodization_and_Block_Periodization_in_Sports_.39.aspx), srovnání blokové vs. lineární/vlnité periodizace ([PubMed 25807030](https://pubmed.ncbi.nlm.nih.gov/25807030/), [PubMed 35044672](https://pubmed.ncbi.nlm.nih.gov/35044672/)), vliv objemu a blízkosti selhání na hypertrofii nezávisle na modelu periodizace ([PMC7068252](https://pmc.ncbi.nlm.nih.gov/articles/PMC7068252/), [PMC10818109](https://pmc.ncbi.nlm.nih.gov/articles/PMC10818109/)) a frekvence 2×/týden na sval pro PPL ([Frontiers 2022](https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2022.949021/full)) — viz i sekce [Teorie: jak se sestavuje trénink](#teorie-jak-se-sestavuje-trénink-shrnutí-z-literatury) níž pro širší kontext (WHO, ACSM 2026, NSCA, PubMed meta-analýzy).
 
-  **Doplňky a pořadí cviků:** u všech 7 šablon platí, že hlavní (víceklubové) cviky jsou vždy před doplňky — v souladu s obecným doporučením NSCA řadit velké svalové skupiny/víceklubové cviky před malé svalové skupiny/jednoklubové cviky, dokud jsi ještě čerstvá a formu nezačíná kazit únava. Doplňky navíc běží **celým pracovním blokem** (ne jen první týden) a taktně mizí jen na deload/testovacím týdnu, kdy má mít přednost zotavení nebo čistý test hlavního cviku.
+  **Doplňky a pořadí cviků:** u všech 9 šablon platí, že hlavní (víceklubové) cviky jsou vždy před doplňky — v souladu s obecným doporučením NSCA řadit velké svalové skupiny/víceklubové cviky před malé svalové skupiny/jednoklubové cviky, dokud jsi ještě čerstvá a formu nezačíná kazit únava. Doplňky navíc běží **celým pracovním blokem** (ne jen první týden) a taktně mizí jen na deload/testovacím týdnu, kdy má mít přednost zotavení nebo čistý test hlavního cviku.
 
   U šablony Wendler 5/3/1 doplňky odpovídají tomu, co popisuje Wendlerova vlastní kniha — tlak/tah/core po každém hlavním cviku (dřív appka měla chybně pojmenovanou i jinak sestavenou sekci "Boring But Big", což je ve skutečnosti jiná, pokročilejší varianta assistance práce — opraveno). Protože ale 3 ze 4 hlavních cviků v 5/3/1 (dřep, bench, OHP) jsou tlakové a jen mrtvý tah je tahový, dny s tlakovým hlavním cvikem mají v doplňcích místo dalšího tlaku druhý tahový cvik — vychází to z doporučovaného poměru **cca 1:2 tlak:tah** pro zdraví ramen (nerovnováha zvyšuje riziko impingement syndromu). Zároveň byl počet sérií u doplňků snížen z původních 5 na 3 (dřív šlo o víc, než je u vedlejších cviků k hlavnímu tréninku obvyklé — 5 sérií je sice jedna z variant, kterou Wendler sám zmiňuje, ale při týdenní kumulaci přes víc dnů to snadno přeroste do zbytečně vysokého objemu).
 
-  **Délka cyklu (kolik má mít týdnů):** mesocykly (ucelené tréninkové bloky) běžně trvají **3–6 týdnů**, přičemž poslední týden bloku bývá deload. Všech 7 šablon (4–5 týdnů, s deloadem na konci u těch, které ho mají mít) do tohohle rozmezí spadá — ověřeno, žádná neměla špatnou délku. Šablona Nováček deload záměrně nemá (u čisté nováčkovské progrese se dokud funguje, prostě pokračuje) a Wendler 5/3/1 má přesně 4 týdny, protože to je i v originále pevná délka jedné "vlny".
+  **Délka cyklu (kolik má mít týdnů):** mesocykly (ucelené tréninkové bloky) běžně trvají **3–6 týdnů**, přičemž poslední týden bloku bývá deload. 8 z 9 šablon (4–5 týdnů, s deloadem na konci u těch, které ho mají mít) do tohohle rozmezí spadá přímo — ověřeno, žádná neměla špatnou délku. Šablona Nováček deload záměrně nemá (u čisté nováčkovské progrese se dokud funguje, prostě pokračuje) a Wendler 5/3/1 má přesně 4 týdny, protože to je i v originále pevná délka jedné "vlny". Jediná výjimka je **Bloková periodizace** (9 týdnů) — ta je záměrně navazující sled kratších fází (Akumulace/Transmutace/Realizace/Deload), z nichž každá spadá do 3–6týdenního rozmezí zvlášť.
 
   **Rozdíly mezi ženami a muži:** aktuální evidence (např. [Frontiers 2023, systematické review](https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2023.1054542/full)) **nepodporuje**, že by se přístup k sílovému tréninku měl mezi ženami a muži zásadně lišit, ani že by šlo trénink smysluplně plánovat podle fáze menstruačního cyklu — důkazy pro to jsou zatím nedostatečné a nekonzistentní. Reálné rozdíly, které se v datech objevují, jsou spíš v míře adaptace než v tom, *jak* trénovat: ženy v průměru získávají větší **relativní** sílu dolní poloviny těla a výraznější zlepšení svalové vytrvalosti (hlavně v pozdější fázi programu), muži v průměru víc **absolutní** síly, velikosti svalů a výbušnosti. Proto appka nemá zvlášť "dámskou" a "pánskou" šablonu — stejné principy (progresivní přetížení, dostatečný objem, blízkost k selhání) fungují pro obě pohlaví, liší se jen výchozí čísla (tvoje vlastní maxima v Profilu).
 
@@ -171,7 +191,7 @@ Export i import jsou tedy vzájemné – co aplikace vyexportuje, to i sama zpá
 Jeden CSV soubor nese tři druhy řádků, rozlišené prvním sloupcem **Typ**:
 - `PROFIL` – jeden řádek se základními údaji (výška, váha, jednotky, zkušenost, dny v týdnu).
 - `MAXIMUM` – jeden řádek na každý zapsaný záznam historie maxim.
-- `PLAN` – řádky s tréninkem samotným; každý odpovídá jedné sérii (rozcvička nebo plán) a nese s sebou celý "rodokmen" (Cyklus/Tyden/Den/Sekce/Cvik) jako sloupce – prázdné dny/sekce/cviky beze všech sérií dostanou vlastní řádek jen s vyplněným rodokmenem, ať se při zpětném importu neztratí.
+- `PLAN` – řádky s tréninkem samotným; každý odpovídá jedné sérii (rozcvička nebo plán) a nese s sebou celý "rodokmen" (Cyklus/Tyden/Den/Sekce/Cvik) jako sloupce, plus `Poznamka_planu` (poznámka k plánu – cíl/RIR/technika) a `Realita_poznamka` (poznámka k realitě – jak to doopravdy šlo), pěkně oddělené sloupce, ať se nepletou. Prázdné dny/sekce/cviky beze všech sérií dostanou vlastní řádek jen s vyplněným rodokmenem, ať se při zpětném importu neztratí.
 
 Starší export bez sloupce Typ (z appky před touhle úpravou) se při importu bere jako čistě `PLAN` (bez profilu), takže funguje i zpětně. Jediné omezení: pokud je ve stejné sekci **dvakrát za sebou cvik se stejným názvem**, import je sloučí do jednoho (v praxi se to skoro neděje).
 
@@ -237,11 +257,13 @@ Nejsilnější evidence podporuje **jednoduchý program s dostatečným objemem,
 ```
 training-plan/
 ├── data/
-│   ├── default.json     # výchozí šablona týdne
-│   ├── plan.json        # uložený plán (vzniká po prvním uložení, není v gitu)
-│   ├── auth.json        # heslo změněné přes appku/reset (vzniká při změně, není v gitu)
-│   ├── profile.json     # výška/váha/jednotky + historie maxim (vzniká při prvním uložení, není v gitu)
-│   ├── templates.json   # databáze šablon tréninků — 7 dodávaných protokolů, JE v gitu (viz sekce výše); vlastní šablony si sem můžeš přidat, jen zvaž gitignore
+│   ├── default.json     # výchozí šablona týdne (start pro nový účet bez uloženého plánu)
+│   ├── users.json       # seznam účtů (jméno/heslo/primary) — víc uživatelů, viz sekce výše; vzniká automaticky, není v gitu
+│   ├── plan.json        # uložený plán hlavního účtu (vzniká po prvním uložení, není v gitu)
+│   ├── profile.json     # profil hlavního účtu — výška/váha/jednotky + historie maxim (vzniká při prvním uložení, není v gitu)
+│   ├── plan-<jméno>.json, profile-<jméno>.json  # totéž pro každý další účet (vzniká při prvním uložení, není v gitu)
+│   ├── auth.json         # z appky před podporou víc uživatelů — čte se už jen jednou při prvním spuštění po upgradu (migrace hesla hlavního účtu do users.json), pak se nepoužívá
+│   ├── templates.json   # databáze šablon tréninků — 9 dodávaných protokolů, JE v gitu (viz sekce výše); vlastní šablony si sem můžeš přidat, jen zvaž gitignore
 │   └── accessory-variants.json  # nabídka doplňků (tlak/tah/nohy/zadní řetězec/core × vybavení), JE v gitu
 ├── public/
 │   ├── index.html
@@ -256,7 +278,7 @@ training-plan/
 
 ## Nasazení do produkce (Docker)
 
-Aplikace je bezstavová (celý stav je jen jeden JSON soubor na disku) a nemá žádné závislosti na externí databázi, takže Docker obraz je jednoduchý – `node:20-alpine` + Express.
+Aplikace je bezstavová (celý stav je pár JSON souborů na disku ve složce `data/`, žádná databáze) a nemá žádné závislosti na externí databázi, takže Docker obraz je jednoduchý – `node:20-alpine` + Express.
 
 ### Potřebné parametry pro nasazení (shrnutí)
 
@@ -304,21 +326,21 @@ docker run -d \
 | Proměnná | Výchozí | Význam |
 |---|---|---|
 | `PORT` | `3100` | Port, na kterém server poslouchá uvnitř kontejneru. Pokud ho měníš, uprav i `EXPOSE`/mapování portu. |
-| `ADMIN_USERNAME` | `trainer936499` | Přihlašovací jméno. |
-| `ADMIN_PASSWORD` | `SilaHubnuti-26x!` | Přihlašovací heslo – **změň před nasazením do produkce.** Pokud si heslo později změníš přes appku (🔑) nebo přes záchranný kód, uloží se do `data/auth.json` a od té chvíle má přednost před touhle proměnnou. |
-| `ADMIN_RESET_CODE` | `ObnovaHesla-9427-Trenink` | Záchranný kód pro obnovení zapomenutého hesla na `/login` → "Zapomenuté heslo?". **Změň ho na něco, co nikde jinde nepoužíváš** – kdokoliv tenhle kód zná, může nastavit nové přihlašovací heslo bez znalosti toho starého. |
+| `ADMIN_USERNAME` | `trainer936499` | Přihlašovací jméno **hlavního účtu** (další účty se zakládají přes appku, viz [Víc uživatelů](#víc-uživatelů-samostatné-účty)). |
+| `ADMIN_PASSWORD` | `SilaHubnuti-26x!` | Heslo hlavního účtu – **změň před nasazením do produkce.** Použije se jen při úplně prvním spuštění (založí `data/users.json`); po založení je zdrojem pravdy `data/users.json`, ne tahle proměnná. |
+| `ADMIN_RESET_CODE` | `ObnovaHesla-9427-Trenink` | Záchranný kód pro obnovení zapomenutého hesla na `/login` → "Zapomenuté heslo?" — funguje pro kterýkoli účet. **Změň ho na něco, co nikde jinde nepoužíváš** – kdokoliv tenhle kód zná, může nastavit nové přihlašovací heslo libovolnému účtu bez znalosti toho starého. |
 
 `docker-compose.yml` má tyhle proměnné už vyplněné (stejnými výchozími hodnotami) – v produkci je tam rovnou přepiš na vlastní.
 
 ### Zálohování dat
 
-Celý stav appky je jeden soubor, `data/plan.json`, přímo ve složce `data/` vedle `docker-compose.yml` (díky bind mountu). Zálohu uděláš úplně obyčejným zkopírováním, žádný Docker příkaz není potřeba:
+Celý stav appky je pár souborů přímo ve složce `data/` vedle `docker-compose.yml` (díky bind mountu) — `plan.json`/`profile.json` hlavního účtu, `plan-<jméno>.json`/`profile-<jméno>.json` každého dalšího účtu a `users.json` se seznamem účtů. Nejjednodušší záloha je celá složka najednou:
 
 ```bash
-cp data/plan.json data/plan-backup-$(date +%F).json
+cp -r data data-backup-$(date +%F)
 ```
 
-a obnovíš stejně opačným směrem (`cp data/plan-backup-XXXX-XX-XX.json data/plan.json`). (`data/*backup*` je v `.gitignore`/`.dockerignore`, takže si takhle pojmenované zálohy klidně nech přímo ve složce.)
+a obnovíš stejně opačným směrem. Zálohovat jde i jednotlivý soubor stejným způsobem jako dřív, např. `cp data/plan.json data/plan-backup-$(date +%F).json`. (`data/*backup*` je v `.gitignore`/`.dockerignore`, takže si takhle pojmenované zálohy klidně nech přímo ve složce.)
 
 ### Reverzní proxy a HTTPS
 

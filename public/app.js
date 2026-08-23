@@ -152,6 +152,7 @@ function normalizeExercise(ex) {
   ex.actualReps = String(ex.actualReps);
   if (ex.actualWeight === undefined) ex.actualWeight = '';
   if (ex.note === undefined) ex.note = '';
+  if (ex.planNote === undefined) ex.planNote = '';
   if (typeof ex.supersetWithNext !== 'boolean') ex.supersetWithNext = false;
   return ex;
 }
@@ -301,6 +302,7 @@ function makeItem(ex, itemsBox) {
 
   if (ex) {
     node.querySelector('.ex-name').value           = ex.name          || '';
+    node.querySelector('.ex-plan-note').value      = ex.planNote      || '';
     node.querySelector('.ex-actual-sets').value    = ex.actualSets    ?? '';
     node.querySelector('.ex-actual-reps').value    = ex.actualReps    || '';
     node.querySelector('.ex-actual-weight').value  = ex.actualWeight  || '';
@@ -433,7 +435,7 @@ function sectionHasContent(sectionNode) {
   return Array.from(sectionNode.querySelectorAll('.exercise-item')).some(exerciseItemHasContent);
 }
 function exerciseItemHasContent(item) {
-  if (['.ex-name', '.ex-actual-sets', '.ex-actual-reps', '.ex-actual-weight', '.ex-note']
+  if (['.ex-name', '.ex-plan-note', '.ex-actual-sets', '.ex-actual-reps', '.ex-actual-weight', '.ex-note']
     .some(sel => item.querySelector(sel).value.trim())) return true;
   if (readSetLines(item.querySelector('.warmup-lines')).length) return true;
   if (readSetLines(item.querySelector('.plan-lines')).length) return true;
@@ -483,16 +485,18 @@ function readExerciseItem(item) {
   const exName            = item.querySelector('.ex-name').value.trim();
   const warmup            = readSetLines(item.querySelector('.warmup-lines'));
   const plan_             = readSetLines(item.querySelector('.plan-lines'));
+  const planNote          = item.querySelector('.ex-plan-note').value.trim();
   const actualSets        = item.querySelector('.ex-actual-sets').value;
   const actualReps        = item.querySelector('.ex-actual-reps').value.trim();
   const actualWeight      = item.querySelector('.ex-actual-weight').value.trim();
   const note              = item.querySelector('.ex-note').value.trim();
   const supersetWithNext  = item.querySelector('.btn-superset-toggle').classList.contains('active');
-  if (!exName && !warmup.length && !plan_.length && !actualSets && !actualReps && !actualWeight && !note) return null;
+  if (!exName && !warmup.length && !plan_.length && !planNote && !actualSets && !actualReps && !actualWeight && !note) return null;
   return {
     name: exName,
     warmup,
     plan: plan_,
+    planNote,
     actualSets: actualSets === '' ? null : Number(actualSets),
     actualReps,
     actualWeight,
@@ -628,7 +632,7 @@ function showToast(msg) {
 const CSV_DELIM = ';';
 const CSV_COLUMNS = [
   'Typ',
-  'Cyklus', 'Tyden', 'Den', 'Den_poznamka', 'Sekce', 'Cvik', 'Superserie', 'Typ_serie',
+  'Cyklus', 'Tyden', 'Den', 'Den_poznamka', 'Sekce', 'Cvik', 'Poznamka_planu', 'Superserie', 'Typ_serie',
   'Serie', 'Opakovani', 'Vaha', 'Realita_serie', 'Realita_opakovani', 'Realita_vaha', 'Realita_poznamka',
   'Profil_vyska_cm', 'Profil_vaha', 'Profil_jednotky', 'Profil_zkusenost', 'Profil_dny_tydne',
   'Max_cvik', 'Max_vaha', 'Max_datum', 'Max_poznamka'
@@ -697,7 +701,7 @@ function planToCsvRows() {
               Realita_serie: ex.actualSets ?? '', Realita_opakovani: ex.actualReps || '',
               Realita_vaha: ex.actualWeight || '', Realita_poznamka: ex.note || ''
             };
-            const exBase = Object.assign({ Sekce: s, Cvik: ex.name || '', Superserie: superset }, base, realita);
+            const exBase = Object.assign({ Sekce: s, Cvik: ex.name || '', Poznamka_planu: ex.planNote || '', Superserie: superset }, base, realita);
             const lines = [
               ...(ex.warmup || []).map(l => Object.assign({}, l, { typ: 'rozcvicka' })),
               ...(ex.plan    || []).map(l => Object.assign({}, l, { typ: 'plan' }))
@@ -837,12 +841,28 @@ function csvRowsToPlanAndProfile(rows) {
       curWeek = curDay = curSection = curExercise = null;
     }
     if (!curWeek || w !== last.w) {
+      // Řádek beze všeho pod úrovní týdne (Tyden i Den i Sekce i Cvik prázdné)
+      // je jen placeholder pro "cyklus bez týdnů" — nezakládat prázdný týden.
+      if (!w && !d && !s && !exName) {
+        curWeek = null;
+        last.w = w; last.d = null; last.s = null; last.ex = null;
+        curDay = curSection = curExercise = null;
+        continue;
+      }
       curWeek = { id: uid('w'), label: w, days: [] };
       curCycle.weeks.push(curWeek);
       last.w = w; last.d = null; last.s = null; last.ex = null;
       curDay = curSection = curExercise = null;
     }
     if (!curDay || d !== last.d) {
+      // Stejně tak řádek beze všeho pod úrovní dne je jen placeholder pro
+      // "týden bez dnů" — nezakládat prázdný den.
+      if (!d && !s && !exName) {
+        curDay = null;
+        last.d = d; last.s = null; last.ex = null;
+        curSection = curExercise = null;
+        continue;
+      }
       curDay = { id: uid('d'), name: d, focus: dFocus, sections: [] };
       curWeek.days.push(curDay);
       last.d = d; last.s = null; last.ex = null;
@@ -863,6 +883,7 @@ function csvRowsToPlanAndProfile(rows) {
         name: exName,
         warmup: [],
         plan: [],
+        planNote: get(r, 'Poznamka_planu'),
         actualSets: toNumOrNull(get(r, 'Realita_serie')),
         actualReps: get(r, 'Realita_opakovani'),
         actualWeight: get(r, 'Realita_vaha'),
@@ -1089,6 +1110,7 @@ function buildViewerExercise(ex) {
   // next — purely visual, not saved anywhere.
   if (ex.warmup && ex.warmup.length) card.appendChild(buildViewerSetGroup('Rozcvička', ex.warmup, true));
   card.appendChild(buildViewerSetGroup('Plán', ex.plan || [], true));
+  if (ex.planNote) card.appendChild(el('div', 'viewer-plan-note', ex.planNote));
 
   // Realita is entered only in Úprava; here it's plain read-only text, and
   // only appears at all once something's actually been logged.
@@ -1495,6 +1517,7 @@ function generateFromTemplate(template) {
           if (ex.actualReps === undefined) ex.actualReps = '';
           if (ex.actualWeight === undefined) ex.actualWeight = '';
           if (ex.note === undefined) ex.note = '';
+          if (ex.planNote === undefined) ex.planNote = '';
           if (typeof ex.supersetWithNext !== 'boolean') ex.supersetWithNext = false;
         });
       });
@@ -1650,6 +1673,149 @@ document.getElementById('cp-submit').addEventListener('click', async () => {
   }
 });
 
+// ── Uživatelé (přidání dalšího samostatného účtu) ────────────────────────────
+const usersOverlay = document.getElementById('users-overlay');
+const usersListEl  = document.getElementById('users-list');
+const nuUsername    = document.getElementById('nu-username');
+const nuPassword    = document.getElementById('nu-password');
+const nuPasswordConfirm = document.getElementById('nu-password-confirm');
+const nuMsg = document.getElementById('nu-msg');
+
+// Jméno pro `%c`-style bezpečné vložení do HTML (uživatelská jména smí mít
+// jen [a-zA-Z0-9_.-], ale radši nespoléhat a stejně escapovat).
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+async function loadUsersList() {
+  usersListEl.innerHTML = '<p class="profile-hint">Načítám…</p>';
+  try {
+    const res = await fetch('/api/users');
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    const j = await res.json();
+    usersListEl.innerHTML = '';
+    (j.users || []).forEach(u => {
+      const row = document.createElement('div');
+      row.className = 'user-row';
+      row.innerHTML = `
+        <div style="flex:1 1 100%">
+          <div class="user-row-actions">
+            <span>${escapeHtml(u.username)}</span>
+            ${u.primary ? '<span class="badge-primary">hlavní účet</span>' : ''}
+            <button type="button" class="btn-row-link" data-user="${escapeHtml(u.username)}">nastavit heslo</button>
+          </div>
+          <div class="user-pw-form" hidden>
+            <input type="password" placeholder="Nové heslo" class="upw-new">
+            <input type="password" placeholder="Nové heslo znovu" class="upw-confirm">
+            <button type="button" class="btn-add upw-submit">Uložit</button>
+          </div>
+        </div>`;
+      const link = row.querySelector('.btn-row-link');
+      const form = row.querySelector('.user-pw-form');
+      link.addEventListener('click', () => { form.hidden = !form.hidden; });
+      row.querySelector('.upw-submit').addEventListener('click', async () => {
+        const newPw = row.querySelector('.upw-new').value;
+        const confirmPw = row.querySelector('.upw-confirm').value;
+        if (!newPw || !confirmPw) { showToast('⚠️ Vyplňte obě pole hesla.'); return; }
+        if (newPw !== confirmPw) { showToast('⚠️ Hesla se neshodují.'); return; }
+        if (newPw.length < 4) { showToast('⚠️ Heslo musí mít alespoň 4 znaky.'); return; }
+        const r = await fetch(`/api/users/${encodeURIComponent(u.username)}/password`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ newPassword: newPw })
+        });
+        if (r.status === 401) { window.location.href = '/login'; return; }
+        const rj = await r.json();
+        if (rj.ok) { showToast(`✓ Heslo pro „${u.username}" změněno.`); form.hidden = true; }
+        else showToast('⚠️ ' + rj.error);
+      });
+      usersListEl.appendChild(row);
+    });
+  } catch (_) {
+    usersListEl.innerHTML = '<p class="profile-hint">Seznam se nepodařilo načíst.</p>';
+  }
+}
+
+function openUsersModal() {
+  nuUsername.value = ''; nuPassword.value = ''; nuPasswordConfirm.value = '';
+  nuMsg.textContent = ''; nuMsg.className = '';
+  usersOverlay.hidden = false;
+  loadUsersList();
+  nuUsername.focus();
+}
+function closeUsersModal() { usersOverlay.hidden = true; }
+
+document.getElementById('users-btn').addEventListener('click', openUsersModal);
+document.getElementById('nu-cancel').addEventListener('click', closeUsersModal);
+usersOverlay.addEventListener('click', e => { if (e.target === usersOverlay) closeUsersModal(); });
+
+document.getElementById('nu-submit').addEventListener('click', async () => {
+  const username = nuUsername.value.trim();
+  const pw = nuPassword.value;
+  const pwConfirm2 = nuPasswordConfirm.value;
+  if (!username || !pw || !pwConfirm2) { nuMsg.className = 'err'; nuMsg.textContent = 'Vyplňte všechna pole.'; return; }
+  if (pw !== pwConfirm2) { nuMsg.className = 'err'; nuMsg.textContent = 'Hesla se neshodují.'; return; }
+  if (pw.length < 4) { nuMsg.className = 'err'; nuMsg.textContent = 'Heslo musí mít alespoň 4 znaky.'; return; }
+
+  const res = await fetch('/api/users', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password: pw })
+  });
+  if (res.status === 401) { window.location.href = '/login'; return; }
+  const j = await res.json();
+  if (j.ok) {
+    nuMsg.className = 'ok'; nuMsg.textContent = `✓ Uživatel „${username}" vytvořen — může se rovnou přihlásit.`;
+    nuUsername.value = ''; nuPassword.value = ''; nuPasswordConfirm.value = '';
+    loadUsersList();
+  } else {
+    nuMsg.className = 'err'; nuMsg.textContent = '⚠️ ' + j.error;
+  }
+});
+
+// Tlačítko "Uživatelé" v hlavičce vidí jen hlavní účet — ostatní uživatelé
+// o sobě navzájem nevědí a nemůžou spravovat cizí hesla.
+let currentUser = null;
+async function loadWhoami() {
+  try {
+    const res = await fetch('/api/whoami');
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    currentUser = await res.json();
+    document.getElementById('users-btn').hidden = !currentUser.primary;
+  } catch (_) { /* nekritické — appka bez toho funguje dál, jen se ikonka nezobrazí */ }
+}
+
+// ── Zapomenuté heslo přímo v Profilu (změna záchranným kódem, bez znalosti
+// současného hesla) — funguje pro vlastní účet, ať jsi kdokoli přihlášený. ──
+const prCode = document.getElementById('pr-code');
+const prNew = document.getElementById('pr-new');
+const prNewConfirm = document.getElementById('pr-new-confirm');
+const prMsg = document.getElementById('pr-msg');
+
+document.getElementById('pr-submit').addEventListener('click', async () => {
+  const code = prCode.value;
+  const next = prNew.value;
+  const confirm2 = prNewConfirm.value;
+  prMsg.textContent = ''; prMsg.className = '';
+  if (!code || !next || !confirm2) { prMsg.className = 'err'; prMsg.textContent = 'Vyplňte všechna pole.'; return; }
+  if (next !== confirm2) { prMsg.className = 'err'; prMsg.textContent = 'Nová hesla se neshodují.'; return; }
+  if (next.length < 4) { prMsg.className = 'err'; prMsg.textContent = 'Heslo musí mít alespoň 4 znaky.'; return; }
+  if (!currentUser) { prMsg.className = 'err'; prMsg.textContent = 'Nepodařilo se zjistit přihlášeného uživatele, zkus obnovit stránku.'; return; }
+
+  const res = await fetch('/reset-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: currentUser.username, resetCode: code, newPassword: next })
+  });
+  const j = await res.json();
+  if (j.ok) {
+    prMsg.className = 'ok'; prMsg.textContent = '✓ Heslo bylo změněno.';
+    prCode.value = ''; prNew.value = ''; prNewConfirm.value = '';
+  } else {
+    prMsg.className = 'err'; prMsg.textContent = '⚠️ ' + j.error;
+  }
+});
+
+loadWhoami();
 loadPlan();
 loadProfile();
 loadTemplates();

@@ -9,6 +9,7 @@ const DATA_FILE      = path.join(__dirname, 'data', 'plan.json');
 const DEFAULT_FILE   = path.join(__dirname, 'data', 'default.json');
 const AUTH_FILE      = path.join(__dirname, 'data', 'auth.json');
 const PROFILE_FILE   = path.join(__dirname, 'data', 'profile.json');
+const USERS_FILE     = path.join(__dirname, 'data', 'users.json');
 const TEMPLATES_FILE = path.join(__dirname, 'data', 'templates.json');
 const ACCESSORY_VARIANTS_FILE = path.join(__dirname, 'data', 'accessory-variants.json');
 
@@ -16,25 +17,63 @@ const ADMIN_USERNAME     = process.env.ADMIN_USERNAME     || 'trainer936499';
 const ADMIN_PASSWORD_ENV = process.env.ADMIN_PASSWORD     || 'SilaHubnuti-26x!';
 const ADMIN_RESET_CODE   = process.env.ADMIN_RESET_CODE   || 'ObnovaHesla-9427-Trenink';
 
-function getPassword() {
-  try {
-    if (fs.existsSync(AUTH_FILE)) {
-      const a = JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8'));
-      if (a.password) return a.password;
-    }
-  } catch (_) {}
-  return ADMIN_PASSWORD_ENV;
-}
-
 // Ensure data folder exists
 const dataDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
+// ── Uživatelé (víc lidí, každý se svým samostatným tréninkem/profilem) ──────
+// data/users.json: pole { username, password, primary }. "primary" je ten
+// jediný uživatel, co appka měla odjakživa (a jeho data.plan.json/profile.json
+// zůstávají na svém původním místě, ať upgrade nic nerozbije) — kdokoli další
+// dostane vlastní soubory data/plan-<jméno>.json a data/profile-<jméno>.json.
+// Heslo je (stejně jako dřív v auth.json) prostý text — appka běží jen
+// lokálně/pro pár známých lidí, ne jako veřejná služba.
+function loadUsers() {
+  if (fs.existsSync(USERS_FILE)) {
+    try {
+      const list = JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
+      if (Array.isArray(list) && list.length) return list;
+    } catch (_) {}
+  }
+  // První spuštění po upgradu na víc uživatelů (nebo úplně první spuštění
+  // appky): založ jediného uživatele z ADMIN_USERNAME/ADMIN_PASSWORD, případně
+  // z dřívějšího data/auth.json, pokud si přes appku heslo už dřív změnila —
+  // ať přihlášení funguje beze změny i po tomhle upgradu.
+  let legacyPassword = ADMIN_PASSWORD_ENV;
+  try {
+    if (fs.existsSync(AUTH_FILE)) {
+      const a = JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8'));
+      if (a.password) legacyPassword = a.password;
+    }
+  } catch (_) {}
+  const users = [{ username: ADMIN_USERNAME, password: legacyPassword, primary: true }];
+  saveUsers(users);
+  return users;
+}
+function saveUsers(users) {
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf8');
+}
+function findUser(users, username) {
+  return users.find(u => u.username === username);
+}
+// Bezpečný název souboru odvozený z uživatelského jména (jen písmena/čísla/-/_).
+function safeUserFile(username) {
+  return String(username).replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+function planFileFor(username) {
+  const u = findUser(loadUsers(), username);
+  return (u && u.primary) ? DATA_FILE : path.join(dataDir, `plan-${safeUserFile(username)}.json`);
+}
+function profileFileFor(username) {
+  const u = findUser(loadUsers(), username);
+  return (u && u.primary) ? PROFILE_FILE : path.join(dataDir, `profile-${safeUserFile(username)}.json`);
+}
+
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true })); // the login <form> posts x-www-form-urlencoded
 
-// ── Simple session (in-memory token, resets on restart) ─────────────────────
-const sessions = new Set();
+// ── Simple session (in-memory token → username, resets on restart) ──────────
+const sessions = new Map();
 function parseCookies(req) {
   const out = {};
   (req.headers.cookie || '').split(';').forEach(c => {
@@ -47,7 +86,10 @@ function isAuthed(req) {
   return sessions.has(parseCookies(req).authToken);
 }
 function requireAuth(req, res, next) {
-  if (isAuthed(req)) return next();
+  if (isAuthed(req)) {
+    req.username = sessions.get(parseCookies(req).authToken);
+    return next();
+  }
   if (req.path.startsWith('/api/')) return res.status(401).json({ error: 'Nepřihlášen(a).' });
   return res.redirect('/login');
 }
@@ -109,6 +151,10 @@ app.get('/login', (req, res) => {
     <div class="reset-box">
       <div class="reset-title">📋 Zadejte záchranný kód</div>
       <div class="field">
+        <label>Uživatelské jméno</label>
+        <input type="text" id="ru" placeholder="Uživatelské jméno, kterému měníš heslo" autocomplete="username">
+      </div>
+      <div class="field">
         <label>Záchranný kód</label>
         <input type="password" id="rc" placeholder="Záchranný kód (viz zápisník / papír)">
         <div class="hint">Záchranný kód je uložen na bezpečném místě, není to stejné heslo jako přihlašovací.</div>
@@ -132,14 +178,15 @@ app.get('/login', (req, res) => {
 </div>
 <script>
 async function doReset() {
+  const un = document.getElementById('ru').value;
   const rc = document.getElementById('rc').value;
   const np = document.getElementById('np').value;
   const nc = document.getElementById('nc').value;
   const msg = document.getElementById('reset-msg');
-  if (!rc || !np || !nc) { msg.className='err'; msg.textContent='Vyplňte všechna pole.'; return; }
+  if (!un || !rc || !np || !nc) { msg.className='err'; msg.textContent='Vyplňte všechna pole.'; return; }
   if (np !== nc) { msg.className='err'; msg.textContent='Nová hesla se neshodují.'; return; }
   if (np.length < 4) { msg.className='err'; msg.textContent='Heslo musí mít alespoň 4 znaky.'; return; }
-  const r = await fetch('/reset-password', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({resetCode:rc,newPassword:np})});
+  const r = await fetch('/reset-password', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:un,resetCode:rc,newPassword:np})});
   const j = await r.json();
   if (j.ok) {
     msg.className='ok'; msg.textContent='✓ Heslo bylo změněno! Nyní se přihlaste.';
@@ -153,9 +200,11 @@ async function doReset() {
 });
 
 app.post('/login', (req, res) => {
-  if (req.body.username === ADMIN_USERNAME && req.body.password === getPassword()) {
+  const users = loadUsers();
+  const u = findUser(users, req.body.username);
+  if (u && req.body.password === u.password) {
     const token = crypto.randomBytes(32).toString('hex');
-    sessions.add(token);
+    sessions.set(token, u.username);
     res.setHeader('Set-Cookie', `authToken=${token}; Path=/; HttpOnly; SameSite=Lax`);
     return res.redirect('/');
   }
@@ -169,12 +218,16 @@ app.get('/logout', (req, res) => {
 });
 
 app.post('/reset-password', (req, res) => {
-  const { resetCode, newPassword } = req.body;
-  if (!resetCode || !newPassword) return res.status(400).json({ error: 'Chybí údaje.' });
+  const { username, resetCode, newPassword } = req.body;
+  if (!username || !resetCode || !newPassword) return res.status(400).json({ error: 'Chybí údaje.' });
   if (resetCode !== ADMIN_RESET_CODE) return res.status(403).json({ error: 'Záchranný kód není správný.' });
   if (newPassword.length < 4) return res.status(400).json({ error: 'Heslo musí mít alespoň 4 znaky.' });
   try {
-    fs.writeFileSync(AUTH_FILE, JSON.stringify({ password: newPassword }, null, 2), 'utf8');
+    const users = loadUsers();
+    const u = findUser(users, username);
+    if (!u) return res.status(404).json({ error: 'Uživatel s tímhle jménem neexistuje.' });
+    u.password = newPassword;
+    saveUsers(users);
     res.json({ ok: true });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -190,28 +243,100 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/api/change-password', (req, res) => {
   const { currentPassword, newPassword } = req.body;
   if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Chybí údaje.' });
-  if (currentPassword !== getPassword()) return res.status(403).json({ error: 'Současné heslo není správné.' });
   if (newPassword.length < 4) return res.status(400).json({ error: 'Nové heslo musí mít alespoň 4 znaky.' });
   try {
-    fs.writeFileSync(AUTH_FILE, JSON.stringify({ password: newPassword }, null, 2), 'utf8');
+    const users = loadUsers();
+    const u = findUser(users, req.username);
+    if (!u || currentPassword !== u.password) return res.status(403).json({ error: 'Současné heslo není správné.' });
+    u.password = newPassword;
+    saveUsers(users);
     res.json({ ok: true });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-// ── Data helpers ─────────────────────────────────────────────────────────────
-function loadPlan() {
-  const file = fs.existsSync(DATA_FILE) ? DATA_FILE : DEFAULT_FILE;
-  return JSON.parse(fs.readFileSync(file, 'utf8'));
+// Kdo jsem – appka na frontendu potřebuje vědět, jestli jsi hlavní účet
+// (jen ten vidí a spravuje ostatní uživatele), a pro samoobslužný reset
+// heslem přes záchranný kód v Profilu potřebuje znát vlastní jméno.
+app.get('/api/whoami', (req, res) => {
+  const u = findUser(loadUsers(), req.username);
+  res.json({ username: req.username, primary: !!(u && u.primary) });
+});
+
+function requirePrimary(req, res, next) {
+  const u = findUser(loadUsers(), req.username);
+  if (u && u.primary) return next();
+  res.status(403).json({ error: 'Tohle smí jen hlavní účet.' });
 }
-function savePlan(plan) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(plan, null, 2), 'utf8');
+
+// ── Uživatelé — přidání dalšího samostatného účtu (vlastní trénink i profil,
+// šablony a doplňky sdílené se všemi) ────────────────────────────────────────
+// Vidí a spravuje jen hlavní účet – ostatní uživatelé o sobě navzájem nevědí
+// (nevidí seznam jmen, nemůžou zakládat další účty ani měnit cizí hesla).
+app.get('/api/users', requirePrimary, (req, res) => {
+  try {
+    const users = loadUsers();
+    res.json({ users: users.map(u => ({ username: u.username, primary: !!u.primary })) });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post('/api/users', requirePrimary, (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ error: 'Chybí uživatelské jméno nebo heslo.' });
+  if (!/^[a-zA-Z0-9_.-]{2,40}$/.test(username)) {
+    return res.status(400).json({ error: 'Uživatelské jméno smí mít jen písmena bez diakritiky, čísla, tečku, pomlčku a podtržítko (2–40 znaků).' });
+  }
+  if (password.length < 4) return res.status(400).json({ error: 'Heslo musí mít alespoň 4 znaky.' });
+  try {
+    const users = loadUsers();
+    if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+      return res.status(409).json({ error: 'Tohle uživatelské jméno už existuje.' });
+    }
+    users.push({ username, password, primary: false });
+    saveUsers(users);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Hlavní účet může nastavit heslo kterémukoli jinému uživateli přímo (bez
+// znalosti jeho současného hesla) — hodí se, když si někdo jiný heslo
+// zapomene a nezná ani záchranný kód.
+app.post('/api/users/:username/password', requirePrimary, (req, res) => {
+  const { newPassword } = req.body;
+  if (!newPassword) return res.status(400).json({ error: 'Chybí nové heslo.' });
+  if (newPassword.length < 4) return res.status(400).json({ error: 'Heslo musí mít alespoň 4 znaky.' });
+  try {
+    const users = loadUsers();
+    const u = findUser(users, req.params.username);
+    if (!u) return res.status(404).json({ error: 'Uživatel s tímhle jménem neexistuje.' });
+    u.password = newPassword;
+    saveUsers(users);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── Data helpers (každý uživatel má svůj vlastní soubor — viz planFileFor) ──
+function loadPlan(username) {
+  const file = planFileFor(username);
+  if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, 'utf8'));
+  // Nový uživatel bez vlastního souboru zatím: začne z výchozí (prázdné/
+  // ukázkové) šablony, stejně jako to odjakživa dělal primární uživatel.
+  return JSON.parse(fs.readFileSync(DEFAULT_FILE, 'utf8'));
+}
+function savePlan(username, plan) {
+  fs.writeFileSync(planFileFor(username), JSON.stringify(plan, null, 2), 'utf8');
 }
 
 // ── API ───────────────────────────────────────────────────────────────────────
 app.get('/api/plan', (req, res) => {
-  try { res.json(loadPlan()); }
+  try { res.json(loadPlan(req.username)); }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -222,7 +347,7 @@ app.post('/api/plan', (req, res) => {
   if (!req.body || !Array.isArray(req.body.cycles) || req.body.cycles.length === 0) {
     return res.status(400).json({ error: 'Neplatná data plánu (chybí cycles).' });
   }
-  try { savePlan(req.body); res.json({ ok: true }); }
+  try { savePlan(req.username, req.body); res.json({ ok: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -231,21 +356,22 @@ app.post('/api/plan', (req, res) => {
 // zpětně vidět zlepšení/zhoršení v čase.
 const EXPERIENCE_LEVELS = ['zacatecnik', 'stredne_pokrocily', 'pokrocily'];
 
-function loadProfile() {
-  if (!fs.existsSync(PROFILE_FILE)) return { height: null, weight: null, units: 'kg', experience: '', daysPerWeek: null, maxima: [] };
-  const p = JSON.parse(fs.readFileSync(PROFILE_FILE, 'utf8'));
+function loadProfile(username) {
+  const file = profileFileFor(username);
+  if (!fs.existsSync(file)) return { height: null, weight: null, units: 'kg', experience: '', daysPerWeek: null, maxima: [] };
+  const p = JSON.parse(fs.readFileSync(file, 'utf8'));
   if (!Array.isArray(p.maxima)) p.maxima = [];
   if (p.units !== 'lb') p.units = 'kg';
   if (!EXPERIENCE_LEVELS.includes(p.experience)) p.experience = '';
   if (typeof p.daysPerWeek !== 'number') p.daysPerWeek = null;
   return p;
 }
-function saveProfile(profile) {
-  fs.writeFileSync(PROFILE_FILE, JSON.stringify(profile, null, 2), 'utf8');
+function saveProfile(username, profile) {
+  fs.writeFileSync(profileFileFor(username), JSON.stringify(profile, null, 2), 'utf8');
 }
 
 app.get('/api/profile', (req, res) => {
-  try { res.json(loadProfile()); }
+  try { res.json(loadProfile(req.username)); }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -253,7 +379,7 @@ app.post('/api/profile', (req, res) => {
   if (!req.body || !Array.isArray(req.body.maxima)) {
     return res.status(400).json({ error: 'Neplatná data profilu (chybí maxima).' });
   }
-  try { saveProfile(req.body); res.json({ ok: true }); }
+  try { saveProfile(req.username, req.body); res.json({ ok: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -289,7 +415,11 @@ app.get('/api/accessory-variants', (req, res) => {
 // Docker container (binding to the default host only listens on loopback
 // inside some container/network setups).
 app.listen(PORT, '0.0.0.0', () => {
+  const users = loadUsers();
+  const primary = users.find(u => u.primary) || users[0];
   console.log(`\n✅  Training plan spuštěn`);
   console.log(`   Otevři  : http://localhost:${PORT}`);
-  console.log(`   Přihlášení: ${ADMIN_USERNAME} / ${getPassword()}\n`);
+  console.log(`   Přihlášení: ${primary.username} / ${primary.password}`);
+  if (users.length > 1) console.log(`   Další účty: ${users.filter(u => !u.primary).map(u => u.username).join(', ')}`);
+  console.log('');
 });

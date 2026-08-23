@@ -42,6 +42,8 @@ header h1 {
 .header-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 10px;
 }
 
@@ -51,23 +53,26 @@ header h1 {
   white-space: nowrap;
 }
 
-.btn-header-icon {
+.btn-header-text {
   background: rgba(255,255,255,.15);
   color: #fff;
   border: 1.5px solid rgba(255,255,255,.4);
   border-radius: 8px;
-  width: 40px;
-  height: 40px;
-  font-size: 1.1em;
+  padding: 10px 16px;
+  font-size: .92em;
+  font-weight: 600;
+  font-family: inherit;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   text-decoration: none;
   line-height: 1;
+  white-space: nowrap;
 }
-.btn-header-icon:hover { background: rgba(255,255,255,.28); }
-.btn-header-icon.active {
+.btn-header-text[hidden] { display: none; }
+.btn-header-text:hover { background: rgba(255,255,255,.28); }
+.btn-header-text.active {
   background: #fff;
   color: #1565c0;
   border-color: #fff;
@@ -234,6 +239,58 @@ header h1 {
   padding: 10px 14px;
   border-radius: 8px;
   margin-bottom: 8px;
+}
+
+/* ── Uživatelé (přidání dalšího účtu) ─────────────────────────────────────── */
+#nu-msg.err {
+  background: #fff0f0; border: 1.5px solid #fcc; color: #c00;
+  font-size: .86em; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;
+}
+#nu-msg.ok {
+  background: #f0fff4; border: 1.5px solid #6c6; color: #050;
+  font-size: .86em; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;
+}
+.modal-divider { border: 0; border-top: 1.5px solid #eef2f6; margin: 16px 0; }
+.users-list { display: grid; gap: 6px; margin-bottom: 4px; }
+.users-list .user-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #f2f7fd; border: 1.5px solid rgba(21,101,192,.15);
+  border-radius: 8px; padding: 8px 12px; font-size: .9em; color: #1c2733;
+}
+.users-list .user-row .badge-primary {
+  font-size: .78em; font-weight: 700; color: #2f6fb0; background: #e7f0fb;
+  border-radius: 999px; padding: 2px 9px;
+}
+.users-list .user-row-actions { display: flex; align-items: center; gap: 8px; }
+.users-list .btn-row-link {
+  background: none; border: none; color: #2f6fb0; font-weight: 600;
+  font-size: .85em; font-family: inherit; cursor: pointer; padding: 0;
+  text-decoration: underline;
+}
+.users-list .user-pw-form {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  margin-top: 6px; padding-top: 6px; border-top: 1.5px dashed #dde5ef;
+}
+.users-list .user-pw-form[hidden] { display: none; }
+.users-list .user-pw-form input {
+  flex: 1 1 140px; min-width: 0; padding: 7px 10px; border: 1.5px solid #dde5ef;
+  border-radius: 6px; font-size: .88em; font-family: inherit;
+}
+.users-list .user-pw-form .btn-add { margin-top: 0; flex: 0 0 auto; padding: 7px 12px; font-size: .85em; }
+
+/* ── Obecný responzivní řádkový formulář (heslo záchranným kódem apod.) ────── */
+.inline-form { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; align-items: center; }
+.inline-form input { flex: 1 1 160px; min-width: 0; border: 1.5px solid #dde5ef; border-radius: 8px; padding: 9px 12px; font-size: 1em; font-family: inherit; background: #fff; }
+.inline-form input:focus { outline: none; border-color: #1565c0; box-shadow: 0 0 0 3px rgba(21,101,192,.12); }
+.inline-form .btn-add { flex: 0 0 auto; margin-top: 0; white-space: nowrap; }
+
+#pr-msg.err {
+  background: #fff0f0; border: 1.5px solid #fcc; color: #c00;
+  font-size: .86em; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;
+}
+#pr-msg.ok {
+  background: #f0fff4; border: 1.5px solid #6c6; color: #050;
+  font-size: .86em; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;
 }
 
 /* ── Mode switch (Zobrazit trénink / Upravit plán) ───────────────────────── */
@@ -484,6 +541,15 @@ header h1 {
   margin-top: -4px;
 }
 
+/* Poznámka k Plánu (cíl, RIR, technika…) — neutrální barva, ne červená
+   Realita ani obyčejný text Plánu, ať je jasné, že je to komentář k plánu. */
+.viewer-plan-note {
+  color: #567;
+  font-size: .88em;
+  font-style: italic;
+  margin: -2px 0 6px;
+}
+
 /* ── Top bar / add cycle ─────────────────────────────────────────────────── */
 
 #top-bar {
@@ -634,11 +700,14 @@ header h1 {
 
 /* ── Weeks (nested inside a cycle) ────────────────────────────────────────── */
 
+/* Vlastní řádek pro záložky týdnů a vlastní řádek pro akční tlačítka pod
+   nimi — když je týdnů hodně (např. 12) a záložky se zalomí na víc řádků,
+   tlačítka by jako flex-sibling "plavala" uprostřed zalomeného bloku
+   (vertikálně centrovaná vůči celé jeho výšce). Column layout tohle řeší. */
 .week-bar {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
-  flex-wrap: wrap;
   margin-bottom: 12px;
 }
 
@@ -646,7 +715,12 @@ header h1 {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  flex: 1;
+}
+
+.week-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .week-tab {
@@ -1101,6 +1175,27 @@ header h1 {
   flex: 0 0 auto;
 }
 .btn-remove:hover, .btn-clear-actual:hover { background: #ffe0e0; }
+
+/* Poznámka k Plánu (cíl % 1RM, RIR, technika…) — patří k plánu, ne k Realitě,
+   proto vlastní neutrální styl, ne ten amber "Realita" box níž. */
+.exercise-plan-note { margin: -2px 0 2px; }
+.exercise-plan-note input {
+  border: 1.5px solid #dde5ef;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: .88em;
+  font-family: inherit;
+  font-style: italic;
+  width: 100%;
+  background: #f7fafd;
+  color: #445a6b;
+}
+.exercise-plan-note input:focus {
+  outline: none;
+  font-style: normal;
+  border-color: #1565c0;
+  box-shadow: 0 0 0 3px rgba(21,101,192,.12);
+}
 
 /* Always-visible "what actually happened" block under the planned row —
    different background so it reads at a glance without expanding anything. */

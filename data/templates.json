@@ -11,24 +11,24 @@
         "label": "Nováček – lineární progrese (4 týdny)",
         "weeks": [
           {
-            "label": "Týden 1 (60 %)",
+            "label": "Týden 1 (62,5 %)",
             "days": [
               {
-                "name": "Pondělí", "focus": "Trénink A · vše na 60 % 1RM",
+                "name": "Pondělí", "focus": "Trénink A · vše na 62,5 % 1RM",
                 "sections": [
                   { "name": "Hlavní cviky", "exercises": [
-                    { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] },
-                    { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] },
-                    { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "60%" }] }
+                    { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "62.5%" }] },
+                    { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "62.5%" }] },
+                    { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "62.5%" }] }
                   ]}
                 ]
               },
               {
-                "name": "Středa", "focus": "Trénink B · vše na 60 % 1RM",
+                "name": "Středa", "focus": "Trénink B · vše na 62,5 % 1RM",
                 "sections": [
                   { "name": "Hlavní cviky", "exercises": [
-                    { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] },
-                    { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] }
+                    { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "62.5%" }] },
+                    { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "62.5%" }] }
                   ]},
                   { "name": "Doplňky", "exercises": [
                     { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "8", "weight": "lehká-střední váha" }] }
@@ -36,12 +36,12 @@
                 ]
               },
               {
-                "name": "Pátek", "focus": "Trénink A · vše na 60 % 1RM",
+                "name": "Pátek", "focus": "Trénink A · vše na 62,5 % 1RM",
                 "sections": [
                   { "name": "Hlavní cviky", "exercises": [
-                    { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] },
-                    { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] },
-                    { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "60%" }] }
+                    { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "62.5%" }] },
+                    { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "62.5%" }] },
+                    { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "62.5%" }] }
                   ]}
                 ]
               }
@@ -867,7 +867,7 @@
       "level": "stredne_pokrocily",
       "daysPerWeek": 3,
       "description": "Jeden z nejrozšířenějších způsobů rozdělení tréninku podle pohybového vzoru: tlak (prsa/ramena/triceps), tah (záda/biceps) a nohy — 3× týdně znamená každý sval 1× týdně, s trochu vyšším objemem v daný den. Tahle verze je „mix“: hlavní cvik dne jde na nižší opakování/vyšší % (síla), sekundární a doplňkové cviky na víc opakování (hypertrofie) — takže se buduje obojí najednou. Šestidenní varianta (PPL–PPL, každý sval 2×/týden) je v popisu zmíněná jako možnost, pokud časem přejdeš na víc dnů.",
-      "source": "Perplexity Deep Research (\"najdi v literatuře a oficiálních zdrojích všechny silové tréninky\", 2026) — přehled hlavních modelů rozdělení tréninku, s parametry podle ACSM 2026 Position Stand a metaanalýz objemu/frekvence pro sílu a hypertrofii.",
+      "source": "Perplexity Deep Research (\"najdi v literatuře a oficiálních zdrojích všechny silové tréninky\", 2026), primární zdroje citované v dané sekci: frekvence tréninku 2×/týden na sval jako výhodná pro hypertrofii při stejném objemu — Fyfe a kol., přehled ve Frontiers in Sports and Active Living 2022 (https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2022.949021/full) a systematický přehled/meta-analýza (https://pmc.ncbi.nlm.nih.gov/articles/PMC10818109/); cílový týdenní objem cca 10 sérií na svalovou skupinu (https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2022.949021/full); aplikace blokové/undulující periodizace na PPL a další splity — NSCA Journal of Strength and Conditioning Research 2021, Periodization and Block Periodization in Sports (https://journals.lww.com/nsca-jscr/Fulltext/2021/08000/Periodization_and_Block_Periodization_in_Sports_.39.aspx) a přehled konceptu blokové periodizace (https://pmc.ncbi.nlm.nih.gov/articles/PMC4637911/).",
       "cycle": {
         "label": "Push/Pull/Legs (PPL) (5 týdnů)",
         "weeks": [
@@ -1026,7 +1026,7 @@
       "level": "pokrocily",
       "daysPerWeek": 3,
       "description": "Trénink rozdělený na navazující fáze s jasnou prioritou: Akumulace (objem a technika) → Transmutace (specifičtější, těžší varianty) → Realizace (soutěžní/cílové cviky, vrchol síly) → Deload. Na rozdíl od lineární periodizace se mezi fázemi mění i výběr cviků, ne jen váha a opakování — v Transmutaci se objevují náročnější varianty (pauzovaný dřep, bench s pauzou), v Realizaci zůstávají jen ty cviky, které opravdu chceš otestovat. Vhodné pro pokročilé s konkrétním cílem (test síly, příprava na závod); pro začátečníka je to zbytečně komplikované — pro ně stačí Nováček nebo Lineární periodizace výše.",
-      "source": "Perplexity Deep Research, sekce \"Jak naplánovat blokovou periodizaci pro silový trénink\" a \"Jaké jsou nejčastější chyby při blokové periodizaci\" (2026) — struktura akumulace/transmutace/realizace/deload, doporučené délky fází a objemy podle NSCA a systematických review blokové periodizace.",
+      "source": "Perplexity Deep Research, sekce \"Jak naplánovat blokovou periodizaci pro silový trénink\" a \"Jaké jsou nejčastější chyby při blokové periodizaci\" (2026), primární zdroje citované v dané sekci: přehled konceptu blokové periodizace, sled akumulace → transmutace → realizace (https://pmc.ncbi.nlm.nih.gov/articles/PMC4637911/); NSCA Journal of Strength and Conditioning Research 2021, Periodization and Block Periodization in Sports (https://journals.lww.com/nsca-jscr/Fulltext/2021/08000/Periodization_and_Block_Periodization_in_Sports_.39.aspx); srovnání blokové periodizace s lineárním a vlnitým (undulujícím) modelem, bez jednoznačné výhody blokové periodizace pro hypertrofii (https://pubmed.ncbi.nlm.nih.gov/25807030/, https://pubmed.ncbi.nlm.nih.gov/35044672/); zjištění, že pro hypertrofii je rozhodující hlavně týdenní objem a blízkost svalového selhání, ne konkrétní periodizační model (https://pmc.ncbi.nlm.nih.gov/articles/PMC7068252/, https://pmc.ncbi.nlm.nih.gov/articles/PMC10818109/).",
       "cycle": {
         "label": "Bloková periodizace (9 týdnů)",
         "weeks": [
