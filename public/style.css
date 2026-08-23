@@ -419,9 +419,9 @@ header h1 {
   font-weight: 600;
   line-height: 1.4;
 }
-.chip-sets   { background: #eef5fc; color: #2f6fb0; }
-.chip-reps   { background: #eef0fc; color: #5b6fd8; }
-.chip-weight { background: #e7f0fb; color: #1565c0; font-weight: 700; }
+.chip-sets   { background: #eef5fc; color: #1565c0; }
+.chip-reps   { background: #f5eefc; color: #7a4fb0; }
+.chip-weight { background: #fff3e8; color: #9a5300; font-weight: 700; }
 .chip-empty  { background: #f0f1f3; color: #aab2bc; font-weight: 400; }
 .set-sep { color: #aab2bc; font-weight: 700; font-size: .9em; }
 
@@ -755,12 +755,12 @@ header h1 {
   padding: 16px 18px;
   box-shadow: 0 2px 8px rgba(0,0,0,.05);
 }
-.days > .day-card:nth-child(7n+1) { --day-accent: #0b5cab; --day-accent-bg: #e5f0fb; }
-.days > .day-card:nth-child(7n+2) { --day-accent: #2f6fb0; --day-accent-bg: #eaf2fb; }
-.days > .day-card:nth-child(7n+3) { --day-accent: #1976d2; --day-accent-bg: #e8f2fc; }
-.days > .day-card:nth-child(7n+4) { --day-accent: #5b6fd8; --day-accent-bg: #eef0fc; }
-.days > .day-card:nth-child(7n+5) { --day-accent: #0e7c86; --day-accent-bg: #e3f3f4; }
-.days > .day-card:nth-child(7n+6) { --day-accent: #3f8fd1; --day-accent-bg: #ecf5fc; }
+.days > .day-card:nth-child(7n+1) { --day-accent: #1565c0; --day-accent-bg: #e7f0fb; }
+.days > .day-card:nth-child(7n+2) { --day-accent: #0e7c86; --day-accent-bg: #e3f3f4; }
+.days > .day-card:nth-child(7n+3) { --day-accent: #5b6fd8; --day-accent-bg: #eef0fc; }
+.days > .day-card:nth-child(7n+4) { --day-accent: #7a4fb0; --day-accent-bg: #f5eefc; }
+.days > .day-card:nth-child(7n+5) { --day-accent: #b35900; --day-accent-bg: #fff3e8; }
+.days > .day-card:nth-child(7n+6) { --day-accent: #1a936f; --day-accent-bg: #e6f5f0; }
 .days > .day-card:nth-child(7n+7) { --day-accent: #234b7c; --day-accent-bg: #e2e9f3; }
 
 .day-head {

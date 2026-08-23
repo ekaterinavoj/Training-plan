@@ -160,10 +160,17 @@ Otevře se ikonkou **👤** v hlavičce. Tři karty:
 
 V režimu Úprava je nahoře vedle `+ Nový cyklus` jedno tlačítko **📄 CSV**, které po kliknutí rozbalí nabídku se dvěma volbami (obousměrně, export i import z jednoho místa):
 
-- **⬇️ Export CSV (stáhnout)** – stáhne **celý** aktuální trénink (všechny cykly, týdny, dny, sekce, cviky, rozcvičku, plán i Realitu) jako jeden `.csv` soubor, čitelný a upravitelný v Excelu/Google Sheets (oddělovač `;`, kódování UTF-8, jde tedy rovnou otevřít i s českými znaky).
-- **⬆️ Import CSV (nahradit plán)** – nahraje trénink zpátky ze souboru ve stejném formátu. **Import nahradí celý aktuální trénink** (appka se před tím zeptá na potvrzení) – hodí se to jako záloha/obnova, přesun mezi zařízeními, nebo hromadná úprava v Excelu (např. přepsání vah pro celý týden najednou) s následným zpětným nahráním.
+- **⬇️ Export CSV (trénink i profil)** – stáhne **celý** aktuální trénink (všechny cykly, týdny, dny, sekce, cviky, rozcvičku, plán i Realitu) **a k tomu i celý Profil** (výška, váha, jednotky, zkušenost, dny v týdnu a kompletní historii maxim) jako jeden `.csv` soubor, čitelný a upravitelný v Excelu/Google Sheets (oddělovač `;`, kódování UTF-8, jde tedy rovnou otevřít i s českými znaky).
+- **⬆️ Import CSV (nahradí trénink i profil)** – nahraje trénink i profil zpátky ze souboru ve stejném formátu. **Import nahradí celý aktuální trénink i Profil** (aplikace se před tím zeptá na potvrzení) – hodí se to jako záloha/obnova, nebo přesun mezi dvěma nasazeními appky (např. z lokálního vývoje na produkční server – exportuješ tady, importuješ tam beze změny souboru), případně hromadná úprava v Excelu (např. přepsání vah pro celý týden najednou) s následným zpětným nahráním.
 
-Export i import jsou tedy vzájemné – co appka vyexportuje, to i sama zpátky bezezbytku naimportuje (obousměrně, včetně diakritiky, čárek/středníků v poznámkách i víceřádkových poznámek). Každý řádek CSV odpovídá jedné sérii (rozcvička nebo plán) a nese s sebou celý "rodokmen" (Cyklus/Tyden/Den/Sekce/Cvik) jako sloupce – prázdné dny/sekce/cviky beze všech sérií dostanou vlastní řádek jen s vyplněným rodokmenem, ať se při zpětném importu neztratí. Jediné omezení: pokud je ve stejné sekci **dvakrát za sebou cvik se stejným názvem**, import je sloučí do jednoho (v praxi se to skoro neděje).
+Export i import jsou tedy vzájemné – co aplikace vyexportuje, to i sama zpátky bezezbytku naimportuje (obousměrně, včetně diakritiky, čárek/středníků v poznámkách i víceřádkových poznámek), ověřeno automatizovaným testem, který export znovu naimportuje a porovná výsledek s originálem beze změny.
+
+Jeden CSV soubor nese tři druhy řádků, rozlišené prvním sloupcem **Typ**:
+- `PROFIL` – jeden řádek se základními údaji (výška, váha, jednotky, zkušenost, dny v týdnu).
+- `MAXIMUM` – jeden řádek na každý zapsaný záznam historie maxim.
+- `PLAN` – řádky s tréninkem samotným; každý odpovídá jedné sérii (rozcvička nebo plán) a nese s sebou celý "rodokmen" (Cyklus/Tyden/Den/Sekce/Cvik) jako sloupce – prázdné dny/sekce/cviky beze všech sérií dostanou vlastní řádek jen s vyplněným rodokmenem, ať se při zpětném importu neztratí.
+
+Starší export bez sloupce Typ (z appky před touhle úpravou) se při importu bere jako čistě `PLAN` (bez profilu), takže funguje i zpětně. Jediné omezení: pokud je ve stejné sekci **dvakrát za sebou cvik se stejným názvem**, import je sloučí do jednoho (v praxi se to skoro neděje).
 
 ## Struktura projektu
 
@@ -190,6 +197,21 @@ training-plan/
 ## Nasazení do produkce (Docker)
 
 Aplikace je bezstavová (celý stav je jen jeden JSON soubor na disku) a nemá žádné závislosti na externí databázi, takže Docker obraz je jednoduchý – `node:20-alpine` + Express.
+
+### Potřebné parametry pro nasazení (shrnutí)
+
+Co je potřeba mít připravené/nastavené, než appku pustíš na serveru:
+
+| Co | Kde se nastavuje | Povinné? |
+|---|---|---|
+| Docker + Docker Compose na serveru | nainstalované na hostitelském stroji | ano |
+| Otevřený/přesměrovaný port (výchozí `3100`) | firewall / router / reverzní proxy serveru | ano |
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_RESET_CODE` | proměnné prostředí v `docker-compose.yml` (viz tabulka níž) | ano – jinak se použijí výchozí hodnoty z tohoto README, což je v produkci bezpečnostní riziko |
+| Složka `./data` vedle `docker-compose.yml`, zapisovatelná | vznikne automaticky při prvním spuštění (bind mount) | ano – bez ní appka neuloží žádná data |
+| `PORT` (jen pokud měníš výchozí `3100`) | proměnná prostředí + `EXPOSE`/mapování portu v `docker-compose.yml` | ne (má výchozí hodnotu) |
+| Reverzní proxy s HTTPS (nginx/Caddy/Traefik) | mimo appku, na serveru | doporučeno pro veřejně dostupnou adresu (viz sekce Reverzní proxy níž) |
+
+Detailní popis jednotlivých kroků a proměnných je v sekcích níž.
 
 ### Rychlý start přes docker-compose (doporučeno)
 

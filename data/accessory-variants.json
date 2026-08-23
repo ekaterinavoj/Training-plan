@@ -6,9 +6,9 @@
       "label": "Tlak (horní tělo)",
       "muscle": "prsa, ramena, triceps",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Kliky (push-upy)", "sets": 3, "reps": "10-15" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Tlaky s jednoručkami vsedě", "sets": 3, "reps": "10" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Tlaky na stroji (chest press)", "sets": 3, "reps": "10-12" }
+        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Push-up (klik)", "sets": 3, "reps": "10-15" },
+        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Dumbbell Bench Press (tlaky s jednoručkami vleže)", "sets": 3, "reps": "10" },
+        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Chest Press (tlaky na stroji)", "sets": 3, "reps": "10-12" }
       ]
     },
     {
@@ -16,9 +16,9 @@
       "label": "Tah (horní tělo)",
       "muscle": "záda, biceps, zadní deltové svaly",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Shyby/přítahy", "sets": 3, "reps": "6-10" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Veslování s jednoručkou", "sets": 3, "reps": "10" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Stahování kladky / veslovací stroj", "sets": 3, "reps": "10-12" }
+        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Shyby (Pull-up)", "sets": 3, "reps": "6-10" },
+        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Veslování s jednoručkou (One-Arm Dumbbell Row)", "sets": 3, "reps": "10" },
+        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Stahování kladky (Lat Pulldown)", "sets": 3, "reps": "10-12" }
       ]
     },
     {
@@ -26,9 +26,9 @@
       "label": "Dolní tělo – jednonožné / quad",
       "muscle": "kvadriceps, hýždě, stabilizace",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Výpady", "sets": 3, "reps": "10/noha" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Bulharský dřep (na nohu)", "sets": 3, "reps": "8-10/noha" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Leg press na stroji", "sets": 3, "reps": "10-12" }
+        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Výpady (Lunge)", "sets": 3, "reps": "10/noha" },
+        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Bulharský dřep (Bulgarian Split Squat)", "sets": 3, "reps": "8-10/noha" },
+        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Leg Press", "sets": 3, "reps": "10-12" }
       ]
     },
     {
@@ -36,9 +36,9 @@
       "label": "Zadní řetězec / kyčelní extenze",
       "muscle": "hamstringy, hýždě, dolní záda",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Hip thrust", "sets": 3, "reps": "12-15" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Rumunský mrtvý tah s jednoručkami", "sets": 3, "reps": "10" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Zakopávání na stroji (leg curl)", "sets": 3, "reps": "12" }
+        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Hip Thrust", "sets": 3, "reps": "12-15" },
+        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Rumunský mrtvý tah s jednoručkami (Romanian Deadlift)", "sets": 3, "reps": "10" },
+        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Zakopávání (Leg Curl)", "sets": 3, "reps": "12" }
       ]
     },
     {
@@ -47,8 +47,8 @@
       "muscle": "hluboký stabilizační systém, přímé a šikmé břišní svaly",
       "variants": [
         { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Plank", "sets": 3, "reps": "30-45 s" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Ruský twist s jednoručkou", "sets": 3, "reps": "12/stranu" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Cable crunch na kladce", "sets": 3, "reps": "12-15" }
+        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Ruský twist s jednoručkou (Russian Twist)", "sets": 3, "reps": "12/stranu" },
+        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Cable Crunch", "sets": 3, "reps": "12-15" }
       ]
     }
   ]

@@ -153,7 +153,7 @@
                   { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 4, "reps": "8", "weight": "65%" }] }
                 ]},
                 { "name": "Doplňky", "exercises": [
-                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
+                  { "name": "Bulharský dřep (Bulgarian Split Squat)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
                 ]}
               ]},
               { "name": "Úterý", "focus": "Horní A · Tlak", "sections": [
@@ -177,7 +177,7 @@
                   { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 4, "reps": "8", "weight": "65%" }] }
                 ]},
                 { "name": "Doplňky", "exercises": [
-                  { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "8", "weight": "vlastní váha" }] }
+                  { "name": "Shyby (Pull-up)", "plan": [{ "sets": 3, "reps": "8", "weight": "" }] }
                 ]}
               ]}
             ]
@@ -190,7 +190,7 @@
                   { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "55%" }], "plan": [{ "sets": 4, "reps": "6", "weight": "70%" }] }
                 ]},
                 { "name": "Doplňky", "exercises": [
-                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
+                  { "name": "Bulharský dřep (Bulgarian Split Squat)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
                 ]}
               ]},
               { "name": "Úterý", "focus": "Horní A · Tlak", "sections": [
@@ -214,7 +214,7 @@
                   { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "55%" }], "plan": [{ "sets": 4, "reps": "6", "weight": "70%" }] }
                 ]},
                 { "name": "Doplňky", "exercises": [
-                  { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "8", "weight": "vlastní váha" }] }
+                  { "name": "Shyby (Pull-up)", "plan": [{ "sets": 3, "reps": "8", "weight": "" }] }
                 ]}
               ]}
             ]
@@ -227,7 +227,7 @@
                   { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "3", "weight": "60%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "75%" }] }
                 ]},
                 { "name": "Doplňky", "exercises": [
-                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 3, "reps": "8", "weight": "střední váha" }] }
+                  { "name": "Bulharský dřep (Bulgarian Split Squat)", "plan": [{ "sets": 3, "reps": "8", "weight": "střední váha" }] }
                 ]}
               ]},
               { "name": "Úterý", "focus": "Horní A · Tlak", "sections": [
@@ -251,7 +251,7 @@
                   { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "3", "weight": "60%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "75%" }] }
                 ]},
                 { "name": "Doplňky", "exercises": [
-                  { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "6", "weight": "vlastní váha + zátěž" }] }
+                  { "name": "Shyby (Pull-up)", "plan": [{ "sets": 3, "reps": "6", "weight": "" }] }
                 ]}
               ]}
             ]
@@ -264,7 +264,7 @@
                   { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "2", "weight": "65%" }], "plan": [{ "sets": 3, "reps": "3", "weight": "82.5%" }] }
                 ]},
                 { "name": "Doplňky", "exercises": [
-                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 2, "reps": "8", "weight": "střední váha" }] }
+                  { "name": "Bulharský dřep (Bulgarian Split Squat)", "plan": [{ "sets": 2, "reps": "8", "weight": "střední váha" }] }
                 ]}
               ]},
               { "name": "Úterý", "focus": "Horní A · Tlak", "sections": [
@@ -288,7 +288,7 @@
                   { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "2", "weight": "65%" }], "plan": [{ "sets": 3, "reps": "3", "weight": "82.5%" }] }
                 ]},
                 { "name": "Doplňky", "exercises": [
-                  { "name": "Shyby/přítahy", "plan": [{ "sets": 2, "reps": "5", "weight": "vlastní váha + zátěž" }] }
+                  { "name": "Shyby (Pull-up)", "plan": [{ "sets": 2, "reps": "5", "weight": "" }] }
                 ]}
               ]}
             ]
@@ -440,7 +440,7 @@
             "days": [
               { "name": "Pondělí", "focus": "Dřep-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 3)" }] } ]},
-                { "name": "Doplňky", "exercises": [ { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] } ]}
+                { "name": "Doplňky", "exercises": [ { "name": "Bulharský dřep (Bulgarian Split Squat)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] } ]}
               ]},
               { "name": "Úterý", "focus": "Bench-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 3)" }] } ]},
@@ -452,7 +452,7 @@
               ]},
               { "name": "Pátek", "focus": "OHP-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 3)" }] } ]},
-                { "name": "Doplňky", "exercises": [ { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "8", "weight": "vlastní váha" }] } ]}
+                { "name": "Doplňky", "exercises": [ { "name": "Shyby (Pull-up)", "plan": [{ "sets": 3, "reps": "8", "weight": "" }] } ]}
               ]}
             ]
           },
@@ -461,7 +461,7 @@
             "days": [
               { "name": "Pondělí", "focus": "Dřep-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 2)" }] } ]},
-                { "name": "Doplňky", "exercises": [ { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 2, "reps": "10", "weight": "střední váha" }] } ]}
+                { "name": "Doplňky", "exercises": [ { "name": "Bulharský dřep (Bulgarian Split Squat)", "plan": [{ "sets": 2, "reps": "10", "weight": "střední váha" }] } ]}
               ]},
               { "name": "Úterý", "focus": "Bench-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 2)" }] } ]},
@@ -473,7 +473,7 @@
               ]},
               { "name": "Pátek", "focus": "OHP-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 2)" }] } ]},
-                { "name": "Doplňky", "exercises": [ { "name": "Shyby/přítahy", "plan": [{ "sets": 2, "reps": "8", "weight": "vlastní váha" }] } ]}
+                { "name": "Doplňky", "exercises": [ { "name": "Shyby (Pull-up)", "plan": [{ "sets": 2, "reps": "8", "weight": "" }] } ]}
               ]}
             ]
           },
@@ -482,7 +482,7 @@
             "days": [
               { "name": "Pondělí", "focus": "Dřep-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "plan": [{ "sets": 3, "reps": "3", "weight": "těžká (RIR 1)" }] } ]},
-                { "name": "Doplňky", "exercises": [ { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 2, "reps": "8", "weight": "střední váha" }] } ]}
+                { "name": "Doplňky", "exercises": [ { "name": "Bulharský dřep (Bulgarian Split Squat)", "plan": [{ "sets": 2, "reps": "8", "weight": "střední váha" }] } ]}
               ]},
               { "name": "Úterý", "focus": "Bench-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "plan": [{ "sets": 3, "reps": "3", "weight": "těžká (RIR 1)" }] } ]},
@@ -494,7 +494,7 @@
               ]},
               { "name": "Pátek", "focus": "OHP-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "plan": [{ "sets": 3, "reps": "3", "weight": "těžká (RIR 1)" }] } ]},
-                { "name": "Doplňky", "exercises": [ { "name": "Shyby/přítahy", "plan": [{ "sets": 2, "reps": "6", "weight": "vlastní váha" }] } ]}
+                { "name": "Doplňky", "exercises": [ { "name": "Shyby (Pull-up)", "plan": [{ "sets": 2, "reps": "6", "weight": "" }] } ]}
               ]}
             ]
           },
@@ -629,7 +629,7 @@
               { "name": "Pondělí", "focus": "Dřep-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "60%" }, { "sets": 1, "reps": "5", "weight": "67.5%" }, { "sets": 1, "reps": "5+", "weight": "77.5%" }] } ]},
                 { "name": "Doplňky (tlak/tah/core)", "exercises": [
-                  { "name": "Kliky (push-upy)", "plan": [{ "sets": 3, "reps": "10", "weight": "vlastní váha" }] },
+                  { "name": "Push-up (klik)", "plan": [{ "sets": 3, "reps": "10", "weight": "vlastní váha" }] },
                   { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
                   { "name": "Plank", "plan": [{ "sets": 3, "reps": "30-45 s", "weight": "vlastní váha" }] }
                 ]}
@@ -637,15 +637,15 @@
               { "name": "Úterý", "focus": "Bench-fokus · doplňky bez tlaku (hlavní cvik je tlak sám o sobě)", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "60%" }, { "sets": 1, "reps": "5", "weight": "67.5%" }, { "sets": 1, "reps": "5+", "weight": "77.5%" }] } ]},
                 { "name": "Doplňky (tah/tah/core)", "exercises": [
-                  { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "8", "weight": "vlastní váha" }] },
-                  { "name": "Veslování s jednoručkou", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
-                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
+                  { "name": "Shyby (Pull-up)", "plan": [{ "sets": 3, "reps": "8", "weight": "" }] },
+                  { "name": "Jednoruční veslování s jednoručkou (One-Arm Dumbbell Row)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
+                  { "name": "Bulharský dřep (Bulgarian Split Squat)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
                 ]}
               ]},
               { "name": "Čtvrtek", "focus": "Mrtvý tah-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "60%" }, { "sets": 1, "reps": "5", "weight": "67.5%" }, { "sets": 1, "reps": "5+", "weight": "77.5%" }] } ]},
                 { "name": "Doplňky (tlak/tah/core)", "exercises": [
-                  { "name": "Kliky (push-upy)", "plan": [{ "sets": 3, "reps": "10", "weight": "vlastní váha" }] },
+                  { "name": "Push-up (klik)", "plan": [{ "sets": 3, "reps": "10", "weight": "vlastní váha" }] },
                   { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
                   { "name": "Zakopávání", "plan": [{ "sets": 3, "reps": "12", "weight": "lehká váha" }] }
                 ]}
@@ -653,8 +653,8 @@
               { "name": "Pátek", "focus": "OHP-fokus · doplňky bez tlaku (hlavní cvik je tlak sám o sobě)", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "60%" }, { "sets": 1, "reps": "5", "weight": "67.5%" }, { "sets": 1, "reps": "5+", "weight": "77.5%" }] } ]},
                 { "name": "Doplňky (tah/tah/core)", "exercises": [
-                  { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "8", "weight": "vlastní váha" }] },
-                  { "name": "Veslování s jednoručkou", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
+                  { "name": "Shyby (Pull-up)", "plan": [{ "sets": 3, "reps": "8", "weight": "" }] },
+                  { "name": "Jednoruční veslování s jednoručkou (One-Arm Dumbbell Row)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
                   { "name": "Plank", "plan": [{ "sets": 3, "reps": "30-45 s", "weight": "vlastní váha" }] }
                 ]}
               ]}
@@ -666,7 +666,7 @@
               { "name": "Pondělí", "focus": "Dřep-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "45%" }], "plan": [{ "sets": 1, "reps": "3", "weight": "62.5%" }, { "sets": 1, "reps": "3", "weight": "72.5%" }, { "sets": 1, "reps": "3+", "weight": "80%" }] } ]},
                 { "name": "Doplňky (tlak/tah/core)", "exercises": [
-                  { "name": "Kliky (push-upy)", "plan": [{ "sets": 3, "reps": "10", "weight": "vlastní váha" }] },
+                  { "name": "Push-up (klik)", "plan": [{ "sets": 3, "reps": "10", "weight": "vlastní váha" }] },
                   { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
                   { "name": "Plank", "plan": [{ "sets": 3, "reps": "30-45 s", "weight": "vlastní váha" }] }
                 ]}
@@ -674,15 +674,15 @@
               { "name": "Úterý", "focus": "Bench-fokus · doplňky bez tlaku (hlavní cvik je tlak sám o sobě)", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "45%" }], "plan": [{ "sets": 1, "reps": "3", "weight": "62.5%" }, { "sets": 1, "reps": "3", "weight": "72.5%" }, { "sets": 1, "reps": "3+", "weight": "80%" }] } ]},
                 { "name": "Doplňky (tah/tah/core)", "exercises": [
-                  { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "8", "weight": "vlastní váha" }] },
-                  { "name": "Veslování s jednoručkou", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
-                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
+                  { "name": "Shyby (Pull-up)", "plan": [{ "sets": 3, "reps": "8", "weight": "" }] },
+                  { "name": "Jednoruční veslování s jednoručkou (One-Arm Dumbbell Row)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
+                  { "name": "Bulharský dřep (Bulgarian Split Squat)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
                 ]}
               ]},
               { "name": "Čtvrtek", "focus": "Mrtvý tah-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "45%" }], "plan": [{ "sets": 1, "reps": "3", "weight": "62.5%" }, { "sets": 1, "reps": "3", "weight": "72.5%" }, { "sets": 1, "reps": "3+", "weight": "80%" }] } ]},
                 { "name": "Doplňky (tlak/tah/core)", "exercises": [
-                  { "name": "Kliky (push-upy)", "plan": [{ "sets": 3, "reps": "10", "weight": "vlastní váha" }] },
+                  { "name": "Push-up (klik)", "plan": [{ "sets": 3, "reps": "10", "weight": "vlastní váha" }] },
                   { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
                   { "name": "Zakopávání", "plan": [{ "sets": 3, "reps": "12", "weight": "lehká váha" }] }
                 ]}
@@ -690,8 +690,8 @@
               { "name": "Pátek", "focus": "OHP-fokus · doplňky bez tlaku (hlavní cvik je tlak sám o sobě)", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "45%" }], "plan": [{ "sets": 1, "reps": "3", "weight": "62.5%" }, { "sets": 1, "reps": "3", "weight": "72.5%" }, { "sets": 1, "reps": "3+", "weight": "80%" }] } ]},
                 { "name": "Doplňky (tah/tah/core)", "exercises": [
-                  { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "8", "weight": "vlastní váha" }] },
-                  { "name": "Veslování s jednoručkou", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
+                  { "name": "Shyby (Pull-up)", "plan": [{ "sets": 3, "reps": "8", "weight": "" }] },
+                  { "name": "Jednoruční veslování s jednoručkou (One-Arm Dumbbell Row)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] },
                   { "name": "Plank", "plan": [{ "sets": 3, "reps": "30-45 s", "weight": "vlastní váha" }] }
                 ]}
               ]}
@@ -703,7 +703,7 @@
               { "name": "Pondělí", "focus": "Dřep-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "45%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "67.5%" }, { "sets": 1, "reps": "3", "weight": "77.5%" }, { "sets": 1, "reps": "1+", "weight": "85%" }] } ]},
                 { "name": "Doplňky (tlak/tah/core)", "exercises": [
-                  { "name": "Kliky (push-upy)", "plan": [{ "sets": 2, "reps": "10", "weight": "vlastní váha" }] },
+                  { "name": "Push-up (klik)", "plan": [{ "sets": 2, "reps": "10", "weight": "vlastní váha" }] },
                   { "name": "Veslování v předklonu", "plan": [{ "sets": 2, "reps": "10", "weight": "střední váha" }] },
                   { "name": "Plank", "plan": [{ "sets": 2, "reps": "30-45 s", "weight": "vlastní váha" }] }
                 ]}
@@ -711,15 +711,15 @@
               { "name": "Úterý", "focus": "Bench-fokus · doplňky bez tlaku (hlavní cvik je tlak sám o sobě)", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "45%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "67.5%" }, { "sets": 1, "reps": "3", "weight": "77.5%" }, { "sets": 1, "reps": "1+", "weight": "85%" }] } ]},
                 { "name": "Doplňky (tah/tah/core)", "exercises": [
-                  { "name": "Shyby/přítahy", "plan": [{ "sets": 2, "reps": "8", "weight": "vlastní váha" }] },
-                  { "name": "Veslování s jednoručkou", "plan": [{ "sets": 2, "reps": "10", "weight": "střední váha" }] },
-                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 2, "reps": "10", "weight": "střední váha" }] }
+                  { "name": "Shyby (Pull-up)", "plan": [{ "sets": 2, "reps": "8", "weight": "" }] },
+                  { "name": "Jednoruční veslování s jednoručkou (One-Arm Dumbbell Row)", "plan": [{ "sets": 2, "reps": "10", "weight": "střední váha" }] },
+                  { "name": "Bulharský dřep (Bulgarian Split Squat)", "plan": [{ "sets": 2, "reps": "10", "weight": "střední váha" }] }
                 ]}
               ]},
               { "name": "Čtvrtek", "focus": "Mrtvý tah-fokus", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "45%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "67.5%" }, { "sets": 1, "reps": "3", "weight": "77.5%" }, { "sets": 1, "reps": "1+", "weight": "85%" }] } ]},
                 { "name": "Doplňky (tlak/tah/core)", "exercises": [
-                  { "name": "Kliky (push-upy)", "plan": [{ "sets": 2, "reps": "10", "weight": "vlastní váha" }] },
+                  { "name": "Push-up (klik)", "plan": [{ "sets": 2, "reps": "10", "weight": "vlastní váha" }] },
                   { "name": "Veslování v předklonu", "plan": [{ "sets": 2, "reps": "10", "weight": "střední váha" }] },
                   { "name": "Zakopávání", "plan": [{ "sets": 2, "reps": "12", "weight": "lehká váha" }] }
                 ]}
@@ -727,8 +727,8 @@
               { "name": "Pátek", "focus": "OHP-fokus · doplňky bez tlaku (hlavní cvik je tlak sám o sobě)", "sections": [
                 { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "45%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "67.5%" }, { "sets": 1, "reps": "3", "weight": "77.5%" }, { "sets": 1, "reps": "1+", "weight": "85%" }] } ]},
                 { "name": "Doplňky (tah/tah/core)", "exercises": [
-                  { "name": "Shyby/přítahy", "plan": [{ "sets": 2, "reps": "8", "weight": "vlastní váha" }] },
-                  { "name": "Veslování s jednoručkou", "plan": [{ "sets": 2, "reps": "10", "weight": "střední váha" }] },
+                  { "name": "Shyby (Pull-up)", "plan": [{ "sets": 2, "reps": "8", "weight": "" }] },
+                  { "name": "Jednoruční veslování s jednoručkou (One-Arm Dumbbell Row)", "plan": [{ "sets": 2, "reps": "10", "weight": "střední váha" }] },
                   { "name": "Plank", "plan": [{ "sets": 2, "reps": "30-45 s", "weight": "vlastní váha" }] }
                 ]}
               ]}

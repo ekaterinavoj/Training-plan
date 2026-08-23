@@ -46,10 +46,10 @@
 <div id="editor">
   <nav id="top-bar">
     <div class="csv-dropdown">
-      <button id="csv-btn" class="btn-csv" title="Export / import celého tréninku jako CSV soubor">📄 CSV ▾</button>
+      <button id="csv-btn" class="btn-csv" title="Export/import tréninku a profilu jako jeden CSV soubor">📄 CSV ▾</button>
       <div id="csv-menu" class="csv-menu" hidden>
-        <button type="button" id="csv-export-opt">⬇️ Export CSV (stáhnout)</button>
-        <button type="button" id="csv-import-opt">⬆️ Import CSV (nahradit plán)</button>
+        <button type="button" id="csv-export-opt">⬇️ Export CSV (trénink i profil)</button>
+        <button type="button" id="csv-import-opt">⬆️ Import CSV (nahradí trénink i profil)</button>
       </div>
     </div>
     <input type="file" id="csv-import-input" accept=".csv,text/csv" hidden>
@@ -100,7 +100,7 @@
         </select>
       </div>
     </div>
-    <p class="profile-hint">Zkušenost a počet dní se používají jen jako doporučení u šablon tréninků níž — u sedících ti appka nabídne odpovídající štítek "✓ sedí ti".</p>
+    <p class="profile-hint">Zkušenost a počet dní se používají jen jako doporučení u šablon tréninků níž — u odpovídajících aplikace zobrazí štítek "✓ sedí ti".</p>
   </section>
 
   <section class="profile-card">
@@ -124,7 +124,7 @@
 
   <section class="profile-card">
     <h2>Šablony tréninků</h2>
-    <p class="profile-hint">Až bude připravená databáze šablon, vyberou se odtud a trénink se vygeneruje s váhami dopočítanými z tvých maxim výše.</p>
+    <p class="profile-hint">Vyber šablonu a vygeneruj z ní nový cyklus s váhami dopočítanými z tvých maxim výše.</p>
     <div id="template-list"></div>
   </section>
 </div>
@@ -159,7 +159,7 @@
 <div id="variant-picker-overlay" class="modal-overlay" hidden>
   <div class="modal-box modal-box-wide">
     <h2>🔄 Vybrat cvik z nabídky</h2>
-    <p class="profile-hint">Nejdřív vyber, co má cvik trénovat, pak vybavení, které máš zrovna k dispozici — appka doplní název cviku i doporučené série/opakování.</p>
+    <p class="profile-hint">Nejdřív vyber, co má cvik trénovat, pak dostupné vybavení — aplikace doplní název cviku i doporučené série/opakování.</p>
     <div id="variant-category-list" class="variant-category-list"></div>
     <div id="variant-option-list" class="variant-option-list" hidden></div>
     <div class="modal-buttons">

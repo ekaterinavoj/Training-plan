@@ -613,17 +613,25 @@ function showToast(msg) {
   setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
-// ── CSV export / import (celý trénink, obousměrně) ──────────────────────────
+// ── CSV export / import (trénink i profil, obousměrně) ──────────────────────
 // Plán je stromová struktura (cyklus → týden → den → sekce → cvik → série),
 // CSV je plochá tabulka — každý řádek je jedna série (rozcvička nebo plán) a
 // nese s sebou celý "rodokmen" (cyklus/týden/den/sekce/cvik) jako sloupce,
 // aby šlo z tabulky zpětně poskládat stejný strom. Prázdné dny/sekce/cviky
 // (bez jediné série) dostanou vlastní řádek jen s vyplněným rodokmenem, ať se
-// při zpětném importu neztratí.
+// při zpětném importu neztratí. Aby export přenesl kompletně i Profil
+// (výška/váha/jednotky/zkušenost/dny v týdnu a historii maxim), je v jednom
+// souboru víc "typů" řádků rozlišených prvním sloupcem Typ — PROFIL (jeden
+// řádek se základními údaji), MAXIMUM (jeden řádek na každý zapsaný záznam
+// maxima) a PLAN (řádky s tréninkem, stejně jako dřív). Starší export bez
+// sloupce Typ se při importu bere jako čistě PLAN, ať funguje i zpětně.
 const CSV_DELIM = ';';
 const CSV_COLUMNS = [
+  'Typ',
   'Cyklus', 'Tyden', 'Den', 'Den_poznamka', 'Sekce', 'Cvik', 'Superserie', 'Typ_serie',
-  'Serie', 'Opakovani', 'Vaha', 'Realita_serie', 'Realita_opakovani', 'Realita_vaha', 'Realita_poznamka'
+  'Serie', 'Opakovani', 'Vaha', 'Realita_serie', 'Realita_opakovani', 'Realita_vaha', 'Realita_poznamka',
+  'Profil_vyska_cm', 'Profil_vaha', 'Profil_jednotky', 'Profil_zkusenost', 'Profil_dny_tydne',
+  'Max_cvik', 'Max_vaha', 'Max_datum', 'Max_poznamka'
 ];
 
 function csvEscapeField(value) {
@@ -637,35 +645,68 @@ function csvEncodeRow(fields) {
   return fields.map(csvEscapeField).join(CSV_DELIM);
 }
 
+// Vytvoří jeden CSV řádek ze zadaných pojmenovaných hodnot — chybějící
+// sloupce se doplní jako prázdné, pořadí vždy odpovídá CSV_COLUMNS.
+function csvRow(typ, values) {
+  const obj = Object.assign({ Typ: typ }, values);
+  return CSV_COLUMNS.map(col => (obj[col] ?? ''));
+}
+
 function planToCsvRows() {
   const rows = [CSV_COLUMNS.slice()];
+
+  // ── Profil (jeden řádek) ────────────────────────────────────────────────
+  rows.push(csvRow('PROFIL', {
+    Profil_vyska_cm: profile.height ?? '',
+    Profil_vaha: profile.weight ?? '',
+    Profil_jednotky: profile.units || 'kg',
+    Profil_zkusenost: profile.experience || '',
+    Profil_dny_tydne: profile.daysPerWeek ?? ''
+  }));
+
+  // ── Historie maxim (jeden řádek na záznam) ──────────────────────────────
+  (profile.maxima || []).forEach(m => {
+    rows.push(csvRow('MAXIMUM', {
+      Max_cvik: m.exercise || '',
+      Max_vaha: m.weight ?? '',
+      Max_datum: m.date || '',
+      Max_poznamka: m.note || ''
+    }));
+  });
+
+  // ── Trénink (cyklus → týden → den → sekce → cvik → série) ───────────────
   plan.cycles.forEach(cycle => {
     const cy = cycle.label || '';
-    if (!cycle.weeks.length) { rows.push([cy, '', '', '', '', '', '', '', '', '', '', '', '', '', '']); return; }
+    if (!cycle.weeks.length) { rows.push(csvRow('PLAN', { Cyklus: cy })); return; }
     cycle.weeks.forEach(week => {
       const w = week.label || '';
-      if (!week.days.length) { rows.push([cy, w, '', '', '', '', '', '', '', '', '', '', '', '', '']); return; }
+      if (!week.days.length) { rows.push(csvRow('PLAN', { Cyklus: cy, Tyden: w })); return; }
       week.days.forEach(day => {
         const d = day.name || '';
         const dFocus = day.focus || '';
         const sections = day.sections || [];
-        if (!sections.length) { rows.push([cy, w, d, dFocus, '', '', '', '', '', '', '', '', '', '', '']); return; }
+        const base = { Cyklus: cy, Tyden: w, Den: d, Den_poznamka: dFocus };
+        if (!sections.length) { rows.push(csvRow('PLAN', base)); return; }
         sections.forEach(section => {
           const s = section.name || '';
           const exercises = section.exercises || [];
-          if (!exercises.length) { rows.push([cy, w, d, dFocus, s, '', '', '', '', '', '', '', '', '', '']); return; }
+          if (!exercises.length) { rows.push(csvRow('PLAN', Object.assign({ Sekce: s }, base))); return; }
           exercises.forEach(ex => {
             const superset = ex.supersetWithNext ? 'ano' : '';
-            const realita = [ex.actualSets ?? '', ex.actualReps || '', ex.actualWeight || '', ex.note || ''];
+            const realita = {
+              Realita_serie: ex.actualSets ?? '', Realita_opakovani: ex.actualReps || '',
+              Realita_vaha: ex.actualWeight || '', Realita_poznamka: ex.note || ''
+            };
+            const exBase = Object.assign({ Sekce: s, Cvik: ex.name || '', Superserie: superset }, base, realita);
             const lines = [
               ...(ex.warmup || []).map(l => Object.assign({}, l, { typ: 'rozcvicka' })),
               ...(ex.plan    || []).map(l => Object.assign({}, l, { typ: 'plan' }))
             ];
             if (!lines.length) {
-              rows.push([cy, w, d, dFocus, s, ex.name || '', superset, '', '', '', ''].concat(realita));
+              rows.push(csvRow('PLAN', exBase));
             } else {
               lines.forEach(l => {
-                rows.push([cy, w, d, dFocus, s, ex.name || '', superset, l.typ, l.sets ?? '', l.reps || '', l.weight || ''].concat(realita));
+                rows.push(csvRow('PLAN', Object.assign({ Typ_serie: l.typ, Serie: l.sets ?? '', Opakovani: l.reps || '', Vaha: l.weight || '' }, exBase)));
               });
             }
           });
@@ -690,7 +731,7 @@ function exportPlanCsv() {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
-  showToast('✓ CSV export stažen');
+  showToast('✓ CSV export stažen (trénink i profil)');
 }
 
 // Ručně napsaný CSV parser (podporuje uvozovky, escapované uvozovky "" a
@@ -729,23 +770,28 @@ function toNumOrNull(s) {
   return isNaN(n) ? null : n;
 }
 
-// Poskládá strom cyklus→týden→den→sekce→cvik zpátky z plochých CSV řádků.
-// Nový uzel na dané úrovni se založí, kdykoliv se hodnota v jejím sloupci
-// liší od předchozího řádku (viz komentář nad CSV_COLUMNS); změna na vyšší
-// úrovni vždy vynutí nový uzel i na všech úrovních pod ní.
-function csvRowsToPlan(rows) {
+// Poskládá strom cyklus→týden→den→sekce→cvik a Profil (+ historii maxim)
+// zpátky z plochých CSV řádků. Nový uzel na dané úrovni se založí, kdykoliv
+// se hodnota v jejím sloupci liší od předchozího řádku (viz komentář nad
+// CSV_COLUMNS); změna na vyšší úrovni vždy vynutí nový uzel i na všech
+// úrovních pod ní. Řádky se rozlišují sloupcem Typ (PROFIL/MAXIMUM/PLAN) —
+// pokud sloupec Typ v souboru chybí (starší export), bere se každý řádek
+// jako PLAN, ať import funguje i se staršími soubory.
+function csvRowsToPlanAndProfile(rows) {
   if (!rows.length) throw new Error('Soubor je prázdný.');
   const header = rows[0].map(h => (h || '').trim());
   const idx = {};
   CSV_COLUMNS.forEach(col => { idx[col] = header.indexOf(col); });
   if (idx.Cyklus === -1 || idx.Cvik === -1) {
-    throw new Error('Soubor neobsahuje očekávané sloupce (např. "Cyklus", "Cvik") — jde o export z téhle appky?');
+    throw new Error('Soubor neobsahuje očekávané sloupce (např. "Cyklus", "Cvik") — jde o export z této aplikace?');
   }
+  const hasTypeColumn = idx.Typ !== -1;
   const get = (r, col) => {
     const i = idx[col];
     return (i == null || i < 0 || r[i] == null) ? '' : String(r[i]).trim();
   };
 
+  const newProfile = { height: null, weight: null, units: 'kg', experience: '', daysPerWeek: null, maxima: [] };
   const newPlan = { cycles: [] };
   let curCycle = null, curWeek = null, curDay = null, curSection = null, curExercise = null;
   let last = { cy: null, w: null, d: null, s: null, ex: null };
@@ -753,6 +799,33 @@ function csvRowsToPlan(rows) {
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
     if (!r.length || (r.length === 1 && r[0].trim() === '')) continue;
+
+    const rowType = hasTypeColumn ? get(r, 'Typ') : 'PLAN';
+
+    if (rowType === 'PROFIL') {
+      const h = get(r, 'Profil_vyska_cm'), wg = get(r, 'Profil_vaha'), u = get(r, 'Profil_jednotky');
+      newProfile.height = h === '' ? null : toNumOrNull(h);
+      newProfile.weight = wg === '' ? null : toNumOrNull(wg);
+      newProfile.units = u === 'lb' ? 'lb' : 'kg';
+      newProfile.experience = EXPERIENCE_LABELS[get(r, 'Profil_zkusenost')] ? get(r, 'Profil_zkusenost') : '';
+      const dpw = get(r, 'Profil_dny_tydne');
+      newProfile.daysPerWeek = dpw === '' ? null : toNumOrNull(dpw);
+      continue;
+    }
+    if (rowType === 'MAXIMUM') {
+      const maxCvik = get(r, 'Max_cvik');
+      if (maxCvik) {
+        newProfile.maxima.push({
+          id: uid('max'),
+          exercise: maxCvik,
+          weight: toNumOrNull(get(r, 'Max_vaha')),
+          date: get(r, 'Max_datum'),
+          note: get(r, 'Max_poznamka')
+        });
+      }
+      continue;
+    }
+    if (rowType !== 'PLAN') continue; // neznámý typ řádku — přeskočit, ne shodit celý import
 
     const cy = get(r, 'Cyklus'), w = get(r, 'Tyden'), d = get(r, 'Den'), dFocus = get(r, 'Den_poznamka'),
           s = get(r, 'Sekce'), exName = get(r, 'Cvik');
@@ -809,21 +882,27 @@ function csvRowsToPlan(rows) {
   }
 
   if (!newPlan.cycles.length) throw new Error('V souboru nebyl nalezen žádný cyklus.');
-  return newPlan;
+  return { plan: newPlan, profile: newProfile };
 }
 
 async function importPlanCsv(file) {
-  if (!confirm('Import nahradí CELÝ aktuální trénink obsahem CSV souboru (nedá se vzít zpět). Pokračovat?')) return;
+  if (!confirm('Import nahradí CELÝ aktuální trénink i Profil (výška/váha/jednotky/zkušenost/dny v týdnu + historii maxim) obsahem CSV souboru (nedá se vzít zpět). Pokračovat?')) return;
   try {
     const text = await file.text();
-    const newPlan = csvRowsToPlan(csvParse(text));
-    plan = newPlan;
+    const result = csvRowsToPlanAndProfile(csvParse(text));
+
+    plan = result.plan;
     currentWeekByCycle = {};
     plan.cycles.forEach(c => { currentWeekByCycle[c.id] = c.weeks[0] ? c.weeks[0].id : null; });
     render();
     renderViewer();
     await savePlan(true);
-    showToast('✓ Trénink importován z CSV');
+
+    profile = result.profile;
+    renderProfile();
+    await saveProfileNow();
+
+    showToast('✓ Trénink i profil importovány z CSV');
   } catch (err) {
     showToast('⚠️ Import selhal: ' + err.message);
   }
@@ -1329,12 +1408,12 @@ document.getElementById('max-add-btn').addEventListener('click', () => {
   showToast('✓ Záznam přidán');
 });
 
-// ── Šablony tréninků (zatím jen ke čtení — databáze se doplní později) ────────
+// ── Šablony tréninků (jen ke čtení, editovatelné přes data/templates.json) ──
 function renderTemplateList() {
   const box = document.getElementById('template-list');
   box.innerHTML = '';
   if (!templates.length) {
-    box.appendChild(el('p', 'profile-hint', 'Zatím tu nejsou žádné šablony. Až databázi připravíš, objeví se tu a půjde z nich rovnou vygenerovat trénink podle tvých maxim výše.'));
+    box.appendChild(el('p', 'profile-hint', 'Zatím tu nejsou žádné šablony k výběru.'));
     return;
   }
   templates.forEach(t => {
