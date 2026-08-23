@@ -87,6 +87,8 @@ header h1 {
 }
 .modal-overlay[hidden] { display: none; }
 
+.modal-box.modal-box-wide { max-width: 560px; }
+
 .modal-box {
   background: #fff;
   border-radius: 14px;
@@ -120,6 +122,79 @@ header h1 {
 .modal-box input:focus {
   border-color: #1565c0;
   box-shadow: 0 0 0 3px rgba(21,101,192,.15);
+}
+
+/* ── Výběr varianty doplňku ───────────────────────────────────────────────── */
+.variant-category-list {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.variant-category-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.variant-category-btn:hover, .variant-category-btn.active {
+  border-color: #1565c0;
+  background: #e7f0fb;
+}
+.variant-category-btn .vc-label { font-weight: 700; color: #1c2733; }
+.variant-category-btn .vc-muscle { font-size: .82em; color: #7c8794; }
+
+.variant-option-list {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0;
+  padding-top: 10px;
+  border-top: 1.5px solid #eef2f6;
+}
+.variant-back-btn {
+  background: none;
+  border: none;
+  color: #2f6fb0;
+  font-size: .85em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  padding: 0 0 4px;
+}
+.variant-option-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.variant-option-btn:hover { border-color: #1565c0; background: #e7f0fb; }
+.variant-option-btn .vo-name { font-weight: 700; color: #1c2733; }
+.variant-option-btn .vo-setsreps { font-size: .82em; color: #7c8794; }
+.variant-option-btn .vo-equipment {
+  flex: 0 0 auto;
+  background: #eef5fc;
+  color: #2f6fb0;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: .76em;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .modal-buttons {
@@ -857,7 +932,7 @@ header h1 {
   box-shadow: 0 0 0 3px rgba(21,101,192,.12);
 }
 
-.btn-move-up, .btn-move-down, .btn-superset-toggle {
+.btn-move-up, .btn-move-down, .btn-superset-toggle, .btn-pick-variant {
   background: #f4f7fb;
   color: #567;
   border: 1.5px solid #dde5ef;
@@ -867,6 +942,7 @@ header h1 {
   font-size: .85em;
   cursor: pointer;
 }
+.btn-pick-variant:hover { border-color: #1565c0; color: #1565c0; }
 .btn-move-up:hover, .btn-move-down:hover { background: #eef2f6; }
 .btn-superset-toggle:hover { border-color: #2f6fb0; }
 .btn-superset-toggle.active {
@@ -1346,7 +1422,8 @@ header h1 {
   .exercise-name-row .btn-remove,
   .exercise-name-row .btn-move-up,
   .exercise-name-row .btn-move-down,
-  .exercise-name-row .btn-superset-toggle {
+  .exercise-name-row .btn-superset-toggle,
+  .exercise-name-row .btn-pick-variant {
     flex: 0 0 40px;
     width: 40px;
     height: 40px;

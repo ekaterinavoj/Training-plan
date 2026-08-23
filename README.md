@@ -98,9 +98,23 @@ Otevře se ikonkou **👤** v hlavičce. Tři karty:
   - Bill Starr, *The Strongest Shall Survive* — systém Heavy/Light/Medium.
   - Jim Wendler, *5/3/1: The Simplest and Most Effective Training System for Raw Strength* — princip sdílí (nižší frekvence hlavního cviku, vysoká specifičnost) i s pokročilejšími powerliftingovými metodami jako Sheikův systém nebo Westside Barbell / conjugate metoda, které appka samostatně neimplementuje (jsou hodně specifické na výběr cvičebních variací a vybavení), ale stojí za zmínku, pokud bys chtěla jít touhle cestou dál.
 
-  **Doplňky a pořadí cviků:** u všech 7 šablon platí, že hlavní (víceklubové) cviky jsou vždy před doplňky — v souladu s obecným doporučením NSCA řadit velké svalové skupiny/víceklubové cviky před malé svalové skupiny/jednoklubové cviky, dokud jsi ještě čerstvá a formu nezačíná kazit únava. Doplňky navíc běží **celým pracovním blokem** (ne jen první týden) a taktně mizí jen na deload/testovacím týdnu, kdy má mít přednost zotavení nebo čistý test hlavního cviku. U šablony Wendler 5/3/1 doplňky odpovídají přesně tomu, co popisuje Wendlerova vlastní kniha — jeden tlak (push), jeden tah (pull) a jeden jednonohý/core cvik po každém hlavním cviku (dřív appka měla u týhle šablony chybně pojmenovanou i jinak sestavenou sekci "Boring But Big", což je ve skutečnosti jiná, pokročilejší varianta assistance práce — opraveno).
+  **Doplňky a pořadí cviků:** u všech 7 šablon platí, že hlavní (víceklubové) cviky jsou vždy před doplňky — v souladu s obecným doporučením NSCA řadit velké svalové skupiny/víceklubové cviky před malé svalové skupiny/jednoklubové cviky, dokud jsi ještě čerstvá a formu nezačíná kazit únava. Doplňky navíc běží **celým pracovním blokem** (ne jen první týden) a taktně mizí jen na deload/testovacím týdnu, kdy má mít přednost zotavení nebo čistý test hlavního cviku.
+
+  U šablony Wendler 5/3/1 doplňky odpovídají tomu, co popisuje Wendlerova vlastní kniha — tlak/tah/core po každém hlavním cviku (dřív appka měla chybně pojmenovanou i jinak sestavenou sekci "Boring But Big", což je ve skutečnosti jiná, pokročilejší varianta assistance práce — opraveno). Protože ale 3 ze 4 hlavních cviků v 5/3/1 (dřep, bench, OHP) jsou tlakové a jen mrtvý tah je tahový, dny s tlakovým hlavním cvikem mají v doplňcích místo dalšího tlaku druhý tahový cvik — vychází to z doporučovaného poměru **cca 1:2 tlak:tah** pro zdraví ramen (nerovnováha zvyšuje riziko impingement syndromu). Zároveň byl počet sérií u doplňků snížen z původních 5 na 3 (dřív šlo o víc, než je u vedlejších cviků k hlavnímu tréninku obvyklé — 5 sérií je sice jedna z variant, kterou Wendler sám zmiňuje, ale při týdenní kumulaci přes víc dnů to snadno přeroste do zbytečně vysokého objemu).
+
+  **Délka cyklu (kolik má mít týdnů):** mesocykly (ucelené tréninkové bloky) běžně trvají **3–6 týdnů**, přičemž poslední týden bloku bývá deload. Všech 7 šablon (4–5 týdnů, s deloadem na konci u těch, které ho mají mít) do tohohle rozmezí spadá — ověřeno, žádná neměla špatnou délku. Šablona Nováček deload záměrně nemá (u čisté nováčkovské progrese se dokud funguje, prostě pokračuje) a Wendler 5/3/1 má přesně 4 týdny, protože to je i v originále pevná délka jedné "vlny".
 
   **Rozdíly mezi ženami a muži:** aktuální evidence (např. [Frontiers 2023, systematické review](https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2023.1054542/full)) **nepodporuje**, že by se přístup k sílovému tréninku měl mezi ženami a muži zásadně lišit, ani že by šlo trénink smysluplně plánovat podle fáze menstruačního cyklu — důkazy pro to jsou zatím nedostatečné a nekonzistentní. Reálné rozdíly, které se v datech objevují, jsou spíš v míře adaptace než v tom, *jak* trénovat: ženy v průměru získávají větší **relativní** sílu dolní poloviny těla a výraznější zlepšení svalové vytrvalosti (hlavně v pozdější fázi programu), muži v průměru víc **absolutní** síly, velikosti svalů a výbušnosti. Proto appka nemá zvlášť "dámskou" a "pánskou" šablonu — stejné principy (progresivní přetížení, dostatečný objem, blízkost k selhání) fungují pro obě pohlaví, liší se jen výchozí čísla (tvoje vlastní maxima v Profilu).
+
+  **Oprava: nový cyklus se po vygenerování nemusel zobrazit.** `switchMode('edit')` končí bez efektu, pokud jsi v Úpravě už byla (typicky když vygeneruješ druhou šablonu hned po první) — cyklus se sice uložil do dat, ale editor se nepřekreslil, takže by na obrazovce chyběl, dokud bys nepřepnula režim tam a zpátky. Opraveno tak, že se editor po vygenerování překreslí vždy, ať jde vidět **celý** nový cyklus (všechny týdny) hned.
+
+  ### Výběr varianty doplňku (🔄)
+
+  Vedle jména každého cviku v editoru je tlačítko **🔄** — funguje úplně stejně u cviku vygenerovaného ze šablony i u cviku, který si píšeš ručně od nuly. Otevře malé okno, kde nejdřív vybereš, **co** má cvik trénovat (tlak / tah / dolní tělo – jednonožné / zadní řetězec / core), a pak **jakým vybavením** ho chceš dělat (vlastní váha / činky / stroj) — appka doplní název cviku a doporučenou sérii/opakování (jen tam, kde je Plán zatím prázdný, ať ti nepřepíše, co už máš vyplněné).
+
+  Kategorie i konkrétní varianty jsou v `data/accessory-variants.json` (obecný obsah, stejně jako šablony — není gitignored):
+  - Rozdělení na tlak/tah v nabídce respektuje stejný **poměr cca 1:2 ve prospěch tahu** jako u šablony Wendler 5/3/1 (zdraví ramen).
+  - Tři varianty vybavení pro každou kategorii jsou vybrané tak, aby šlo o **stejný vzor pohybu** (jen jiné náčiní) — opřeno o [systematický přehled a meta-analýzu Heidt a kol. 2023](https://pubmed.ncbi.nlm.nih.gov/37582807/), která u volných vah a strojů nenašla rozdíl v hypertrofii; síla je částečně specifická pro typ tréninku, ale ne natolik, aby jedna varianta byla "špatná". Výběr vybavení je tedy hlavně otázka dostupnosti, ne správnosti.
 
   `data/templates.json` na rozdíl od `plan.json`/`profile.json` **není gitignored** — jde o obecný, appkou dodávaný obsah (stejně jako `data/default.json`), ne o tvoje osobní data. Formát:
   ```json
@@ -160,7 +174,8 @@ training-plan/
 │   ├── plan.json        # uložený plán (vzniká po prvním uložení, není v gitu)
 │   ├── auth.json        # heslo změněné přes appku/reset (vzniká při změně, není v gitu)
 │   ├── profile.json     # výška/váha/jednotky + historie maxim (vzniká při prvním uložení, není v gitu)
-│   └── templates.json   # databáze šablon tréninků — 4 dodávané protokoly, JE v gitu (viz sekce výše); vlastní šablony si sem můžeš přidat, jen zvaž gitignore
+│   ├── templates.json   # databáze šablon tréninků — 7 dodávaných protokolů, JE v gitu (viz sekce výše); vlastní šablony si sem můžeš přidat, jen zvaž gitignore
+│   └── accessory-variants.json  # nabídka doplňků (tlak/tah/nohy/zadní řetězec/core × vybavení), JE v gitu
 ├── public/
 │   ├── index.html
 │   ├── style.css

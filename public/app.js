@@ -26,6 +26,7 @@ let mode = VALID_MODES.includes(localStorage.getItem('trainingPlanMode')) ? loca
 let profile   = { height: null, weight: null, units: 'kg', experience: '', daysPerWeek: null, maxima: [] };
 const EXPERIENCE_LABELS = { zacatecnik: 'Začátečník', stredne_pokrocily: 'Středně pokročilý', pokrocily: 'Pokročilý' };
 let templates = [];
+let accessoryVariants = []; // kategorie doplňků (tlak/tah/nohy/zadní řetězec/core) × vybavení
 
 // Mode is 2-way now (view/edit) plus a "profile" overlay opened from the
 // header's 👤 icon — this remembers which of the two to return to when it
@@ -85,6 +86,13 @@ async function loadTemplates() {
   const data = await res.json();
   templates = Array.isArray(data.templates) ? data.templates : [];
   renderTemplateList();
+}
+
+async function loadAccessoryVariants() {
+  const res = await fetch('/api/accessory-variants');
+  if (res.status === 401) { window.location.href = '/login'; return; }
+  const data = await res.json();
+  accessoryVariants = Array.isArray(data.categories) ? data.categories : [];
 }
 
 function migrate(data) {
@@ -335,6 +343,7 @@ function makeItem(ex, itemsBox) {
     if (itemsBox) refreshSupersetVisuals(itemsBox);
     scheduleAutoSave();
   });
+  node.querySelector('.btn-pick-variant').addEventListener('click', () => openVariantPicker(node));
 
   // Ruční zadávání (bez šablony): pro cvik, u kterého máš v Profilu zapsané
   // maximum, dopočítá váhu podle stejného pravidla jako šablony — 60 %
@@ -1418,7 +1427,11 @@ function generateFromTemplate(template) {
   currentWeekByCycle[cloned.id] = cloned.weeks[0] ? cloned.weeks[0].id : null;
 
   savePlan(true);
+  // switchMode('edit') no-opuje, pokud v Úpravě už jsme (např. druhé
+  // generování za sebou) — render() proto voláme vždy zvlášť, ať se nově
+  // vygenerovaný celý cyklus opravdu objeví v editoru, ne jen v datech.
   switchMode('edit');
+  render();
   const node = cyclesEl.querySelector(`.cycle[data-cycle-id="${cloned.id}"]`);
   if (node) node.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
@@ -1430,6 +1443,91 @@ function generateFromTemplate(template) {
 }
 
 document.getElementById('max-date').value = new Date().toISOString().slice(0, 10);
+
+// ── Výběr varianty doplňku ───────────────────────────────────────────────────
+// Funguje stejně pro cvik vygenerovaný ze šablony i pro cvik, který si píšeš
+// ručně — tlačítko 🔄 je na každé kartě cviku v editoru. Nejdřív se vybere
+// kategorie (tlak/tah/nohy-jednonožné/zadní řetězec/core), pak konkrétní
+// varianta podle dostupného vybavení (vlastní váha/činky/stroj); vybraná
+// varianta doplní název cviku a — pokud je Plán zatím prázdný — i doporučenou
+// sérii/opakování.
+const variantOverlay  = document.getElementById('variant-picker-overlay');
+const variantCatBox   = document.getElementById('variant-category-list');
+const variantOptBox   = document.getElementById('variant-option-list');
+let variantPickerTargetNode = null;
+
+function openVariantPicker(exerciseItemNode) {
+  variantPickerTargetNode = exerciseItemNode;
+  variantOptBox.hidden = true;
+  variantOptBox.innerHTML = '';
+  renderVariantCategories();
+  variantOverlay.hidden = false;
+}
+function closeVariantPicker() {
+  variantOverlay.hidden = true;
+  variantPickerTargetNode = null;
+}
+
+function renderVariantCategories() {
+  variantCatBox.innerHTML = '';
+  if (!accessoryVariants.length) {
+    variantCatBox.appendChild(el('p', 'profile-hint', 'Nabídka doplňků se zatím nenačetla nebo je prázdná.'));
+    return;
+  }
+  accessoryVariants.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'variant-category-btn';
+    btn.appendChild(el('span', 'vc-label', cat.label || cat.id));
+    if (cat.muscle) btn.appendChild(el('span', 'vc-muscle', cat.muscle));
+    btn.addEventListener('click', () => renderVariantOptions(cat));
+    variantCatBox.appendChild(btn);
+  });
+}
+
+function renderVariantOptions(category) {
+  variantOptBox.innerHTML = '';
+  variantOptBox.hidden = false;
+  const back = document.createElement('button');
+  back.type = 'button';
+  back.className = 'variant-back-btn';
+  back.textContent = '← Zpět na kategorie';
+  back.addEventListener('click', () => { variantOptBox.hidden = true; variantOptBox.innerHTML = ''; });
+  variantOptBox.appendChild(back);
+
+  (category.variants || []).forEach(v => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'variant-option-btn';
+    const left = el('span');
+    left.appendChild(el('div', 'vo-name', v.name));
+    left.appendChild(el('div', 'vo-setsreps', `${v.sets}× ${v.reps}`));
+    btn.appendChild(left);
+    btn.appendChild(el('span', 'vo-equipment', v.equipmentLabel || v.equipment));
+    btn.addEventListener('click', () => applyVariant(v));
+    variantOptBox.appendChild(btn);
+  });
+}
+
+function applyVariant(variant) {
+  if (!variantPickerTargetNode) { closeVariantPicker(); return; }
+  const nameInput = variantPickerTargetNode.querySelector('.ex-name');
+  nameInput.value = variant.name;
+  const planLines = variantPickerTargetNode.querySelector('.plan-lines');
+  if (planLines && !planLines.children.length) {
+    const line = buildSetLine({ sets: variant.sets, reps: variant.reps, weight: '' });
+    planLines.appendChild(line);
+  }
+  closeVariantPicker();
+  scheduleAutoSave();
+  showToast(`✓ Doplněno: ${variant.name}`);
+}
+
+document.getElementById('variant-picker-cancel').addEventListener('click', closeVariantPicker);
+variantOverlay.addEventListener('click', e => { if (e.target === variantOverlay) closeVariantPicker(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !variantOverlay.hidden) closeVariantPicker();
+});
 
 // ── Změna hesla ──────────────────────────────────────────────────────────────
 const pwOverlay  = document.getElementById('change-pw-overlay');
@@ -1476,3 +1574,4 @@ document.getElementById('cp-submit').addEventListener('click', async () => {
 loadPlan();
 loadProfile();
 loadTemplates();
+loadAccessoryVariants();

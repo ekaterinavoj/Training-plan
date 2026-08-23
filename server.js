@@ -10,6 +10,7 @@ const DEFAULT_FILE   = path.join(__dirname, 'data', 'default.json');
 const AUTH_FILE      = path.join(__dirname, 'data', 'auth.json');
 const PROFILE_FILE   = path.join(__dirname, 'data', 'profile.json');
 const TEMPLATES_FILE = path.join(__dirname, 'data', 'templates.json');
+const ACCESSORY_VARIANTS_FILE = path.join(__dirname, 'data', 'accessory-variants.json');
 
 const ADMIN_USERNAME     = process.env.ADMIN_USERNAME     || 'trainer936499';
 const ADMIN_PASSWORD_ENV = process.env.ADMIN_PASSWORD     || 'SilaHubnuti-26x!';
@@ -265,6 +266,19 @@ app.get('/api/templates', (req, res) => {
     if (!fs.existsSync(TEMPLATES_FILE)) return res.json({ templates: [] });
     const t = JSON.parse(fs.readFileSync(TEMPLATES_FILE, 'utf8'));
     res.json({ templates: Array.isArray(t.templates) ? t.templates : [] });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── Varianty doplňků (tlak/tah/nohy/zadní řetězec/core × vlastní váha/činky/
+// stroj) ────────────────────────────────────────────────────────────────────
+// Obecný, appkou dodávaný obsah stejně jako šablony — ne osobní data.
+app.get('/api/accessory-variants', (req, res) => {
+  try {
+    if (!fs.existsSync(ACCESSORY_VARIANTS_FILE)) return res.json({ categories: [] });
+    const a = JSON.parse(fs.readFileSync(ACCESSORY_VARIANTS_FILE, 'utf8'));
+    res.json({ categories: Array.isArray(a.categories) ? a.categories : [] });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

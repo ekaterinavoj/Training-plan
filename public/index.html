@@ -155,6 +155,19 @@
   </div>
 </div>
 
+<!-- ── Výběr varianty doplňku (tlak/tah/nohy/zadní řetězec/core × vybavení) ─── -->
+<div id="variant-picker-overlay" class="modal-overlay" hidden>
+  <div class="modal-box modal-box-wide">
+    <h2>🔄 Vybrat cvik z nabídky</h2>
+    <p class="profile-hint">Nejdřív vyber, co má cvik trénovat, pak vybavení, které máš zrovna k dispozici — appka doplní název cviku i doporučené série/opakování.</p>
+    <div id="variant-category-list" class="variant-category-list"></div>
+    <div id="variant-option-list" class="variant-option-list" hidden></div>
+    <div class="modal-buttons">
+      <button id="variant-picker-cancel" class="btn-sec">Zavřít</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── Templates ─────────────────────────────────────────────────────────── -->
 
 <template id="cycle-tpl">
@@ -222,6 +235,7 @@
       <button type="button" class="btn-move-down" title="Posunout níž">▼</button>
       <input type="text" class="ex-name" placeholder="Cvik (např. Dřep)" autocomplete="off">
       <button type="button" class="btn-superset-toggle" title="Spojit s dalším cvikem do superserie">🔗</button>
+      <button type="button" class="btn-pick-variant" title="Vybrat cvik z nabídky (tlak/tah/nohy/zadní řetězec/core × vlastní váha/činky/stroj)">🔄</button>
       <button class="btn-remove" title="Odebrat cvik">✕</button>
     </div>
     <div class="set-group set-group-warmup">
