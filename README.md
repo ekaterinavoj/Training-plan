@@ -75,7 +75,7 @@ Otevře se ikonkou **👤** v hlavičce. Tři karty:
   - Tahle maxima se používají na dvou místech:
     1. Tlačítko **⚡ Doplnit z maxima** u každého cviku v editoru (vedle `+ Přidat sérii`) – když název cviku odpovídá nějakému zapsanému maximu, dopočítá váhu podle pravidla **60 % maxima v 1. týdnu cyklu, +2,5 kg každý další týden** (týden se pozná podle toho, na které záložce týdne zrovna jsi) a doplní ji do prázdných řádků Plánu. Hodí se to i bez šablony, když si trénink píšeš ručně.
     2. Šablony tréninků (viz níž) – ty počítají váhu ze stejného maxima podle procenta, které šablona předepisuje.
-- **Šablony tréninků** – appka se dodává se **4 hotovými, výzkumem podloženými protokoly** (viz níž), každý jako karta se štítky úrovně/frekvence (zeleně zvýrazněné, pokud sedí k tomu, co máš vyplněné v Základních údajích výše, plus štítek "✓ sedí ti", když sedí obojí), krátkým popisem, zdrojem a tlačítkem **⚡ Vygenerovat trénink**, které vytvoří nový cyklus s váhami dopočítanými z maxim výše (a upozorní, pokud pro nějaký hlavní cvik maximum ještě nemáš).
+- **Šablony tréninků** – appka se dodává se **7 hotovými, výzkumem podloženými protokoly** (viz níž), každý jako karta se štítky úrovně/frekvence (zeleně zvýrazněné, pokud sedí k tomu, co máš vyplněné v Základních údajích výše, plus štítek "✓ sedí ti", když sedí obojí), krátkým popisem, zdrojem a tlačítkem **⚡ Vygenerovat trénink**, které vytvoří nový cyklus s váhami dopočítanými z maxim výše (a upozorní, pokud pro nějaký hlavní cvik maximum ještě nemáš).
 
   ### Dodávané protokoly (`data/templates.json`)
 
@@ -85,12 +85,20 @@ Otevře se ikonkou **👤** v hlavičce. Tři karty:
   | **Lineární periodizace – síla** | středně pokročilý | 4× | Klasický blokový model: opakování klesají, % 1RM stoupá (4×8@65 % → 3×3@82,5 %), 5. týden deload/test. Horní/dolní split. |
   | **Vlnitá (undulující) periodizace** | středně pokročilý | 3× | Intenzita/opakování se mění den ode dne (těžký/střední/lehký), ne jen týden od týdne. Celotělově, deload na konci bloku. |
   | **Autoregulace dle RIR** | pokročilý | 4× | Váhu u hlavního cviku volíš sama podle pocitu (RIR = kolik opakování bys ještě zvládla navíc), ne podle pevného procenta. RIR v bloku postupně klesá, pak deload. |
+  | **5×5 (Heavy/Light/Medium)** | středně pokročilý | 3× | Klasický systém Billa Starra: stejné hlavní cviky 3×/týden s jinou intenzitou (těžký/lehký/střední den); těžký den se postupně mění z 5×5 na 5×3, jak síla roste. |
+  | **Powerliftingový trénink (Wendler 5/3/1)** | středně pokročilý | 4× | Jeden hlavní cvik denně (dřep/bench/mrtvý tah/OHP), čtyřtýdenní vlny 5/5/5+ → 3/3/3+ → 5/3/1+ → deload, poslední série je AMRAP ("+"). Procenta už mají vestavěný polštář tréninkového maxima. |
+  | **Silová vytrvalost** | (kterákoli) | 3× | Ne max. síla, ale víc opakování se střední zátěží (40–60 % 1RM, 15–20 opakování, pauzy do 90 s) — čtvrtý typ projevu síly vedle max. síly, výbušnosti a hypertrofie. |
 
   Zdroje, ze kterých protokoly vycházejí (každý je navíc vypsaný přímo u dané šablony v appce):
-  - American College of Sports Medicine. [Progression Models in Resistance Training for Healthy Adults](https://pubmed.ncbi.nlm.nih.gov/19204579/) (2009 Position Stand) — doporučené rozsahy % 1RM a opakování podle úrovně zkušenosti.
+  - American College of Sports Medicine. [Progression Models in Resistance Training for Healthy Adults](https://pubmed.ncbi.nlm.nih.gov/19204579/) (2009 Position Stand) — doporučené rozsahy % 1RM a opakování podle úrovně zkušenosti i pro svalovou vytrvalost.
+  - American College of Sports Medicine. Resistance Training Prescription for Muscle Function, Hypertrophy, and Physical Performance in Healthy Adults ([2026 Position Stand](https://acsm.org/resistance-training-guidelines-update-2026/), první aktualizace od roku 2009, 137 systematických review, ~30 000 účastníků) — potvrzuje mj. ≥80 % 1RM pro sílu, 2–3 série, 2×/týden.
   - Rhea, M. R. a kol. [Comparison between linear and daily undulating periodized resistance training to increase strength](https://pubmed.ncbi.nlm.nih.gov/19910831/) (2002) a novější systematická review/meta-analýzy srovnávající lineární a vlnitou (DUP) periodizaci.
   - Zourdos, M. C. a kol. — zavedení RIR škály (reps-in-reserve) pro sílový trénink; autoregulační výzkum u vzpěračů/silových trojbojařů (Helms a kol.).
   - Princip nováčkovské lineární progrese (Starting Strength / novice linear progression literatura).
+  - Bill Starr, *The Strongest Shall Survive* — systém Heavy/Light/Medium.
+  - Jim Wendler, *5/3/1: The Simplest and Most Effective Training System for Raw Strength* — princip sdílí (nižší frekvence hlavního cviku, vysoká specifičnost) i s pokročilejšími powerliftingovými metodami jako Sheikův systém nebo Westside Barbell / conjugate metoda, které appka samostatně neimplementuje (jsou hodně specifické na výběr cvičebních variací a vybavení), ale stojí za zmínku, pokud bys chtěla jít touhle cestou dál.
+
+  **Rozdíly mezi ženami a muži:** aktuální evidence (např. [Frontiers 2023, systematické review](https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2023.1054542/full)) **nepodporuje**, že by se přístup k sílovému tréninku měl mezi ženami a muži zásadně lišit, ani že by šlo trénink smysluplně plánovat podle fáze menstruačního cyklu — důkazy pro to jsou zatím nedostatečné a nekonzistentní. Reálné rozdíly, které se v datech objevují, jsou spíš v míře adaptace než v tom, *jak* trénovat: ženy v průměru získávají větší **relativní** sílu dolní poloviny těla a výraznější zlepšení svalové vytrvalosti (hlavně v pozdější fázi programu), muži v průměru víc **absolutní** síly, velikosti svalů a výbušnosti. Proto appka nemá zvlášť "dámskou" a "pánskou" šablonu — stejné principy (progresivní přetížení, dostatečný objem, blízkost k selhání) fungují pro obě pohlaví, liší se jen výchozí čísla (tvoje vlastní maxima v Profilu).
 
   `data/templates.json` na rozdíl od `plan.json`/`profile.json` **není gitignored** — jde o obecný, appkou dodávaný obsah (stejně jako `data/default.json`), ne o tvoje osobní data. Formát:
   ```json
