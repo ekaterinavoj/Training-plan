@@ -190,7 +190,7 @@ header h1 {
   color: #fff;
 }
 
-#editor[hidden], #viewer[hidden] { display: none; }
+#editor[hidden], #viewer[hidden], #profile[hidden] { display: none; }
 
 /* ── Viewer (read-only plan + editable "reality" log) ────────────────────── */
 
