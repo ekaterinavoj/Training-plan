@@ -4,8 +4,11 @@ node_modules/
 data/plan.json
 data/auth.json
 data/profile.json
-data/templates.json
 data/*backup*
+# data/templates.json NENÍ gitignored — obsahuje obecné, výzkumem podložené
+# tréninkové protokoly dodávané s appkou (stejně jako data/default.json), ne
+# osobní data. Pokud si do něj později přidáš vlastní soukromé šablony,
+# zvaž, jestli je nechceš mít radši v gitignored kopii mimo repo.
 *.env
 .env
 .env.*

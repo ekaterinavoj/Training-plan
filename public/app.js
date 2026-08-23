@@ -23,7 +23,8 @@ const VALID_MODES = ['view', 'edit', 'profile'];
 let mode = VALID_MODES.includes(localStorage.getItem('trainingPlanMode')) ? localStorage.getItem('trainingPlanMode') : 'view';
 
 // Profil + historie maxim + šablony (načtené odděleně od `plan`).
-let profile   = { height: null, weight: null, units: 'kg', maxima: [] };
+let profile   = { height: null, weight: null, units: 'kg', experience: '', daysPerWeek: null, maxima: [] };
+const EXPERIENCE_LABELS = { zacatecnik: 'Začátečník', stredne_pokrocily: 'Středně pokročilý', pokrocily: 'Pokročilý' };
 let templates = [];
 
 // Mode is 2-way now (view/edit) plus a "profile" overlay opened from the
@@ -71,6 +72,8 @@ async function loadProfile() {
     height: data.height ?? null,
     weight: data.weight ?? null,
     units: data.units === 'lb' ? 'lb' : 'kg',
+    experience: EXPERIENCE_LABELS[data.experience] ? data.experience : '',
+    daysPerWeek: Number.isInteger(data.daysPerWeek) ? data.daysPerWeek : null,
     maxima: Array.isArray(data.maxima) ? data.maxima : []
   };
   renderProfile();
@@ -1076,8 +1079,26 @@ function el(tag, className, text) {
 
 document.getElementById('save-btn').addEventListener('click', () => savePlan(false));
 document.getElementById('add-cycle-btn').addEventListener('click', addCycle);
-document.getElementById('csv-export-btn').addEventListener('click', exportPlanCsv);
-document.getElementById('csv-import-btn').addEventListener('click', () => {
+// Jedno tlačítko "📄 CSV" s malou nabídkou pod ním — export i import na
+// jednom místě, ať jde obojí (obousměrně) z jedné vstupní brány.
+const csvBtn  = document.getElementById('csv-btn');
+const csvMenu = document.getElementById('csv-menu');
+csvBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  csvMenu.hidden = !csvMenu.hidden;
+});
+document.addEventListener('click', e => {
+  if (!csvMenu.hidden && !csvMenu.contains(e.target) && e.target !== csvBtn) csvMenu.hidden = true;
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') csvMenu.hidden = true;
+});
+document.getElementById('csv-export-opt').addEventListener('click', () => {
+  csvMenu.hidden = true;
+  exportPlanCsv();
+});
+document.getElementById('csv-import-opt').addEventListener('click', () => {
+  csvMenu.hidden = true;
   document.getElementById('csv-import-input').click();
 });
 document.getElementById('csv-import-input').addEventListener('change', e => {
@@ -1146,6 +1167,8 @@ function renderProfile() {
   document.getElementById('profile-height').value = profile.height ?? '';
   document.getElementById('profile-weight').value = profile.weight ?? '';
   document.getElementById('profile-units').value = profile.units || 'kg';
+  document.getElementById('profile-experience').value = profile.experience || '';
+  document.getElementById('profile-days-per-week').value = profile.daysPerWeek ?? '';
   refreshAllWeightBadges();
 
   const datalist = document.getElementById('max-exercise-list');
@@ -1259,6 +1282,16 @@ document.getElementById('profile-units').addEventListener('change', e => {
   refreshAllWeightBadges();
   renderMaxList();
 });
+document.getElementById('profile-experience').addEventListener('change', e => {
+  profile.experience = e.target.value;
+  scheduleProfileAutoSave();
+  renderTemplateList();
+});
+document.getElementById('profile-days-per-week').addEventListener('change', e => {
+  profile.daysPerWeek = e.target.value === '' ? null : Number(e.target.value);
+  scheduleProfileAutoSave();
+  renderTemplateList();
+});
 
 document.getElementById('max-add-btn').addEventListener('click', () => {
   const exerciseInput = document.getElementById('max-exercise');
@@ -1298,7 +1331,24 @@ function renderTemplateList() {
   templates.forEach(t => {
     const card = el('div', 'template-card');
     card.appendChild(el('div', 'template-name', t.label || 'Šablona bez názvu'));
+
+    const badges = el('div', 'template-badges');
+    if (t.level && EXPERIENCE_LABELS[t.level]) {
+      const matches = profile.experience && profile.experience === t.level;
+      badges.appendChild(el('span', 'template-badge' + (matches ? ' template-badge-match' : ''), EXPERIENCE_LABELS[t.level]));
+    }
+    if (t.daysPerWeek) {
+      const matches = profile.daysPerWeek && profile.daysPerWeek === t.daysPerWeek;
+      badges.appendChild(el('span', 'template-badge' + (matches ? ' template-badge-match' : ''), t.daysPerWeek + '×/týden'));
+    }
+    if ((t.level && profile.experience === t.level) && (t.daysPerWeek && profile.daysPerWeek === t.daysPerWeek)) {
+      badges.appendChild(el('span', 'template-badge template-badge-match', '✓ sedí ti'));
+    }
+    if (badges.children.length) card.appendChild(badges);
+
     if (t.description) card.appendChild(el('div', 'template-desc', t.description));
+    if (t.source) card.appendChild(el('div', 'template-source', '📚 Zdroj: ' + t.source));
+
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn-main';

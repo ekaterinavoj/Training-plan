@@ -447,6 +447,38 @@ header h1 {
 }
 .btn-csv:hover { background: #e7f0fb; }
 
+.csv-dropdown { position: relative; }
+.csv-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #fff;
+  border: 1.5px solid #dde5ef;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.14);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 220px;
+  z-index: 20;
+}
+.csv-menu[hidden] { display: none; }
+.csv-menu button {
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: .92em;
+  font-weight: 600;
+  font-family: inherit;
+  color: #1c2733;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.csv-menu button:hover { background: #e7f0fb; color: #1565c0; }
+
 /* ── Cycles ───────────────────────────────────────────────────────────────── */
 
 #cycles {
@@ -1211,8 +1243,20 @@ header h1 {
   margin-bottom: 10px;
 }
 .template-card:last-child { margin-bottom: 0; }
-.template-name { font-weight: 700; color: #1c2733; margin-bottom: 4px; }
-.template-desc { color: #7c8794; font-size: .9em; margin-bottom: 10px; }
+.template-name { font-weight: 700; color: #1c2733; margin-bottom: 6px; }
+.template-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.template-badge {
+  display: inline-block;
+  background: #eef5fc;
+  color: #2f6fb0;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: .76em;
+  font-weight: 700;
+}
+.template-badge-match { background: #1565c0; color: #fff; }
+.template-desc { color: #7c8794; font-size: .9em; margin-bottom: 8px; }
+.template-source { color: #9aa4af; font-size: .8em; font-style: italic; margin-bottom: 10px; line-height: 1.4; }
 
 /* ── Mobile (phones, e.g. Samsung S24 ~412px wide) ──────────────────────────
    Goal: comfortable one-thumb data entry — full-width text fields that don't
@@ -1238,6 +1282,8 @@ header h1 {
 
   #top-bar { padding: 0 10px; }
   .btn-add-cycle, .btn-csv { width: 100%; padding: 13px 16px; }
+  .csv-dropdown { width: 100%; }
+  .csv-menu { left: 0; right: 0; min-width: 0; }
 
   #cycles { padding: 0 10px; margin: 12px auto 28px; gap: 12px; }
 

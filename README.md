@@ -70,14 +70,29 @@ Struktura je čtyřúrovňová: **cyklus → týden → den → sekce → cvik**
 
 Otevře se ikonkou **👤** v hlavičce. Tři karty:
 
-- **Základní údaje** – výška, váha, a **jednotky vah** (kg / lb). Přepnutí jednotky se hned projeví u váhové značky ve všech polích (editor i tady) – nejde o přepočet starých čísel, jen o to, jaká jednotka se od teď automaticky nabízí.
+- **Základní údaje** – výška, váha, **jednotky vah** (kg / lb), **tréninková zkušenost** (začátečník / středně pokročilý / pokročilý) a **tréninkové dny v týdnu**. Jednotka se hned projeví u váhové značky ve všech polích (editor i tady) – nejde o přepočet starých čísel, jen o to, jaká jednotka se od teď automaticky nabízí. Zkušenost a dny v týdnu se nikam jinam nepromítají než do doporučení u šablon níž (žádné pole není povinné).
 - **Maximální váhy** – u každého cviku (dřep, bench, mrtvý tah...) si zapíšeš aktuální maximum. Není to jedno přepisované číslo – každý zápis zůstává v **historii**, takže je u cviku vidět poslední hodnota, trend oproti minulému záznamu (▲/▼) a po rozkliknutí "Historie (N)" celý vývoj v čase i s daty a poznámkami. Jednotlivé záznamy jde smazat tlačítkem ✕.
   - Tahle maxima se používají na dvou místech:
     1. Tlačítko **⚡ Doplnit z maxima** u každého cviku v editoru (vedle `+ Přidat sérii`) – když název cviku odpovídá nějakému zapsanému maximu, dopočítá váhu podle pravidla **60 % maxima v 1. týdnu cyklu, +2,5 kg každý další týden** (týden se pozná podle toho, na které záložce týdne zrovna jsi) a doplní ji do prázdných řádků Plánu. Hodí se to i bez šablony, když si trénink píšeš ručně.
     2. Šablony tréninků (viz níž) – ty počítají váhu ze stejného maxima podle procenta, které šablona předepisuje.
-- **Šablony tréninků** – zatím prázdné, čeká se na databázi šablon (bude doplněna později). Až tam nějaká šablona bude, objeví se tu jako karta s tlačítkem **⚡ Vygenerovat trénink**, které vytvoří nový cyklus s váhami dopočítanými z maxim výše.
+- **Šablony tréninků** – appka se dodává se **4 hotovými, výzkumem podloženými protokoly** (viz níž), každý jako karta se štítky úrovně/frekvence (zeleně zvýrazněné, pokud sedí k tomu, co máš vyplněné v Základních údajích výše, plus štítek "✓ sedí ti", když sedí obojí), krátkým popisem, zdrojem a tlačítkem **⚡ Vygenerovat trénink**, které vytvoří nový cyklus s váhami dopočítanými z maxim výše (a upozorní, pokud pro nějaký hlavní cvik maximum ještě nemáš).
 
-  Formát `data/templates.json` (soubor je gitignored, protože jde o osobní data stejně jako plán):
+  ### Dodávané protokoly (`data/templates.json`)
+
+  | Šablona | Úroveň | Dní/týden | Princip |
+  |---|---|---|---|
+  | **Nováček – lineární progrese** | začátečník | 3× | Váha u hlavních cviků stoupá každý týden o pevný krok (60→70 % 1RM za 4 týdny). |
+  | **Lineární periodizace – síla** | středně pokročilý | 4× | Klasický blokový model: opakování klesají, % 1RM stoupá (4×8@65 % → 3×3@82,5 %), 5. týden deload/test. Horní/dolní split. |
+  | **Vlnitá (undulující) periodizace** | středně pokročilý | 3× | Intenzita/opakování se mění den ode dne (těžký/střední/lehký), ne jen týden od týdne. Celotělově, deload na konci bloku. |
+  | **Autoregulace dle RIR** | pokročilý | 4× | Váhu u hlavního cviku volíš sama podle pocitu (RIR = kolik opakování bys ještě zvládla navíc), ne podle pevného procenta. RIR v bloku postupně klesá, pak deload. |
+
+  Zdroje, ze kterých protokoly vycházejí (každý je navíc vypsaný přímo u dané šablony v appce):
+  - American College of Sports Medicine. [Progression Models in Resistance Training for Healthy Adults](https://pubmed.ncbi.nlm.nih.gov/19204579/) (2009 Position Stand) — doporučené rozsahy % 1RM a opakování podle úrovně zkušenosti.
+  - Rhea, M. R. a kol. [Comparison between linear and daily undulating periodized resistance training to increase strength](https://pubmed.ncbi.nlm.nih.gov/19910831/) (2002) a novější systematická review/meta-analýzy srovnávající lineární a vlnitou (DUP) periodizaci.
+  - Zourdos, M. C. a kol. — zavedení RIR škály (reps-in-reserve) pro sílový trénink; autoregulační výzkum u vzpěračů/silových trojbojařů (Helms a kol.).
+  - Princip nováčkovské lineární progrese (Starting Strength / novice linear progression literatura).
+
+  `data/templates.json` na rozdíl od `plan.json`/`profile.json` **není gitignored** — jde o obecný, appkou dodávaný obsah (stejně jako `data/default.json`), ne o tvoje osobní data. Formát:
   ```json
   {
     "templates": [
@@ -119,10 +134,10 @@ Otevře se ikonkou **👤** v hlavičce. Tři karty:
 
 ## Export a import CSV
 
-V režimu Úprava jsou nahoře vedle `+ Nový cyklus` dvě tlačítka:
+V režimu Úprava je nahoře vedle `+ Nový cyklus` jedno tlačítko **📄 CSV**, které po kliknutí rozbalí nabídku se dvěma volbami (obousměrně, export i import z jednoho místa):
 
-- **⬇️ Export CSV** – stáhne **celý** aktuální trénink (všechny cykly, týdny, dny, sekce, cviky, rozcvičku, plán i Realitu) jako jeden `.csv` soubor, čitelný a upravitelný v Excelu/Google Sheets (oddělovač `;`, kódování UTF-8, jde tedy rovnou otevřít i s českými znaky).
-- **⬆️ Import CSV** – nahraje trénink zpátky ze souboru ve stejném formátu. **Import nahradí celý aktuální trénink** (appka se před tím zeptá na potvrzení) – hodí se to jako záloha/obnova, přesun mezi zařízeními, nebo hromadná úprava v Excelu (např. přepsání vah pro celý týden najednou) s následným zpětným nahráním.
+- **⬇️ Export CSV (stáhnout)** – stáhne **celý** aktuální trénink (všechny cykly, týdny, dny, sekce, cviky, rozcvičku, plán i Realitu) jako jeden `.csv` soubor, čitelný a upravitelný v Excelu/Google Sheets (oddělovač `;`, kódování UTF-8, jde tedy rovnou otevřít i s českými znaky).
+- **⬆️ Import CSV (nahradit plán)** – nahraje trénink zpátky ze souboru ve stejném formátu. **Import nahradí celý aktuální trénink** (appka se před tím zeptá na potvrzení) – hodí se to jako záloha/obnova, přesun mezi zařízeními, nebo hromadná úprava v Excelu (např. přepsání vah pro celý týden najednou) s následným zpětným nahráním.
 
 Export i import jsou tedy vzájemné – co appka vyexportuje, to i sama zpátky bezezbytku naimportuje (obousměrně, včetně diakritiky, čárek/středníků v poznámkách i víceřádkových poznámek). Každý řádek CSV odpovídá jedné sérii (rozcvička nebo plán) a nese s sebou celý "rodokmen" (Cyklus/Tyden/Den/Sekce/Cvik) jako sloupce – prázdné dny/sekce/cviky beze všech sérií dostanou vlastní řádek jen s vyplněným rodokmenem, ať se při zpětném importu neztratí. Jediné omezení: pokud je ve stejné sekci **dvakrát za sebou cvik se stejným názvem**, import je sloučí do jednoho (v praxi se to skoro neděje).
 
@@ -135,7 +150,7 @@ training-plan/
 │   ├── plan.json        # uložený plán (vzniká po prvním uložení, není v gitu)
 │   ├── auth.json        # heslo změněné přes appku/reset (vzniká při změně, není v gitu)
 │   ├── profile.json     # výška/váha/jednotky + historie maxim (vzniká při prvním uložení, není v gitu)
-│   └── templates.json   # databáze šablon tréninků (doplníš později, není v gitu)
+│   └── templates.json   # databáze šablon tréninků — 4 dodávané protokoly, JE v gitu (viz sekce výše); vlastní šablony si sem můžeš přidat, jen zvaž gitignore
 ├── public/
 │   ├── index.html
 │   ├── style.css

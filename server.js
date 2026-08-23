@@ -228,11 +228,15 @@ app.post('/api/plan', (req, res) => {
 // ── Profil (výška, váha) a historie maximálních vah ───────────────────────────
 // Maxima jsou historie záznamů (ne jen jedno číslo přepsané pokaždé), takže jde
 // zpětně vidět zlepšení/zhoršení v čase.
+const EXPERIENCE_LEVELS = ['zacatecnik', 'stredne_pokrocily', 'pokrocily'];
+
 function loadProfile() {
-  if (!fs.existsSync(PROFILE_FILE)) return { height: null, weight: null, units: 'kg', maxima: [] };
+  if (!fs.existsSync(PROFILE_FILE)) return { height: null, weight: null, units: 'kg', experience: '', daysPerWeek: null, maxima: [] };
   const p = JSON.parse(fs.readFileSync(PROFILE_FILE, 'utf8'));
   if (!Array.isArray(p.maxima)) p.maxima = [];
   if (p.units !== 'lb') p.units = 'kg';
+  if (!EXPERIENCE_LEVELS.includes(p.experience)) p.experience = '';
+  if (typeof p.daysPerWeek !== 'number') p.daysPerWeek = null;
   return p;
 }
 function saveProfile(profile) {

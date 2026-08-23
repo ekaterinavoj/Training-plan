@@ -1,0 +1,499 @@
+{
+  "templates": [
+    {
+      "id": "tpl-nlp-zacatecnik",
+      "label": "Nováček – lineární progrese",
+      "level": "zacatecnik",
+      "daysPerWeek": 3,
+      "description": "Pro úplné začátečníky (prvních cca 3–6 měsíců pravidelného tréninku). Váha u hlavních cviků stoupá každý týden o pevný krok, dokud to tělo zvládá — jde o zjednodušený (týdenní, ne po každém tréninku) model klasické nováčkovské lineární progrese. Jakmile přidávání vázne 2+ týdny po sobě, přejdi na Lineární periodizaci nebo Vlnitou periodizaci.",
+      "source": "ACSM 2009 Position Stand (nováček: 60–70 % 1RM, 8–12 opakování, 2–3× týdně); princip lineární progrese pro začátečníky (Starting Strength / novice linear progression literatura).",
+      "cycle": {
+        "label": "Nováček – lineární progrese (4 týdny)",
+        "weeks": [
+          {
+            "label": "Týden 1 (60 %)",
+            "days": [
+              {
+                "name": "Pondělí", "focus": "Trénink A · vše na 60 % 1RM",
+                "sections": [
+                  { "name": "Hlavní cviky", "exercises": [
+                    { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] },
+                    { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] },
+                    { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "60%" }] }
+                  ]}
+                ]
+              },
+              {
+                "name": "Středa", "focus": "Trénink B · vše na 60 % 1RM",
+                "sections": [
+                  { "name": "Hlavní cviky", "exercises": [
+                    { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] },
+                    { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] }
+                  ]},
+                  { "name": "Doplňky", "exercises": [
+                    { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "8", "weight": "lehká-střední váha" }] }
+                  ]}
+                ]
+              },
+              {
+                "name": "Pátek", "focus": "Trénink A · vše na 60 % 1RM",
+                "sections": [
+                  { "name": "Hlavní cviky", "exercises": [
+                    { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] },
+                    { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "60%" }] },
+                    { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "60%" }] }
+                  ]}
+                ]
+              }
+            ]
+          },
+          {
+            "label": "Týden 2 (65 %)",
+            "days": [
+              { "name": "Pondělí", "focus": "Trénink A · vše na 65 % 1RM", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "65%" }] },
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "65%" }] },
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "65%" }] }
+                ]}
+              ]},
+              { "name": "Středa", "focus": "Trénink B · vše na 65 % 1RM", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "65%" }] },
+                  { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "65%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "8", "weight": "lehká-střední váha" }] }
+                ]}
+              ]},
+              { "name": "Pátek", "focus": "Trénink A · vše na 65 % 1RM", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "65%" }] },
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "65%" }] },
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "65%" }] }
+                ]}
+              ]}
+            ]
+          },
+          {
+            "label": "Týden 3 (67,5 %)",
+            "days": [
+              { "name": "Pondělí", "focus": "Trénink A · vše na 67,5 % 1RM", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "67.5%" }] },
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "67.5%" }] },
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "67.5%" }] }
+                ]}
+              ]},
+              { "name": "Středa", "focus": "Trénink B · vše na 67,5 % 1RM", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "67.5%" }] },
+                  { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "67.5%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "8", "weight": "lehká-střední váha" }] }
+                ]}
+              ]},
+              { "name": "Pátek", "focus": "Trénink A · vše na 67,5 % 1RM", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "67.5%" }] },
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "67.5%" }] },
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "67.5%" }] }
+                ]}
+              ]}
+            ]
+          },
+          {
+            "label": "Týden 4 (70 %)",
+            "days": [
+              { "name": "Pondělí", "focus": "Trénink A · vše na 70 % 1RM", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "70%" }] },
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "70%" }] },
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "70%" }] }
+                ]}
+              ]},
+              { "name": "Středa", "focus": "Trénink B · vše na 70 % 1RM", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "70%" }] },
+                  { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "70%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "8", "weight": "lehká-střední váha" }] }
+                ]}
+              ]},
+              { "name": "Pátek", "focus": "Trénink A · vše na 70 % 1RM · konec bloku, zapiš si nová maxima do Profilu", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "70%" }] },
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "70%" }] },
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "40%" }], "plan": [{ "sets": 1, "reps": "5", "weight": "70%" }] }
+                ]}
+              ]}
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "id": "tpl-lp-blok-sila",
+      "label": "Lineární periodizace – síla",
+      "level": "stredne_pokrocily",
+      "daysPerWeek": 4,
+      "description": "Klasický blokový model: objem (počet opakování) postupně klesá, intenzita (% maxima) stoupá — 4 buildup týdny + deload/testovací týden na konci. 4× týdně, horní/dolní split (2× nohy, 2× horní tělo za týden).",
+      "source": "ACSM 2009 Position Stand (pokročilejší: periodizovaný rozsah 1–12 opakování s důrazem na těžké zóny 1–6, 3–5 min pauza); Rhea a kol. 2002 a novější systematické review potvrzují spolehlivý přínos lineární periodizace pro sílu.",
+      "cycle": {
+        "label": "Lineární periodizace – síla (5 týdnů)",
+        "weeks": [
+          {
+            "label": "Týden 1 (4×8 @ 65 %)",
+            "days": [
+              { "name": "Pondělí", "focus": "Dolní A · Nohy", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 4, "reps": "8", "weight": "65%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
+                ]}
+              ]},
+              { "name": "Úterý", "focus": "Horní A · Tlak", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 4, "reps": "8", "weight": "65%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
+                ]}
+              ]},
+              { "name": "Čtvrtek", "focus": "Dolní B · Tah", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 3, "reps": "8", "weight": "65%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Zakopávání", "plan": [{ "sets": 3, "reps": "12", "weight": "lehká váha" }] }
+                ]}
+              ]},
+              { "name": "Pátek", "focus": "Horní B · Tah/tlak ramena", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 4, "reps": "8", "weight": "65%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "8", "weight": "vlastní váha" }] }
+                ]}
+              ]}
+            ]
+          },
+          {
+            "label": "Týden 2 (4×6 @ 70 %)",
+            "days": [
+              { "name": "Pondělí", "focus": "Dolní A · Nohy", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "55%" }], "plan": [{ "sets": 4, "reps": "6", "weight": "70%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
+                ]}
+              ]},
+              { "name": "Úterý", "focus": "Horní A · Tlak", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "55%" }], "plan": [{ "sets": 4, "reps": "6", "weight": "70%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] }
+                ]}
+              ]},
+              { "name": "Čtvrtek", "focus": "Dolní B · Tah", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "55%" }], "plan": [{ "sets": 3, "reps": "6", "weight": "70%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Zakopávání", "plan": [{ "sets": 3, "reps": "12", "weight": "lehká váha" }] }
+                ]}
+              ]},
+              { "name": "Pátek", "focus": "Horní B · Tah/tlak ramena", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }, { "sets": 1, "reps": "5", "weight": "55%" }], "plan": [{ "sets": 4, "reps": "6", "weight": "70%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "8", "weight": "vlastní váha" }] }
+                ]}
+              ]}
+            ]
+          },
+          {
+            "label": "Týden 3 (3×5 @ 75 %)",
+            "days": [
+              { "name": "Pondělí", "focus": "Dolní A · Nohy", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "3", "weight": "60%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "75%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 3, "reps": "8", "weight": "střední váha" }] }
+                ]}
+              ]},
+              { "name": "Úterý", "focus": "Horní A · Tlak", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "3", "weight": "60%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "75%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "8", "weight": "střední váha" }] }
+                ]}
+              ]},
+              { "name": "Čtvrtek", "focus": "Dolní B · Tah", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "3", "weight": "60%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "75%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Zakopávání", "plan": [{ "sets": 3, "reps": "10", "weight": "lehká váha" }] }
+                ]}
+              ]},
+              { "name": "Pátek", "focus": "Horní B · Tah/tlak ramena", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "3", "weight": "60%" }], "plan": [{ "sets": 3, "reps": "5", "weight": "75%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "6", "weight": "vlastní váha + zátěž" }] }
+                ]}
+              ]}
+            ]
+          },
+          {
+            "label": "Týden 4 (3×3 @ 82,5 %)",
+            "days": [
+              { "name": "Pondělí", "focus": "Dolní A · Nohy", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "2", "weight": "65%" }], "plan": [{ "sets": 3, "reps": "3", "weight": "82.5%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 2, "reps": "8", "weight": "střední váha" }] }
+                ]}
+              ]},
+              { "name": "Úterý", "focus": "Horní A · Tlak", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "2", "weight": "65%" }], "plan": [{ "sets": 3, "reps": "3", "weight": "82.5%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Veslování v předklonu", "plan": [{ "sets": 2, "reps": "8", "weight": "střední váha" }] }
+                ]}
+              ]},
+              { "name": "Čtvrtek", "focus": "Dolní B · Tah", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "2", "weight": "65%" }], "plan": [{ "sets": 3, "reps": "3", "weight": "82.5%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Zakopávání", "plan": [{ "sets": 2, "reps": "10", "weight": "lehká váha" }] }
+                ]}
+              ]},
+              { "name": "Pátek", "focus": "Horní B · Tah/tlak ramena", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Overhead press", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }, { "sets": 1, "reps": "2", "weight": "65%" }], "plan": [{ "sets": 3, "reps": "3", "weight": "82.5%" }] }
+                ]},
+                { "name": "Doplňky", "exercises": [
+                  { "name": "Shyby/přítahy", "plan": [{ "sets": 2, "reps": "5", "weight": "vlastní váha + zátěž" }] }
+                ]}
+              ]}
+            ]
+          },
+          {
+            "label": "Týden 5 (Deload/Test)",
+            "days": [
+              { "name": "Pondělí", "focus": "Deload · lehce, technika", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Zadní dřep", "plan": [{ "sets": 2, "reps": "5", "weight": "60%" }] }
+                ]}
+              ]},
+              { "name": "Úterý", "focus": "Deload · lehce, technika", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Bench press", "plan": [{ "sets": 2, "reps": "5", "weight": "60%" }] }
+                ]}
+              ]},
+              { "name": "Čtvrtek", "focus": "Deload · lehce, technika", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Mrtvý tah", "plan": [{ "sets": 2, "reps": "5", "weight": "60%" }] }
+                ]}
+              ]},
+              { "name": "Pátek", "focus": "Volitelně: otestuj nové 1RM na hlavních cvicích a zapiš je do Profilu (Maximální váhy) — pak z nich příští blok počítá dál.", "sections": [
+                { "name": "Hlavní cvik", "exercises": [
+                  { "name": "Overhead press", "plan": [{ "sets": 2, "reps": "5", "weight": "60%" }] }
+                ]}
+              ]}
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "id": "tpl-dup-vlnita",
+      "label": "Vlnitá (undulující) periodizace",
+      "level": "stredne_pokrocily",
+      "daysPerWeek": 3,
+      "description": "Intenzita a počet opakování se mění den ode dne (těžký/střední/lehký den) místo týden od týdne — tzv. daily undulating periodization (DUP). Přes týdny se navíc základ mírně zvedá, na konci bloku je deload. 3× týdně, celotělově (dřep, bench, mrtvý tah každý trénink).",
+      "source": "Rhea a kol. 2002 (srovnání DUP vs. lineární periodizace) a novější systematické review/meta-analýzy (např. Grgic a kol.) ukazují, že DUP je pro rozvoj síly minimálně stejně účinná jako lineární model, u trénovaných jedinců v části studií i lepší.",
+      "cycle": {
+        "label": "Vlnitá (undulující) periodizace (4 týdny)",
+        "weeks": [
+          {
+            "label": "Týden 1",
+            "days": [
+              { "name": "Pondělí", "focus": "Těžký den · nízké opakování, vysoká intenzita", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 3, "reps": "4", "weight": "85%" }] },
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 3, "reps": "4", "weight": "85%" }] },
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 2, "reps": "4", "weight": "85%" }] }
+                ]},
+                { "name": "Core", "exercises": [ { "name": "Plank", "plan": [{ "sets": 3, "reps": "30-45 s", "weight": "vlastní váha" }] } ]}
+              ]},
+              { "name": "Středa", "focus": "Střední den · střední opakování, střední intenzita", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "8", "weight": "72.5%" }] },
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "8", "weight": "72.5%" }] },
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }], "plan": [{ "sets": 2, "reps": "8", "weight": "72.5%" }] }
+                ]},
+                { "name": "Core", "exercises": [ { "name": "Plank", "plan": [{ "sets": 3, "reps": "30-45 s", "weight": "vlastní váha" }] } ]}
+              ]},
+              { "name": "Pátek", "focus": "Lehký/objemový den · vysoké opakování, nízká intenzita", "sections": [
+                { "name": "Hlavní cviky", "exercises": [
+                  { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "10", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "12", "weight": "62.5%" }] },
+                  { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "10", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "12", "weight": "62.5%" }] },
+                  { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "10", "weight": "40%" }], "plan": [{ "sets": 2, "reps": "12", "weight": "62.5%" }] }
+                ]},
+                { "name": "Core", "exercises": [ { "name": "Plank", "plan": [{ "sets": 3, "reps": "45-60 s", "weight": "vlastní váha" }] } ]}
+              ]}
+            ]
+          },
+          {
+            "label": "Týden 2",
+            "days": [
+              { "name": "Pondělí", "focus": "Těžký den", "sections": [ { "name": "Hlavní cviky", "exercises": [
+                { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 3, "reps": "4", "weight": "87.5%" }] },
+                { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 3, "reps": "4", "weight": "87.5%" }] },
+                { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 2, "reps": "4", "weight": "87.5%" }] }
+              ]} ]},
+              { "name": "Středa", "focus": "Střední den", "sections": [ { "name": "Hlavní cviky", "exercises": [
+                { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "8", "weight": "75%" }] },
+                { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "8", "weight": "75%" }] },
+                { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }], "plan": [{ "sets": 2, "reps": "8", "weight": "75%" }] }
+              ]} ]},
+              { "name": "Pátek", "focus": "Lehký/objemový den", "sections": [ { "name": "Hlavní cviky", "exercises": [
+                { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "10", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "12", "weight": "65%" }] },
+                { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "10", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "12", "weight": "65%" }] },
+                { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "10", "weight": "40%" }], "plan": [{ "sets": 2, "reps": "12", "weight": "65%" }] }
+              ]} ]}
+            ]
+          },
+          {
+            "label": "Týden 3",
+            "days": [
+              { "name": "Pondělí", "focus": "Těžký den", "sections": [ { "name": "Hlavní cviky", "exercises": [
+                { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 3, "reps": "3", "weight": "90%" }] },
+                { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 3, "reps": "3", "weight": "90%" }] },
+                { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "5", "weight": "50%" }], "plan": [{ "sets": 2, "reps": "3", "weight": "90%" }] }
+              ]} ]},
+              { "name": "Středa", "focus": "Střední den", "sections": [ { "name": "Hlavní cviky", "exercises": [
+                { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "6", "weight": "77.5%" }] },
+                { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "6", "weight": "77.5%" }] },
+                { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "8", "weight": "40%" }], "plan": [{ "sets": 2, "reps": "6", "weight": "77.5%" }] }
+              ]} ]},
+              { "name": "Pátek", "focus": "Lehký/objemový den", "sections": [ { "name": "Hlavní cviky", "exercises": [
+                { "name": "Zadní dřep", "warmup": [{ "sets": 1, "reps": "10", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "10", "weight": "67.5%" }] },
+                { "name": "Bench press", "warmup": [{ "sets": 1, "reps": "10", "weight": "40%" }], "plan": [{ "sets": 3, "reps": "10", "weight": "67.5%" }] },
+                { "name": "Mrtvý tah", "warmup": [{ "sets": 1, "reps": "10", "weight": "40%" }], "plan": [{ "sets": 2, "reps": "10", "weight": "67.5%" }] }
+              ]} ]}
+            ]
+          },
+          {
+            "label": "Týden 4 (Deload)",
+            "days": [
+              { "name": "Pondělí", "focus": "Deload · lehce", "sections": [ { "name": "Hlavní cviky", "exercises": [
+                { "name": "Zadní dřep", "plan": [{ "sets": 2, "reps": "3", "weight": "70%" }] },
+                { "name": "Bench press", "plan": [{ "sets": 2, "reps": "3", "weight": "70%" }] },
+                { "name": "Mrtvý tah", "plan": [{ "sets": 1, "reps": "3", "weight": "70%" }] }
+              ]} ]},
+              { "name": "Středa", "focus": "Deload · lehce", "sections": [ { "name": "Hlavní cviky", "exercises": [
+                { "name": "Zadní dřep", "plan": [{ "sets": 2, "reps": "6", "weight": "60%" }] },
+                { "name": "Bench press", "plan": [{ "sets": 2, "reps": "6", "weight": "60%" }] },
+                { "name": "Mrtvý tah", "plan": [{ "sets": 1, "reps": "6", "weight": "60%" }] }
+              ]} ]},
+              { "name": "Pátek", "focus": "Deload · lehce · konec bloku, zapiš si nová maxima do Profilu", "sections": [ { "name": "Hlavní cviky", "exercises": [
+                { "name": "Zadní dřep", "plan": [{ "sets": 2, "reps": "10", "weight": "50%" }] },
+                { "name": "Bench press", "plan": [{ "sets": 2, "reps": "10", "weight": "50%" }] },
+                { "name": "Mrtvý tah", "plan": [{ "sets": 1, "reps": "10", "weight": "50%" }] }
+              ]} ]}
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "id": "tpl-rir-autoregulace",
+      "label": "Autoregulace dle RIR (Reps in Reserve)",
+      "level": "pokrocily",
+      "daysPerWeek": 4,
+      "description": "Váhu u hlavního cviku si každý trénink volíš sama podle pocitu tak, aby poslední série odpovídala zadanému RIR (kolik opakování bys ještě zvládla navíc, než by sis sedla pod činkou) — ne podle pevného procenta starého maxima. V rámci bloku RIR postupně klesá (blížíš se víc k selhání), na konci je deload. Hodí se, když už máš zkušenost odhadnout vlastní rezervu.",
+      "source": "Zourdos a kol. 2016 (RIR škála pro sílový trénink) a autoregulační výzkum u vzpěračů/silových trojbojařů (Helms a kol.) — RIR/RPE autoregulace lépe reaguje na denní formu než pevná procenta 1RM.",
+      "cycle": {
+        "label": "Autoregulace dle RIR (5 týdnů)",
+        "weeks": [
+          {
+            "label": "Týden 1 (RIR 3)",
+            "days": [
+              { "name": "Pondělí", "focus": "Dřep-fokus", "sections": [
+                { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 3)" }] } ]},
+                { "name": "Doplňky", "exercises": [ { "name": "Bulharský dřep (na nohu)", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] } ]}
+              ]},
+              { "name": "Úterý", "focus": "Bench-fokus", "sections": [
+                { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 3)" }] } ]},
+                { "name": "Doplňky", "exercises": [ { "name": "Veslování v předklonu", "plan": [{ "sets": 3, "reps": "10", "weight": "střední váha" }] } ]}
+              ]},
+              { "name": "Čtvrtek", "focus": "Mrtvý tah-fokus", "sections": [
+                { "name": "Hlavní cvik", "exercises": [ { "name": "Mrtvý tah", "plan": [{ "sets": 3, "reps": "5", "weight": "těžká (RIR 3)" }] } ]},
+                { "name": "Doplňky", "exercises": [ { "name": "Zakopávání", "plan": [{ "sets": 3, "reps": "12", "weight": "lehká váha" }] } ]}
+              ]},
+              { "name": "Pátek", "focus": "OHP-fokus", "sections": [
+                { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 3)" }] } ]},
+                { "name": "Doplňky", "exercises": [ { "name": "Shyby/přítahy", "plan": [{ "sets": 3, "reps": "8", "weight": "vlastní váha" }] } ]}
+              ]}
+            ]
+          },
+          {
+            "label": "Týden 2 (RIR 2)",
+            "days": [
+              { "name": "Pondělí", "focus": "Dřep-fokus", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 2)" }] } ]} ]},
+              { "name": "Úterý", "focus": "Bench-fokus", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 2)" }] } ]} ]},
+              { "name": "Čtvrtek", "focus": "Mrtvý tah-fokus", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Mrtvý tah", "plan": [{ "sets": 3, "reps": "5", "weight": "těžká (RIR 2)" }] } ]} ]},
+              { "name": "Pátek", "focus": "OHP-fokus", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "plan": [{ "sets": 4, "reps": "5", "weight": "těžká (RIR 2)" }] } ]} ]}
+            ]
+          },
+          {
+            "label": "Týden 3 (RIR 1)",
+            "days": [
+              { "name": "Pondělí", "focus": "Dřep-fokus", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "plan": [{ "sets": 3, "reps": "3", "weight": "těžká (RIR 1)" }] } ]} ]},
+              { "name": "Úterý", "focus": "Bench-fokus", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "plan": [{ "sets": 3, "reps": "3", "weight": "těžká (RIR 1)" }] } ]} ]},
+              { "name": "Čtvrtek", "focus": "Mrtvý tah-fokus", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Mrtvý tah", "plan": [{ "sets": 3, "reps": "3", "weight": "těžká (RIR 1)" }] } ]} ]},
+              { "name": "Pátek", "focus": "OHP-fokus", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "plan": [{ "sets": 3, "reps": "3", "weight": "těžká (RIR 1)" }] } ]} ]}
+            ]
+          },
+          {
+            "label": "Týden 4 (RIR 0-1, test)",
+            "days": [
+              { "name": "Pondělí", "focus": "Dřep-fokus · téměř na doraz", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "plan": [{ "sets": 3, "reps": "1-2", "weight": "těžká (RIR 0-1)" }] } ]} ]},
+              { "name": "Úterý", "focus": "Bench-fokus · téměř na doraz", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "plan": [{ "sets": 3, "reps": "1-2", "weight": "těžká (RIR 0-1)" }] } ]} ]},
+              { "name": "Čtvrtek", "focus": "Mrtvý tah-fokus · téměř na doraz", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Mrtvý tah", "plan": [{ "sets": 3, "reps": "1-2", "weight": "těžká (RIR 0-1)" }] } ]} ]},
+              { "name": "Pátek", "focus": "OHP-fokus · téměř na doraz", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "plan": [{ "sets": 3, "reps": "1-2", "weight": "těžká (RIR 0-1)" }] } ]} ]}
+            ]
+          },
+          {
+            "label": "Týden 5 (Deload)",
+            "days": [
+              { "name": "Pondělí", "focus": "Deload · lehce (RIR 4-5)", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Zadní dřep", "plan": [{ "sets": 3, "reps": "5", "weight": "lehká (RIR 4-5)" }] } ]} ]},
+              { "name": "Úterý", "focus": "Deload · lehce (RIR 4-5)", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Bench press", "plan": [{ "sets": 3, "reps": "5", "weight": "lehká (RIR 4-5)" }] } ]} ]},
+              { "name": "Čtvrtek", "focus": "Deload · lehce (RIR 4-5)", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Mrtvý tah", "plan": [{ "sets": 3, "reps": "5", "weight": "lehká (RIR 4-5)" }] } ]} ]},
+              { "name": "Pátek", "focus": "Deload · lehce · konec bloku, zapiš si nová maxima do Profilu", "sections": [ { "name": "Hlavní cvik", "exercises": [ { "name": "Overhead press", "plan": [{ "sets": 3, "reps": "5", "weight": "lehká (RIR 4-5)" }] } ]} ]}
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
