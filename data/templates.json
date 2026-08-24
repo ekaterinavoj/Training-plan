@@ -11124,12 +11124,12 @@
                         ]
                       },
                       {
-                        "name": "Tricepsová kladka",
+                        "name": "Dumbbell Flye (rozpažování s jednoručkami)",
                         "plan": [
                           {
                             "sets": 3,
-                            "reps": "10-15",
-                            "weight": "RIR 1-2"
+                            "reps": "12-15",
+                            "weight": "lehká váha"
                           }
                         ]
                       }
@@ -11139,7 +11139,7 @@
               },
               {
                 "name": "Úterý",
-                "focus": "Limbs 1 · nohy (kvadricepsy + zadní řetězec)",
+                "focus": "Limbs 1 · nohy (kvadricepsy + zadní řetězec) + paže",
                 "sections": [
                   {
                     "name": "Hlavní cviky",
@@ -11202,6 +11202,16 @@
                             "weight": "RIR 1-2"
                           }
                         ]
+                      },
+                      {
+                        "name": "Tricepsová kladka",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -11257,7 +11267,7 @@
                         ]
                       },
                       {
-                        "name": "Dumbbell Flye (rozpažování s jednoručkami)",
+                        "name": "Lateral Raise (upažování s jednoručkami)",
                         "plan": [
                           {
                             "sets": 3,
@@ -11325,6 +11335,26 @@
                           {
                             "sets": 3,
                             "reps": "12-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Hammer Curl (kladivový zdvih)",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Overhead Cable Triceps Extension (přes hlavu na kladce)",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
                             "weight": "RIR 1-2"
                           }
                         ]
@@ -11395,12 +11425,12 @@
                         ]
                       },
                       {
-                        "name": "Tricepsová kladka",
+                        "name": "Dumbbell Flye (rozpažování s jednoručkami)",
                         "plan": [
                           {
                             "sets": 3,
-                            "reps": "10-15",
-                            "weight": "RIR 1-2"
+                            "reps": "12-15",
+                            "weight": "lehká váha"
                           }
                         ]
                       }
@@ -11410,7 +11440,7 @@
               },
               {
                 "name": "Úterý",
-                "focus": "Limbs 1 · nohy (kvadricepsy + zadní řetězec)",
+                "focus": "Limbs 1 · nohy (kvadricepsy + zadní řetězec) + paže",
                 "sections": [
                   {
                     "name": "Hlavní cviky",
@@ -11473,6 +11503,16 @@
                             "weight": "RIR 1-2"
                           }
                         ]
+                      },
+                      {
+                        "name": "Tricepsová kladka",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -11528,7 +11568,7 @@
                         ]
                       },
                       {
-                        "name": "Dumbbell Flye (rozpažování s jednoručkami)",
+                        "name": "Lateral Raise (upažování s jednoručkami)",
                         "plan": [
                           {
                             "sets": 3,
@@ -11596,6 +11636,26 @@
                           {
                             "sets": 3,
                             "reps": "12-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Hammer Curl (kladivový zdvih)",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Overhead Cable Triceps Extension (přes hlavu na kladce)",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
                             "weight": "RIR 1-2"
                           }
                         ]
@@ -11666,12 +11726,12 @@
                         ]
                       },
                       {
-                        "name": "Tricepsová kladka",
+                        "name": "Dumbbell Flye (rozpažování s jednoručkami)",
                         "plan": [
                           {
                             "sets": 3,
-                            "reps": "10-15",
-                            "weight": "RIR 1-2"
+                            "reps": "12-15",
+                            "weight": "lehká váha"
                           }
                         ]
                       }
@@ -11681,7 +11741,7 @@
               },
               {
                 "name": "Úterý",
-                "focus": "Limbs 1 · nohy (kvadricepsy + zadní řetězec)",
+                "focus": "Limbs 1 · nohy (kvadricepsy + zadní řetězec) + paže",
                 "sections": [
                   {
                     "name": "Hlavní cviky",
@@ -11744,6 +11804,16 @@
                             "weight": "RIR 1-2"
                           }
                         ]
+                      },
+                      {
+                        "name": "Tricepsová kladka",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -11799,7 +11869,7 @@
                         ]
                       },
                       {
-                        "name": "Dumbbell Flye (rozpažování s jednoručkami)",
+                        "name": "Lateral Raise (upažování s jednoručkami)",
                         "plan": [
                           {
                             "sets": 3,
@@ -11867,6 +11937,26 @@
                           {
                             "sets": 3,
                             "reps": "12-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Hammer Curl (kladivový zdvih)",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Overhead Cable Triceps Extension (přes hlavu na kladce)",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
                             "weight": "RIR 1-2"
                           }
                         ]
@@ -11937,12 +12027,12 @@
                         ]
                       },
                       {
-                        "name": "Tricepsová kladka",
+                        "name": "Dumbbell Flye (rozpažování s jednoručkami)",
                         "plan": [
                           {
                             "sets": 3,
-                            "reps": "10-15",
-                            "weight": "RIR 1-2"
+                            "reps": "12-15",
+                            "weight": "lehká váha"
                           }
                         ]
                       }
@@ -11952,7 +12042,7 @@
               },
               {
                 "name": "Úterý",
-                "focus": "Limbs 1 · nohy (kvadricepsy + zadní řetězec)",
+                "focus": "Limbs 1 · nohy (kvadricepsy + zadní řetězec) + paže",
                 "sections": [
                   {
                     "name": "Hlavní cviky",
@@ -12015,6 +12105,16 @@
                             "weight": "RIR 1-2"
                           }
                         ]
+                      },
+                      {
+                        "name": "Tricepsová kladka",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -12070,7 +12170,7 @@
                         ]
                       },
                       {
-                        "name": "Dumbbell Flye (rozpažování s jednoručkami)",
+                        "name": "Lateral Raise (upažování s jednoručkami)",
                         "plan": [
                           {
                             "sets": 3,
@@ -12141,6 +12241,26 @@
                             "weight": "RIR 1-2"
                           }
                         ]
+                      },
+                      {
+                        "name": "Hammer Curl (kladivový zdvih)",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Overhead Cable Triceps Extension (přes hlavu na kladce)",
+                        "plan": [
+                          {
+                            "sets": 3,
+                            "reps": "10-15",
+                            "weight": "RIR 1-2"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -12198,7 +12318,7 @@
               },
               {
                 "name": "Úterý",
-                "focus": "Limbs 1 · nohy (kvadricepsy + zadní řetězec)",
+                "focus": "Limbs 1 · nohy (kvadricepsy + zadní řetězec) + paže",
                 "sections": [
                   {
                     "name": "Hlavní cviky",
