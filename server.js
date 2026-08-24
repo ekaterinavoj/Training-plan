@@ -21,13 +21,36 @@ const ADMIN_RESET_CODE   = process.env.ADMIN_RESET_CODE   || 'ObnovaHesla-9427-T
 const dataDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
+// ── Hesla — hashovaná (scrypt + náhodná sůl na uživatele), ne prostý text ───
+// Node má scrypt vestavěný v `crypto`, takže to nepřidává žádnou další
+// závislost. Uložený tvar je "sůl:hash" (obojí hex). Stará data/users.json
+// (appka před touhle úpravou) mají hesla ještě jako prostý text — ta appka
+// pozná (viz isHashed) a při nejbližším úspěšném přihlášení/změně hesla je
+// potichu přehashuje, ať se nemusí nic ručně migrovat.
+const SCRYPT_KEYLEN = 64;
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(password, salt, SCRYPT_KEYLEN).toString('hex');
+  return `${salt}:${hash}`;
+}
+function isHashed(stored) {
+  return typeof stored === 'string' && /^[0-9a-f]{32}:[0-9a-f]{128}$/.test(stored);
+}
+function verifyPassword(password, stored) {
+  if (!stored) return false;
+  if (!isHashed(stored)) return password === stored; // starší, ještě nepřehashované heslo
+  const [salt, hexHash] = stored.split(':');
+  const hashBuffer = Buffer.from(hexHash, 'hex');
+  const testHash = crypto.scryptSync(password, salt, SCRYPT_KEYLEN);
+  if (hashBuffer.length !== testHash.length) return false;
+  return crypto.timingSafeEqual(hashBuffer, testHash);
+}
+
 // ── Uživatelé (víc lidí, každý se svým samostatným tréninkem/profilem) ──────
 // data/users.json: pole { username, password, primary }. "primary" je ten
 // jediný uživatel, co appka měla odjakživa (a jeho data.plan.json/profile.json
 // zůstávají na svém původním místě, ať upgrade nic nerozbije) — kdokoli další
 // dostane vlastní soubory data/plan-<jméno>.json a data/profile-<jméno>.json.
-// Heslo je (stejně jako dřív v auth.json) prostý text — appka běží jen
-// lokálně/pro pár známých lidí, ne jako veřejná služba.
 function loadUsers() {
   if (fs.existsSync(USERS_FILE)) {
     try {
@@ -38,7 +61,9 @@ function loadUsers() {
   // První spuštění po upgradu na víc uživatelů (nebo úplně první spuštění
   // appky): založ jediného uživatele z ADMIN_USERNAME/ADMIN_PASSWORD, případně
   // z dřívějšího data/auth.json, pokud si přes appku heslo už dřív změnila —
-  // ať přihlášení funguje beze změny i po tomhle upgradu.
+  // ať přihlášení funguje beze změny i po tomhle upgradu. Heslo se rovnou
+  // uloží hashované, i když zdroj (env proměnná / staré auth.json) je ještě
+  // prostý text.
   let legacyPassword = ADMIN_PASSWORD_ENV;
   try {
     if (fs.existsSync(AUTH_FILE)) {
@@ -46,15 +71,21 @@ function loadUsers() {
       if (a.password) legacyPassword = a.password;
     }
   } catch (_) {}
-  const users = [{ username: ADMIN_USERNAME, password: legacyPassword, primary: true }];
+  const users = [{ username: ADMIN_USERNAME, password: hashPassword(legacyPassword), primary: true }];
   saveUsers(users);
   return users;
 }
 function saveUsers(users) {
   fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf8');
 }
+// Case-insensitivní porovnání — jméno se dřív hledalo přesnou shodou, ale
+// kontrola duplicity při zakládání účtu (níž) už dávno je case-insensitivní
+// ("Petr" a "petr" jsou brány jako stejné jméno) — nekonzistence mezi tím by
+// mohla někoho vyhodit z přihlášení, kdyby napsal jméno jinou velikostí písmen,
+// než jakou ho založil.
 function findUser(users, username) {
-  return users.find(u => u.username === username);
+  const needle = String(username || '').toLowerCase();
+  return users.find(u => u.username.toLowerCase() === needle);
 }
 // Bezpečný název souboru odvozený z uživatelského jména (jen písmena/čísla/-/_).
 function safeUserFile(username) {
@@ -202,7 +233,13 @@ async function doReset() {
 app.post('/login', (req, res) => {
   const users = loadUsers();
   const u = findUser(users, req.body.username);
-  if (u && req.body.password === u.password) {
+  if (u && verifyPassword(req.body.password, u.password)) {
+    // Tichá migrace: pokud bylo heslo ještě uložené jako prostý text (starší
+    // data/users.json), po prvním úspěšném přihlášení ho rovnou přehashuj.
+    if (!isHashed(u.password)) {
+      u.password = hashPassword(req.body.password);
+      saveUsers(users);
+    }
     const token = crypto.randomBytes(32).toString('hex');
     sessions.set(token, u.username);
     res.setHeader('Set-Cookie', `authToken=${token}; Path=/; HttpOnly; SameSite=Lax`);
@@ -226,7 +263,7 @@ app.post('/reset-password', (req, res) => {
     const users = loadUsers();
     const u = findUser(users, username);
     if (!u) return res.status(404).json({ error: 'Uživatel s tímhle jménem neexistuje.' });
-    u.password = newPassword;
+    u.password = hashPassword(newPassword);
     saveUsers(users);
     res.json({ ok: true });
   } catch (e) {
@@ -247,8 +284,8 @@ app.post('/api/change-password', (req, res) => {
   try {
     const users = loadUsers();
     const u = findUser(users, req.username);
-    if (!u || currentPassword !== u.password) return res.status(403).json({ error: 'Současné heslo není správné.' });
-    u.password = newPassword;
+    if (!u || !verifyPassword(currentPassword, u.password)) return res.status(403).json({ error: 'Současné heslo není správné.' });
+    u.password = hashPassword(newPassword);
     saveUsers(users);
     res.json({ ok: true });
   } catch (e) {
@@ -295,7 +332,13 @@ app.post('/api/users', requirePrimary, (req, res) => {
     if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
       return res.status(409).json({ error: 'Tohle uživatelské jméno už existuje.' });
     }
-    users.push({ username, password, primary: false });
+    // Jméno se pro soubory dat (plan-<jméno>.json) zbaví diakritiky/teček na
+    // "_" (viz safeUserFile) — bez týhle kontroly by např. "a.b" a "a_b"
+    // skončily na stejném souboru a jeden by přepsal reálná data druhého.
+    if (users.some(u => !u.primary && safeUserFile(u.username).toLowerCase() === safeUserFile(username).toLowerCase())) {
+      return res.status(409).json({ error: 'Tohle jméno by kolidovalo se souborem existujícího uživatele (příliš podobné znaky) — zkus jiné.' });
+    }
+    users.push({ username, password: hashPassword(password), primary: false });
     saveUsers(users);
     res.json({ ok: true });
   } catch (e) {
@@ -314,7 +357,7 @@ app.post('/api/users/:username/password', requirePrimary, (req, res) => {
     const users = loadUsers();
     const u = findUser(users, req.params.username);
     if (!u) return res.status(404).json({ error: 'Uživatel s tímhle jménem neexistuje.' });
-    u.password = newPassword;
+    u.password = hashPassword(newPassword);
     saveUsers(users);
     res.json({ ok: true });
   } catch (e) {
@@ -419,7 +462,10 @@ app.listen(PORT, '0.0.0.0', () => {
   const primary = users.find(u => u.primary) || users[0];
   console.log(`\n✅  Training plan spuštěn`);
   console.log(`   Otevři  : http://localhost:${PORT}`);
-  console.log(`   Přihlášení: ${primary.username} / ${primary.password}`);
+  // Heslo je teď hashované, nedá se z uložených dat zpětně vypsat — vypiš
+  // jen jméno; heslo je to, co sis nastavila (výchozí je ADMIN_PASSWORD,
+  // dokud ho nezměníš).
+  console.log(`   Přihlášení: ${primary.username} / (heslo které sis nastavila, výchozí je proměnná ADMIN_PASSWORD)`);
   if (users.length > 1) console.log(`   Další účty: ${users.filter(u => !u.primary).map(u => u.username).join(', ')}`);
   console.log('');
 });

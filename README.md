@@ -49,6 +49,8 @@ Appka zatím neumí účty mazat přes rozhraní – kdybys chtěla nějaký ode
 
 Technicky: hlavní účet (ten, co appka měla odjakživa) dál používá stejné soubory jako dřív – `data/plan.json` a `data/profile.json` – takže upgrade na víc uživatelů nijak nenarušil existující data. Každý další účet dostane vlastní `data/plan-<jméno>.json` a `data/profile-<jméno>.json` (založí se automaticky při prvním uložení). Všechny tyhle soubory jsou gitignored stejně jako dřív – žádná osobní data žádného účtu se necommitují.
 
+**Hesla se v `data/users.json` ukládají hashovaná** (scrypt + náhodná sůl na uživatele; vestavěné v Node, žádná externí závislost), ne jako prostý text. Starší `data/users.json` (appka před touhle úpravou) mělo heslo ještě čitelné přímo v souboru – appka to pozná a při nejbližším úspěšném přihlášení (nebo změně hesla) ho potichu přehashuje, takže není potřeba nic ručně migrovat.
+
 ## Dva režimy
 
 Nahoře pod hlavičkou jsou dvě velká tlačítka:
@@ -133,11 +135,12 @@ Otevře se tlačítkem **Profil** v hlavičce. Karty:
 
   ### Výběr varianty doplňku (🔄)
 
-  Vedle jména každého cviku v editoru je tlačítko **🔄** — funguje úplně stejně u cviku vygenerovaného ze šablony i u cviku, který si píšeš ručně od nuly. Otevře malé okno, kde nejdřív vybereš, **co** má cvik trénovat (tlak / tah / dolní tělo – jednonožné / zadní řetězec / core), a pak **jakým vybavením** ho chceš dělat (vlastní váha / činky / stroj) — appka doplní název cviku a doporučenou sérii/opakování (jen tam, kde je Plán zatím prázdný, ať ti nepřepíše, co už máš vyplněné).
+  Vedle jména každého cviku v editoru je tlačítko **🔄** — funguje úplně stejně u cviku vygenerovaného ze šablony i u cviku, který si píšeš ručně od nuly. Otevře malé okno, kde nejdřív vybereš, **co** má cvik trénovat, a pak **jakým vybavením** ho chceš dělat (vlastní váha / činky / stroj) — appka doplní název cviku a doporučenou sérii/opakování (jen tam, kde je Plán zatím prázdný, ať ti nepřepíše, co už máš vyplněné).
 
-  Kategorie i konkrétní varianty jsou v `data/accessory-variants.json` (obecný obsah, stejně jako šablony — není gitignored):
-  - Rozdělení na tlak/tah v nabídce respektuje stejný **poměr cca 1:2 ve prospěch tahu** jako u šablony Wendler 5/3/1 (zdraví ramen).
+  Nabídka má **9 kategorií** (rozšířeno z původních 5 podle podrobné rešerše cviků podle svalových partií): tlak-hrudník, tah-záda, nohy-kvadricepsy, zadní řetězec (hamstringy/hýždě), lýtka, ramena (tlak nad hlavu a delty), biceps, triceps, core. U každého vybavení (vlastní váha/činky/stroj) je navíc obvykle **2–3 cviků na výběr**, ne jen jeden pevný — dohromady **57 cviků** (dřív 15). Kategorie i konkrétní varianty jsou v `data/accessory-variants.json` (obecný obsah, stejně jako šablony — není gitignored):
+  - Rozdělení na tlak/tah respektuje stejný **poměr cca 1:2 ve prospěch tahu** jako u šablony Wendler 5/3/1 (zdraví ramen).
   - Tři varianty vybavení pro každou kategorii jsou vybrané tak, aby šlo o **stejný vzor pohybu** (jen jiné náčiní) — opřeno o [systematický přehled a meta-analýzu Heidt a kol. 2023](https://pubmed.ncbi.nlm.nih.gov/37582807/), která u volných vah a strojů nenašla rozdíl v hypertrofii; síla je částečně specifická pro typ tréninku, ale ne natolik, aby jedna varianta byla "špatná". Výběr vybavení je tedy hlavně otázka dostupnosti, ne správnosti.
+  - Samotné rozdělení na 9 kategorií a výběr konkrétních cviků vychází z Perplexity Deep Research (rešerše cviků podle partií + doplňkových cviků k hlavním zdvihům), která cituje především [NSCA Strength and Conditioning Journal 2017 o velkých a malých svalech v silovém tréninku](https://journals.lww.com/nsca-scj/fulltext/2017/10000/large_and_small_muscles_in_resistance_training__is.9.aspx) (odtud i parametry doplňků — 8+ opakování, 1–3 série u síly / 3–4 u hypertrofie, pořadí power → core → assistance) a ACSM Position Stand.
 
   `data/templates.json` na rozdíl od `plan.json`/`profile.json` **není gitignored** — jde o obecný, appkou dodávaný obsah (stejně jako `data/default.json`), ne o tvoje osobní data. Formát:
   ```json
@@ -258,13 +261,13 @@ Nejsilnější evidence podporuje **jednoduchý program s dostatečným objemem,
 training-plan/
 ├── data/
 │   ├── default.json     # výchozí šablona týdne (start pro nový účet bez uloženého plánu)
-│   ├── users.json       # seznam účtů (jméno/heslo/primary) — víc uživatelů, viz sekce výše; vzniká automaticky, není v gitu
+│   ├── users.json       # seznam účtů (jméno/hash hesla/primary) — víc uživatelů, viz sekce výše; vzniká automaticky, není v gitu
 │   ├── plan.json        # uložený plán hlavního účtu (vzniká po prvním uložení, není v gitu)
 │   ├── profile.json     # profil hlavního účtu — výška/váha/jednotky + historie maxim (vzniká při prvním uložení, není v gitu)
 │   ├── plan-<jméno>.json, profile-<jméno>.json  # totéž pro každý další účet (vzniká při prvním uložení, není v gitu)
 │   ├── auth.json         # z appky před podporou víc uživatelů — čte se už jen jednou při prvním spuštění po upgradu (migrace hesla hlavního účtu do users.json), pak se nepoužívá
 │   ├── templates.json   # databáze šablon tréninků — 9 dodávaných protokolů, JE v gitu (viz sekce výše); vlastní šablony si sem můžeš přidat, jen zvaž gitignore
-│   └── accessory-variants.json  # nabídka doplňků (tlak/tah/nohy/zadní řetězec/core × vybavení), JE v gitu
+│   └── accessory-variants.json  # nabídka doplňků (9 kategorií podle svalových partií × vybavení), JE v gitu
 ├── public/
 │   ├── index.html
 │   ├── style.css

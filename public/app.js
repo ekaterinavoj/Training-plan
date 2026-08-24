@@ -1631,29 +1631,17 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !variantOverlay.hidden) closeVariantPicker();
 });
 
-// ── Změna hesla ──────────────────────────────────────────────────────────────
-const pwOverlay  = document.getElementById('change-pw-overlay');
+// ── Změna hesla (karta v Profilu, ne modál) ──────────────────────────────────
 const pwCurrent  = document.getElementById('cp-current');
 const pwNew      = document.getElementById('cp-new');
 const pwConfirm  = document.getElementById('cp-confirm');
 const pwMsg      = document.getElementById('cp-msg');
 
-function openPwModal() {
-  pwCurrent.value = ''; pwNew.value = ''; pwConfirm.value = '';
-  pwMsg.textContent = ''; pwMsg.className = '';
-  pwOverlay.hidden = false;
-  pwCurrent.focus();
-}
-function closePwModal() { pwOverlay.hidden = true; }
-
-document.getElementById('change-pw-btn').addEventListener('click', openPwModal);
-document.getElementById('cp-cancel').addEventListener('click', closePwModal);
-pwOverlay.addEventListener('click', e => { if (e.target === pwOverlay) closePwModal(); });
-
 document.getElementById('cp-submit').addEventListener('click', async () => {
   const current = pwCurrent.value;
   const next    = pwNew.value;
   const confirm_ = pwConfirm.value;
+  pwMsg.textContent = ''; pwMsg.className = '';
   if (!current || !next || !confirm_) { pwMsg.className = 'err'; pwMsg.textContent = 'Vyplňte všechna pole.'; return; }
   if (next !== confirm_) { pwMsg.className = 'err'; pwMsg.textContent = 'Nová hesla se neshodují.'; return; }
   if (next.length < 4) { pwMsg.className = 'err'; pwMsg.textContent = 'Heslo musí mít alespoň 4 znaky.'; return; }
@@ -1667,14 +1655,14 @@ document.getElementById('cp-submit').addEventListener('click', async () => {
   const j = await res.json();
   if (j.ok) {
     pwMsg.className = 'ok'; pwMsg.textContent = '✓ Heslo bylo změněno.';
-    setTimeout(closePwModal, 1500);
+    pwCurrent.value = ''; pwNew.value = ''; pwConfirm.value = '';
   } else {
     pwMsg.className = 'err'; pwMsg.textContent = '⚠️ ' + j.error;
   }
 });
 
-// ── Uživatelé (přidání dalšího samostatného účtu) ────────────────────────────
-const usersOverlay = document.getElementById('users-overlay');
+// ── Uživatelé (karta v Profilu, jen pro hlavní účet — viz loadWhoami) ───────
+const usersCard    = document.getElementById('users-card');
 const usersListEl  = document.getElementById('users-list');
 const nuUsername    = document.getElementById('nu-username');
 const nuPassword    = document.getElementById('nu-password');
@@ -1735,23 +1723,11 @@ async function loadUsersList() {
   }
 }
 
-function openUsersModal() {
-  nuUsername.value = ''; nuPassword.value = ''; nuPasswordConfirm.value = '';
-  nuMsg.textContent = ''; nuMsg.className = '';
-  usersOverlay.hidden = false;
-  loadUsersList();
-  nuUsername.focus();
-}
-function closeUsersModal() { usersOverlay.hidden = true; }
-
-document.getElementById('users-btn').addEventListener('click', openUsersModal);
-document.getElementById('nu-cancel').addEventListener('click', closeUsersModal);
-usersOverlay.addEventListener('click', e => { if (e.target === usersOverlay) closeUsersModal(); });
-
 document.getElementById('nu-submit').addEventListener('click', async () => {
   const username = nuUsername.value.trim();
   const pw = nuPassword.value;
   const pwConfirm2 = nuPasswordConfirm.value;
+  nuMsg.textContent = ''; nuMsg.className = '';
   if (!username || !pw || !pwConfirm2) { nuMsg.className = 'err'; nuMsg.textContent = 'Vyplňte všechna pole.'; return; }
   if (pw !== pwConfirm2) { nuMsg.className = 'err'; nuMsg.textContent = 'Hesla se neshodují.'; return; }
   if (pw.length < 4) { nuMsg.className = 'err'; nuMsg.textContent = 'Heslo musí mít alespoň 4 znaky.'; return; }
@@ -1772,16 +1748,17 @@ document.getElementById('nu-submit').addEventListener('click', async () => {
   }
 });
 
-// Tlačítko "Uživatelé" v hlavičce vidí jen hlavní účet — ostatní uživatelé
-// o sobě navzájem nevědí a nemůžou spravovat cizí hesla.
+// Kartu "Uživatelé" v Profilu vidí jen hlavní účet — ostatní uživatelé o sobě
+// navzájem nevědí a nemůžou spravovat cizí hesla.
 let currentUser = null;
 async function loadWhoami() {
   try {
     const res = await fetch('/api/whoami');
     if (res.status === 401) { window.location.href = '/login'; return; }
     currentUser = await res.json();
-    document.getElementById('users-btn').hidden = !currentUser.primary;
-  } catch (_) { /* nekritické — appka bez toho funguje dál, jen se ikonka nezobrazí */ }
+    usersCard.hidden = !currentUser.primary;
+    if (currentUser.primary) loadUsersList();
+  } catch (_) { /* nekritické — appka bez toho funguje dál, jen se karta nezobrazí */ }
 }
 
 // ── Zapomenuté heslo přímo v Profilu (změna záchranným kódem, bez znalosti
