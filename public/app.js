@@ -364,8 +364,8 @@ function makeItem(ex, itemsBox) {
 
   // Ruční zadávání (bez šablony): pro cvik, u kterého máš v Profilu zapsané
   // maximum, dopočítá váhu podle stejného pravidla jako šablony — 60 %
-  // maxima v 1. týdnu cyklu, +2,5 kg každý další týden — a doplní ji do
-  // prázdných řádků Plánu.
+  // maxima v 1. týdnu cyklu, +krok/týden podle jednotky (viz progressionStep:
+  // 2,5 kg / 5 lb) — a doplní ji do prázdných řádků Plánu.
   node.querySelector('.btn-fill-from-max').addEventListener('click', () => {
     const exName = node.querySelector('.ex-name').value.trim();
     if (!exName) { showToast('⚠️ Nejdřív vyplň název cviku.'); return; }
@@ -373,8 +373,9 @@ function makeItem(ex, itemsBox) {
     if (max == null) { showToast(`⚠️ Pro „${exName}" zatím nemáš v Profilu zapsané maximum.`); return; }
 
     const weekIndex = findWeekIndexForNode(node); // 0-based
-    const raw = max * 0.6 + 2.5 * weekIndex;
-    const rounded = Math.round(raw / 2.5) * 2.5;
+    const step = progressionStep();
+    const raw = max * 0.6 + step * weekIndex;
+    const rounded = Math.round(raw / step) * step;
     const weightStr = trimZero(rounded) + ' ' + unitLabel();
 
     const planLinesBox = node.querySelector('.plan-lines');
@@ -401,7 +402,7 @@ function makeItem(ex, itemsBox) {
 
 // Podle DOM ancestor zjistí, kolikátý (0-based) je aktuálně zobrazený týden
 // v cyklu, do kterého daná exercise-item karta patří — použito pro
-// progresivní dopočet váhy z maxima (60 % + 2,5 kg/týden).
+// progresivní dopočet váhy z maxima (60 % + krok/týden podle jednotky).
 function findWeekIndexForNode(node) {
   const cycleNode = node.closest('.cycle');
   if (!cycleNode) return 0;
@@ -1274,6 +1275,14 @@ function unitLabel() {
   return profile.units === 'lb' ? 'lb' : 'kg';
 }
 
+// Krok progrese/zaokrouhlení podle jednotky — 2,5 kg odpovídá běžnému
+// kotouči (1,25 kg na stranu), ekvivalent v lb je 5 lb (2,5 lb na stranu).
+// Použito jak pro týdenní přírůstek (+krok/týden), tak pro zaokrouhlení
+// dopočtené váhy na "reálné" přírůstky činky.
+function progressionStep() {
+  return profile.units === 'lb' ? 5 : 2.5;
+}
+
 // Značka jednotky se zobrazí, jen když pole obsahuje čisté číslo (nebo je
 // prázdné) — u volného textu jako "prázdná osa" nebo rozsahu "67,5–70 kg"
 // by se jen pletla, takže tam zůstane skrytá.
@@ -1507,14 +1516,16 @@ function latestMaxFor(exerciseName) {
 
 // Šablona zapisuje váhu buď jako obyčejný text (např. "vlastní váha"), nebo
 // jako procento z posledního maxima daného cviku (např. "60%"). Tohle druhé
-// se tady dopočítá na konkrétní kg a zaokrouhlí na 2,5 kg.
+// se tady dopočítá na konkrétní váhu a zaokrouhlí na reálný přírůstek činky
+// podle aktuální jednotky (viz progressionStep — 2,5 kg / 5 lb).
 function resolveTemplateWeight(weightStr, exerciseName) {
   const m = /^(\d+(?:[.,]\d+)?)\s*%$/.exec((weightStr || '').trim());
   if (!m) return { weight: weightStr || '', missing: false };
   const pct = parseFloat(m[1].replace(',', '.'));
   const max = latestMaxFor(exerciseName);
   if (max == null) return { weight: '', missing: true };
-  const rounded = Math.round((max * pct / 100) / 2.5) * 2.5;
+  const step = progressionStep();
+  const rounded = Math.round((max * pct / 100) / step) * step;
   return { weight: trimZero(rounded) + ' ' + unitLabel(), missing: false };
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "training-plan",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Tréninkový plán – jednoduchá aplikace pro sledování cvičení",
   "main": "server.js",
   "engines": {
