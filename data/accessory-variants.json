@@ -8,6 +8,7 @@
       "variants": [
         { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Push-up (klik)", "sets": 3, "reps": "10-15" },
         { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Kliky se zvednutýma nohama (Decline Push-up)", "sets": 3, "reps": "8-12" },
+        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Klik na jedné ruce, asistovaný (Assisted One-Arm Push-up)", "sets": 3, "reps": "6-8/ruku" },
         { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Dumbbell Bench Press (tlaky s jednoručkami vleže)", "sets": 3, "reps": "10" },
         { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Incline Dumbbell Press (šikmý tlak s jednoručkami)", "sets": 3, "reps": "10" },
         { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Dumbbell Flye (rozpažování s jednoručkami)", "sets": 3, "reps": "12-15" },
@@ -34,8 +35,10 @@
       "label": "Nohy – kvadricepsy (přední strana stehen)",
       "muscle": "kvadriceps, hýždě, stabilizace",
       "variants": [
+        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Dřep (vlastní váha)", "sets": 3, "reps": "15-20" },
         { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Výpady (Lunge)", "sets": 3, "reps": "10/noha" },
         { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Step-up (výstup na bednu)", "sets": 3, "reps": "10/noha" },
+        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Pistol Squat (jednonožní dřep, asistovaný)", "sets": 3, "reps": "5/noha" },
         { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Bulharský dřep (Bulgarian Split Squat)", "sets": 3, "reps": "8-10/noha" },
         { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Goblet Squat (dřep s jednoručkou)", "sets": 3, "reps": "10-12" },
         { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Leg Press", "sets": 3, "reps": "10-12" },
@@ -49,6 +52,7 @@
       "variants": [
         { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Hip Thrust", "sets": 3, "reps": "12-15" },
         { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Glute Bridge (lehčí varianta hip thrustu)", "sets": 3, "reps": "12-15" },
+        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Jednonožní Hip Thrust (Single-Leg Hip Thrust)", "sets": 3, "reps": "10-15/noha" },
         { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Rumunský mrtvý tah s jednoručkami (Romanian Deadlift)", "sets": 3, "reps": "10" },
         { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Jednonožní RDL s jednoručkou (Single-Leg RDL)", "sets": 3, "reps": "8-10/noha" },
         { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Zakopávání (Leg Curl)", "sets": 3, "reps": "12" },
