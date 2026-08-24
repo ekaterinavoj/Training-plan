@@ -21,6 +21,33 @@ const ADMIN_RESET_CODE   = process.env.ADMIN_RESET_CODE   || 'ObnovaHesla-9427-T
 const dataDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
+// ── Shipped content (templates.json, accessory-variants.json) ──────────────
+// V produkci je celá data/ namontovaná jako Docker volume (./data:/app/data),
+// takže při startu kontejneru přepíše hostitelův (starý) obsah tenhle
+// composed image úplně — i kdyby image měl novější templates.json/
+// accessory-variants.json zabudované z buildu, nikdy by se ke kontejneru
+// nedostaly. Proto Dockerfile navíc uloží čerstvou kopii těchhle dvou
+// souborů mimo data/ (do shipped-defaults/) a tady je při každém startu
+// natvrdo přepíšeme zpátky do data/ — jsou to obecná dodávaná data, ne
+// osobní obsah uživatele, takže je v pořádku (a žádoucí) je vždy obnovit
+// na aktuální verzi z image. Mimo Docker (lokální `npm start`) shipped-
+// defaults/ neexistuje, takže se tenhle blok jen tiše přeskočí.
+const shippedDir = path.join(__dirname, 'shipped-defaults');
+if (fs.existsSync(shippedDir)) {
+  for (const file of ['templates.json', 'accessory-variants.json']) {
+    try {
+      const src = path.join(shippedDir, file);
+      const dest = path.join(dataDir, file);
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, dest);
+        console.log(`   Obnoveno z image: data/${file}`);
+      }
+    } catch (err) {
+      console.error(`   Nepodařilo se obnovit data/${file} z image:`, err.message);
+    }
+  }
+}
+
 // ── Hesla — hashovaná (scrypt + náhodná sůl na uživatele), ne prostý text ───
 // Node má scrypt vestavěný v `crypto`, takže to nepřidává žádnou další
 // závislost. Uložený tvar je "sůl:hash" (obojí hex). Stará data/users.json
