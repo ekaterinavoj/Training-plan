@@ -1,20 +1,74 @@
 {
-  "source": "Kategorie a jejich vzájemný poměr vychází z doporučení cca 1:2 tlak:tah pro zdraví ramen a rovnováhu (viz šablona Wendler 5/3/1). Rozdělení na 9 kategorií (tlak/tah/nohy-kvadriceps/zadní řetězec/lýtka/ramena-tlak/biceps/triceps/core), více cviků na výběr u každého vybavení a výběr konkrétních cviků vychází z Perplexity Deep Research ('udělej mi rešerši všech možných cviků na různé části těla a svalové partie' a 'a doplňkové cviky?', 2026), která sama cituje především NSCA Strength and Conditioning Journal 2017, Large and Small Muscles in Resistance Training: Is It Time to Reconsider Their Role? (https://journals.lww.com/nsca-scj/fulltext/2017/10000/large_and_small_muscles_in_resistance_training__is.9.aspx) — odtud i doporučené parametry doplňků (8+ opakování, 1-3 série u síly / 3-4 u hypertrofie, pořadí power → core → assistance) a ACSM 2009/2026 Position Stand (https://acsm.org/resistance-training-guidelines-update-2026/). Rovnocennost variant se stejným vzorem pohybu napříč vybavením (vlastní váha / činky / stroj) opírá o Heidt a kol. 2023, systematický přehled a meta-analýza srovnávající volné váhy a stroje — hypertrofie vychází podobně u obou, síla je z části specifická pro typ tréninku (https://pubmed.ncbi.nlm.nih.gov/37582807/), takže výběr vybavení je hlavně otázka dostupnosti a preference, ne správnosti. U každého vybavení je teď obvykle 2-3 cviků na výběr (ne jen jeden pevný) — pokrývají jak vícekloubové, tak izolační varianty dané partie/vzoru.",
+  "source": "Kategorie a jejich vzájemný poměr vychází z doporučení cca 1:2 tlak:tah pro zdraví ramen a rovnováhu (viz šablona Wendler 5/3/1). Rozdělení na 9 kategorií (tlak/tah/nohy-kvadriceps/zadní řetězec/lýtka/ramena-tlak/biceps/triceps/core), více cviků na výběr u každého vybavení a výběr konkrétních cviků vychází z Perplexity Deep Research ('udělej mi rešerši všech možných cviků na různé části těla a svalové partie' a 'a doplňkové cviky?', 2026), která sama cituje především NSCA Strength and Conditioning Journal 2017, Large and Small Muscles in Resistance Training: Is It Time to Reconsider Their Role? (https://journals.lww.com/nsca-scj/fulltext/2017/10000/large_and_small_muscles_in_resistance_training__is.9.aspx) — odtud i doporučené parametry doplňků (8+ opakování, 1-3 série u síly / 3-4 u hypertrofie, pořadí power → core → assistance) a ACSM 2009/2026 Position Stand (https://acsm.org/resistance-training-guidelines-update-2026/). Rovnocennost variant se stejným vzorem pohybu napříč vybavením (vlastní váha / činky / stroj) opírá o Heidt a kol. 2023, systematický přehled a meta-analýza srovnávající volné váhy a stroje — hypertrofie vychází podobně u obou, síla je z části specifická pro typ tréninku (https://pubmed.ncbi.nlm.nih.gov/37582807/), takže výběr vybavení je hlavně otázka dostupnosti a preference, ne správnosti. U každého vybavení je teď obvykle 2-3 cviků na výběr (ne jen jeden pevný) — pokrývají jak vícekloubové, tak izolační varianty dané partie/vzoru. Šest cviků na core (rotace na šikmé lavici, tuck hold, sed s rotací a medicinbalem, V-sit/tuck crunch, reverse crunch, bear plank s přenášením váhy) přidáno podle poznámek uživatelčina trenéra k rozboru konkrétních cviků z fotek/videí (2026) — doporučené série/opakování a upozornění na kombinace, kterým je lepší se vyhnout (např. těžká rotace hned po mrtvém tahu, víc podobných cviků na flexory kyčlí ve stejném tréninku), pocházejí odtud, ne z akademické literatury.",
   "categories": [
     {
       "id": "push",
       "label": "Tlak (horní tělo) – hrudník",
       "muscle": "prsa, ramena, triceps",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Push-up (klik)", "sets": 3, "reps": "10-15" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Kliky se zvednutýma nohama (Decline Push-up)", "sets": 3, "reps": "8-12" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Klik na jedné ruce, asistovaný (Assisted One-Arm Push-up)", "sets": 3, "reps": "6-8/ruku" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Dumbbell Bench Press (tlaky s jednoručkami vleže)", "sets": 3, "reps": "10" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Incline Dumbbell Press (šikmý tlak s jednoručkami)", "sets": 3, "reps": "10" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Dumbbell Flye (rozpažování s jednoručkami)", "sets": 3, "reps": "12-15" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Chest Press (tlaky na stroji)", "sets": 3, "reps": "10-12" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Pec Deck (Butterfly)", "sets": 3, "reps": "12-15" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Cable Crossover (stahování kladek)", "sets": 3, "reps": "12-15" }
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Push-up (klik)",
+          "sets": 3,
+          "reps": "10-15"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Kliky se zvednutýma nohama (Decline Push-up)",
+          "sets": 3,
+          "reps": "8-12"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Klik na jedné ruce, asistovaný (Assisted One-Arm Push-up)",
+          "sets": 3,
+          "reps": "6-8/ruku"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Dumbbell Bench Press (tlaky s jednoručkami vleže)",
+          "sets": 3,
+          "reps": "10"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Incline Dumbbell Press (šikmý tlak s jednoručkami)",
+          "sets": 3,
+          "reps": "10"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Dumbbell Flye (rozpažování s jednoručkami)",
+          "sets": 3,
+          "reps": "12-15"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Chest Press (tlaky na stroji)",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Pec Deck (Butterfly)",
+          "sets": 3,
+          "reps": "12-15"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Cable Crossover (stahování kladek)",
+          "sets": 3,
+          "reps": "12-15"
+        }
       ]
     },
     {
@@ -22,12 +76,48 @@
       "label": "Tah (horní tělo) – záda",
       "muscle": "záda, biceps, zadní deltové svaly",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Shyby (Pull-up)", "sets": 3, "reps": "6-10" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Inverted Row (veslování v podpažení pod tyčí)", "sets": 3, "reps": "8-12" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Veslování s jednoručkou (One-Arm Dumbbell Row)", "sets": 3, "reps": "10" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Chest-Supported Dumbbell Row (veslování opřená o lavici)", "sets": 3, "reps": "10-12" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Stahování kladky (Lat Pulldown)", "sets": 3, "reps": "10-12" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Seated Cable Row (veslování na kladce vsedě)", "sets": 3, "reps": "10-12" }
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Shyby (Pull-up)",
+          "sets": 3,
+          "reps": "6-10"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Inverted Row (veslování v podpažení pod tyčí)",
+          "sets": 3,
+          "reps": "8-12"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Veslování s jednoručkou (One-Arm Dumbbell Row)",
+          "sets": 3,
+          "reps": "10"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Chest-Supported Dumbbell Row (veslování opřená o lavici)",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Stahování kladky (Lat Pulldown)",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Seated Cable Row (veslování na kladce vsedě)",
+          "sets": 3,
+          "reps": "10-12"
+        }
       ]
     },
     {
@@ -35,14 +125,62 @@
       "label": "Nohy – kvadricepsy (přední strana stehen)",
       "muscle": "kvadriceps, hýždě, stabilizace",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Dřep (vlastní váha)", "sets": 3, "reps": "15-20" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Výpady (Lunge)", "sets": 3, "reps": "10/noha" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Step-up (výstup na bednu)", "sets": 3, "reps": "10/noha" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Pistol Squat (jednonožní dřep, asistovaný)", "sets": 3, "reps": "5/noha" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Bulharský dřep (Bulgarian Split Squat)", "sets": 3, "reps": "8-10/noha" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Goblet Squat (dřep s jednoručkou)", "sets": 3, "reps": "10-12" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Leg Press", "sets": 3, "reps": "10-12" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Leg Extension (předkopávání)", "sets": 3, "reps": "12-15" }
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Dřep (vlastní váha)",
+          "sets": 3,
+          "reps": "15-20"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Výpady (Lunge)",
+          "sets": 3,
+          "reps": "10/noha"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Step-up (výstup na bednu)",
+          "sets": 3,
+          "reps": "10/noha"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Pistol Squat (jednonožní dřep, asistovaný)",
+          "sets": 3,
+          "reps": "5/noha"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Bulharský dřep (Bulgarian Split Squat)",
+          "sets": 3,
+          "reps": "8-10/noha"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Goblet Squat (dřep s jednoručkou)",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Leg Press",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Leg Extension (předkopávání)",
+          "sets": 3,
+          "reps": "12-15"
+        }
       ]
     },
     {
@@ -50,13 +188,55 @@
       "label": "Zadní řetězec – hamstringy, hýždě",
       "muscle": "hamstringy, hýždě, dolní záda",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Hip Thrust", "sets": 3, "reps": "12-15" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Glute Bridge (lehčí varianta hip thrustu)", "sets": 3, "reps": "12-15" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Jednonožní Hip Thrust (Single-Leg Hip Thrust)", "sets": 3, "reps": "10-15/noha" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Rumunský mrtvý tah s jednoručkami (Romanian Deadlift)", "sets": 3, "reps": "10" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Jednonožní RDL s jednoručkou (Single-Leg RDL)", "sets": 3, "reps": "8-10/noha" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Zakopávání (Leg Curl)", "sets": 3, "reps": "12" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Back Extension (na římské židli / GHD)", "sets": 3, "reps": "12-15" }
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Hip Thrust",
+          "sets": 3,
+          "reps": "12-15"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Glute Bridge (lehčí varianta hip thrustu)",
+          "sets": 3,
+          "reps": "12-15"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Jednonožní Hip Thrust (Single-Leg Hip Thrust)",
+          "sets": 3,
+          "reps": "10-15/noha"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Rumunský mrtvý tah s jednoručkami (Romanian Deadlift)",
+          "sets": 3,
+          "reps": "10"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Jednonožní RDL s jednoručkou (Single-Leg RDL)",
+          "sets": 3,
+          "reps": "8-10/noha"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Zakopávání (Leg Curl)",
+          "sets": 3,
+          "reps": "12"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Back Extension (na římské židli / GHD)",
+          "sets": 3,
+          "reps": "12-15"
+        }
       ]
     },
     {
@@ -64,12 +244,48 @@
       "label": "Lýtka (plantární flexe)",
       "muscle": "lýtkové svaly (gastrocnemius, soleus)",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Obounožní výpony ve stoje (Standing Calf Raise)", "sets": 3, "reps": "15-20" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Jednonožní výpony na schodu (Single-Leg Calf Raise)", "sets": 3, "reps": "15-20/noha" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Výpony s jednoručkami (Dumbbell Calf Raise)", "sets": 3, "reps": "15-20" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Výpony vsedě s jednoručkou na koleni (Seated Dumbbell Calf Raise)", "sets": 3, "reps": "15-20" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Calf Raise Machine (výpony na stroji)", "sets": 3, "reps": "15-20" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Výpony na leg pressu (Leg Press Calf Raise)", "sets": 3, "reps": "15-20" }
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Obounožní výpony ve stoje (Standing Calf Raise)",
+          "sets": 3,
+          "reps": "15-20"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Jednonožní výpony na schodu (Single-Leg Calf Raise)",
+          "sets": 3,
+          "reps": "15-20/noha"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Výpony s jednoručkami (Dumbbell Calf Raise)",
+          "sets": 3,
+          "reps": "15-20"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Výpony vsedě s jednoručkou na koleni (Seated Dumbbell Calf Raise)",
+          "sets": 3,
+          "reps": "15-20"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Calf Raise Machine (výpony na stroji)",
+          "sets": 3,
+          "reps": "15-20"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Výpony na leg pressu (Leg Press Calf Raise)",
+          "sets": 3,
+          "reps": "15-20"
+        }
       ]
     },
     {
@@ -77,13 +293,55 @@
       "label": "Ramena – tlak nad hlavu a delty",
       "muscle": "deltové svaly, triceps, horní hrudník",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Pike Push-up", "sets": 3, "reps": "8-12" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Y-Raise (výdrž na břiše)", "sets": 3, "reps": "12-15" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Dumbbell Overhead Press (tlak s jednoručkami nad hlavu)", "sets": 3, "reps": "8-10" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Lateral Raise (upažování s jednoručkami)", "sets": 3, "reps": "12-15" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Arnold Press", "sets": 3, "reps": "10-12" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Shoulder Press Machine (tlak na ramena na stroji)", "sets": 3, "reps": "10-12" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Face Pull (na kladce)", "sets": 3, "reps": "12-15" }
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Pike Push-up",
+          "sets": 3,
+          "reps": "8-12"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Y-Raise (výdrž na břiše)",
+          "sets": 3,
+          "reps": "12-15"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Dumbbell Overhead Press (tlak s jednoručkami nad hlavu)",
+          "sets": 3,
+          "reps": "8-10"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Lateral Raise (upažování s jednoručkami)",
+          "sets": 3,
+          "reps": "12-15"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Arnold Press",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Shoulder Press Machine (tlak na ramena na stroji)",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Face Pull (na kladce)",
+          "sets": 3,
+          "reps": "12-15"
+        }
       ]
     },
     {
@@ -91,12 +349,48 @@
       "label": "Paže – biceps",
       "muscle": "biceps brachii, brachialis",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Chin-up (shyby podhmatem)", "sets": 3, "reps": "6-10" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Bicepsový zdvih s jednoručkami (Dumbbell Bicep Curl)", "sets": 3, "reps": "10-15" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Hammer Curl (kladivový zdvih)", "sets": 3, "reps": "10-15" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Incline Dumbbell Curl (na šikmé lavici)", "sets": 3, "reps": "10-12" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Bicepsový zdvih na kladce (Cable Curl)", "sets": 3, "reps": "10-15" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Reverse Cable Curl (podhmatem, předloktí)", "sets": 3, "reps": "10-15" }
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Chin-up (shyby podhmatem)",
+          "sets": 3,
+          "reps": "6-10"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Bicepsový zdvih s jednoručkami (Dumbbell Bicep Curl)",
+          "sets": 3,
+          "reps": "10-15"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Hammer Curl (kladivový zdvih)",
+          "sets": 3,
+          "reps": "10-15"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Incline Dumbbell Curl (na šikmé lavici)",
+          "sets": 3,
+          "reps": "10-12"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Bicepsový zdvih na kladce (Cable Curl)",
+          "sets": 3,
+          "reps": "10-15"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Reverse Cable Curl (podhmatem, předloktí)",
+          "sets": 3,
+          "reps": "10-15"
+        }
       ]
     },
     {
@@ -104,12 +398,48 @@
       "label": "Paže – triceps",
       "muscle": "triceps brachii",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Tricepsový klik na lavici (Bench Dip)", "sets": 3, "reps": "10-15" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Diamond Push-up (úzký klik)", "sets": 3, "reps": "8-12" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Tricepsový zdvih s jednoručkou nad hlavou (Overhead Triceps Extension)", "sets": 3, "reps": "10-15" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Skull Crusher s jednoručkami (Lying Triceps Extension)", "sets": 3, "reps": "10-15" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Tricepsová kladka (Triceps Pushdown)", "sets": 3, "reps": "10-15" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Overhead Cable Triceps Extension (přes hlavu na kladce)", "sets": 3, "reps": "10-15" }
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Tricepsový klik na lavici (Bench Dip)",
+          "sets": 3,
+          "reps": "10-15"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Diamond Push-up (úzký klik)",
+          "sets": 3,
+          "reps": "8-12"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Tricepsový zdvih s jednoručkou nad hlavou (Overhead Triceps Extension)",
+          "sets": 3,
+          "reps": "10-15"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Skull Crusher s jednoručkami (Lying Triceps Extension)",
+          "sets": 3,
+          "reps": "10-15"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Tricepsová kladka (Triceps Pushdown)",
+          "sets": 3,
+          "reps": "10-15"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Overhead Cable Triceps Extension (přes hlavu na kladce)",
+          "sets": 3,
+          "reps": "10-15"
+        }
       ]
     },
     {
@@ -117,12 +447,90 @@
       "label": "Core / střed těla",
       "muscle": "hluboký stabilizační systém, přímé a šikmé břišní svaly",
       "variants": [
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Plank", "sets": 3, "reps": "30-45 s" },
-        { "equipment": "vlastni_vaha", "equipmentLabel": "Vlastní váha", "name": "Dead Bug", "sets": 3, "reps": "10-12/stranu" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Ruský twist s jednoručkou (Russian Twist)", "sets": 3, "reps": "12/stranu" },
-        { "equipment": "cinky", "equipmentLabel": "Činky", "name": "Úklony s jednoručkou (Dumbbell Side Bend)", "sets": 3, "reps": "12-15/stranu" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Cable Crunch", "sets": 3, "reps": "12-15" },
-        { "equipment": "stroj", "equipmentLabel": "Stroj", "name": "Cable Woodchop (na kladce, diagonální rotace)", "sets": 3, "reps": "10-12/stranu" }
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Plank",
+          "sets": 3,
+          "reps": "30-45 s"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Dead Bug",
+          "sets": 3,
+          "reps": "10-12/stranu"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Ruský twist s jednoručkou (Russian Twist)",
+          "sets": 3,
+          "reps": "12/stranu"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Úklony s jednoručkou (Dumbbell Side Bend)",
+          "sets": 3,
+          "reps": "12-15/stranu"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Cable Crunch",
+          "sets": 3,
+          "reps": "12-15"
+        },
+        {
+          "equipment": "stroj",
+          "equipmentLabel": "Stroj",
+          "name": "Cable Woodchop (na kladce, diagonální rotace)",
+          "sets": 3,
+          "reps": "10-12/stranu"
+        },
+        {
+          "equipment": "cinky",
+          "equipmentLabel": "Činky",
+          "name": "Rotace v předklonu na šikmé lavici (s jednoručkou)",
+          "sets": 3,
+          "reps": "8-12/stranu"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Tuck Hold (zkrácená V-sedová pozice)",
+          "sets": 3,
+          "reps": "15-25 s"
+        },
+        {
+          "equipment": "medicinbal",
+          "equipmentLabel": "Medicinbal",
+          "name": "Sed s rotací a medicinbalem (Russian Twist)",
+          "sets": 3,
+          "reps": "8-12/stranu"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "V-sit / Tuck Crunch",
+          "sets": 3,
+          "reps": "8-12"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Reverse Crunch (zvedání pánve)",
+          "sets": 3,
+          "reps": "10-15"
+        },
+        {
+          "equipment": "vlastni_vaha",
+          "equipmentLabel": "Vlastní váha",
+          "name": "Bear Plank s přenášením váhy",
+          "sets": 3,
+          "reps": "20-30 s"
+        }
       ]
     }
   ]
