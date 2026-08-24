@@ -244,13 +244,17 @@ async function doReset() {
   if (!un || !rc || !np || !nc) { msg.className='err'; msg.textContent='Vyplňte všechna pole.'; return; }
   if (np !== nc) { msg.className='err'; msg.textContent='Nová hesla se neshodují.'; return; }
   if (np.length < 4) { msg.className='err'; msg.textContent='Heslo musí mít alespoň 4 znaky.'; return; }
-  const r = await fetch('/reset-password', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:un,resetCode:rc,newPassword:np})});
-  const j = await r.json();
-  if (j.ok) {
-    msg.className='ok'; msg.textContent='✓ Heslo bylo změněno! Nyní se přihlaste.';
-    setTimeout(()=>{ document.getElementById('reset-section').style.display='none'; document.getElementById('login-section').style.display='block'; },2000);
-  } else {
-    msg.className='err'; msg.textContent='⚠️ '+j.error;
+  try {
+    const r = await fetch('/reset-password', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:un,resetCode:rc,newPassword:np})});
+    const j = await r.json();
+    if (j.ok) {
+      msg.className='ok'; msg.textContent='✓ Heslo bylo změněno! Nyní se přihlaste.';
+      setTimeout(()=>{ document.getElementById('reset-section').style.display='none'; document.getElementById('login-section').style.display='block'; },2000);
+    } else {
+      msg.className='err'; msg.textContent='⚠️ '+j.error;
+    }
+  } catch (e) {
+    msg.className='err'; msg.textContent='⚠️ Nepodařilo se spojit se serverem. Zkus to znovu za chvíli.';
   }
 }
 </script>

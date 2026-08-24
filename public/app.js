@@ -54,45 +54,60 @@ function defaultCycle(n) {
 
 // ── Load & migrate ────────────────────────────────────────────────────────────
 async function loadPlan() {
-  const res = await fetch('/api/plan');
-  if (res.status === 401) { window.location.href = '/login'; return; }
-  const data = await res.json();
-  plan = migrate(data);
-  currentWeekByCycle = {};
-  plan.cycles.forEach(c => { currentWeekByCycle[c.id] = c.weeks[0] ? c.weeks[0].id : null; });
-  render();
-  renderViewer();
-  applyMode();
+  try {
+    const res = await fetch('/api/plan');
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    const data = await res.json();
+    plan = migrate(data);
+    currentWeekByCycle = {};
+    plan.cycles.forEach(c => { currentWeekByCycle[c.id] = c.weeks[0] ? c.weeks[0].id : null; });
+    render();
+    renderViewer();
+    applyMode();
+  } catch (_) {
+    // Výpadek spojení (např. restart serveru zrovna když se stránka
+    // načítala) by bez try/catch nechal appku vypadat prázdně/rozbitě, beze
+    // slova proč — radši ukázat hlášku a nechat uživatele zkusit obnovit.
+    showToast('⚠️ Nepodařilo se načíst trénink — zkus stránku obnovit (F5).');
+  }
 }
 
 async function loadProfile() {
-  const res = await fetch('/api/profile');
-  if (res.status === 401) { window.location.href = '/login'; return; }
-  const data = await res.json();
-  profile = {
-    height: data.height ?? null,
-    weight: data.weight ?? null,
-    units: data.units === 'lb' ? 'lb' : 'kg',
-    experience: EXPERIENCE_LABELS[data.experience] ? data.experience : '',
-    daysPerWeek: Number.isInteger(data.daysPerWeek) ? data.daysPerWeek : null,
-    maxima: Array.isArray(data.maxima) ? data.maxima : []
-  };
-  renderProfile();
+  try {
+    const res = await fetch('/api/profile');
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    const data = await res.json();
+    profile = {
+      height: data.height ?? null,
+      weight: data.weight ?? null,
+      units: data.units === 'lb' ? 'lb' : 'kg',
+      experience: EXPERIENCE_LABELS[data.experience] ? data.experience : '',
+      daysPerWeek: Number.isInteger(data.daysPerWeek) ? data.daysPerWeek : null,
+      maxima: Array.isArray(data.maxima) ? data.maxima : []
+    };
+    renderProfile();
+  } catch (_) {
+    showToast('⚠️ Nepodařilo se načíst profil — zkus stránku obnovit (F5).');
+  }
 }
 
 async function loadTemplates() {
-  const res = await fetch('/api/templates');
-  if (res.status === 401) { window.location.href = '/login'; return; }
-  const data = await res.json();
-  templates = Array.isArray(data.templates) ? data.templates : [];
-  renderTemplateList();
+  try {
+    const res = await fetch('/api/templates');
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    const data = await res.json();
+    templates = Array.isArray(data.templates) ? data.templates : [];
+    renderTemplateList();
+  } catch (_) { /* nekritické — appka bez šablon dál funguje, jen se nenabídnou */ }
 }
 
 async function loadAccessoryVariants() {
-  const res = await fetch('/api/accessory-variants');
-  if (res.status === 401) { window.location.href = '/login'; return; }
-  const data = await res.json();
-  accessoryVariants = Array.isArray(data.categories) ? data.categories : [];
+  try {
+    const res = await fetch('/api/accessory-variants');
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    const data = await res.json();
+    accessoryVariants = Array.isArray(data.categories) ? data.categories : [];
+  } catch (_) { /* nekritické — appka bez doplňků dál funguje, jen se nenabídnou */ }
 }
 
 function migrate(data) {
@@ -596,18 +611,27 @@ async function savePlan(auto) {
   if (mode === 'edit') {
     plan.cycles.forEach(c => syncCycleCurrentWeekFromDom(c));
   }
-  const res = await fetch('/api/plan', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(plan)
-  });
-  if (res.status === 401) { window.location.href = '/login'; return; }
-  if (res.ok) {
-    setSaveStatus('✓ Uloženo');
-    if (!auto) showToast('✓ Uloženo');
-  } else {
-    setSaveStatus('⚠️ Neuloženo');
-    showToast('⚠️ Uložení se nezdařilo');
+  try {
+    const res = await fetch('/api/plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(plan)
+    });
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    if (res.ok) {
+      setSaveStatus('✓ Uloženo');
+      if (!auto) showToast('✓ Uloženo');
+    } else {
+      setSaveStatus('⚠️ Neuloženo');
+      showToast('⚠️ Uložení se nezdařilo');
+    }
+  } catch (_) {
+    // Selhání na síťové úrovni (výpadek spojení, restart serveru uprostřed
+    // requestu) by bez try/catch prošlo úplně potichu — fetch() by vyhodil
+    // výjimku a nikdy by se nedostal ke kódu, který nastavuje stavovou
+    // hlášku. Radši ukázat, že se neuložilo, než tvářit se, že je vše OK.
+    setSaveStatus('⚠️ Neuloženo (výpadek spojení)');
+    showToast('⚠️ Uložení se nezdařilo — nepodařilo se spojit se serverem, zkus to znovu.');
   }
 }
 
@@ -1230,13 +1254,17 @@ function scheduleProfileAutoSave() {
   profileAutoSaveTimer = setTimeout(saveProfileNow, 700);
 }
 async function saveProfileNow() {
-  const res = await fetch('/api/profile', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(profile)
-  });
-  if (res.status === 401) { window.location.href = '/login'; return; }
-  setSaveStatus(res.ok ? '✓ Uloženo' : '⚠️ Neuloženo');
+  try {
+    const res = await fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profile)
+    });
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    setSaveStatus(res.ok ? '✓ Uloženo' : '⚠️ Neuloženo');
+  } catch (_) {
+    setSaveStatus('⚠️ Neuloženo (výpadek spojení)');
+  }
 }
 
 // ── Jednotky vah (kg / lb) ───────────────────────────────────────────────────
@@ -1646,18 +1674,24 @@ document.getElementById('cp-submit').addEventListener('click', async () => {
   if (next !== confirm_) { pwMsg.className = 'err'; pwMsg.textContent = 'Nová hesla se neshodují.'; return; }
   if (next.length < 4) { pwMsg.className = 'err'; pwMsg.textContent = 'Heslo musí mít alespoň 4 znaky.'; return; }
 
-  const res = await fetch('/api/change-password', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ currentPassword: current, newPassword: next })
-  });
-  if (res.status === 401) { window.location.href = '/login'; return; }
-  const j = await res.json();
-  if (j.ok) {
-    pwMsg.className = 'ok'; pwMsg.textContent = '✓ Heslo bylo změněno.';
-    pwCurrent.value = ''; pwNew.value = ''; pwConfirm.value = '';
-  } else {
-    pwMsg.className = 'err'; pwMsg.textContent = '⚠️ ' + j.error;
+  try {
+    const res = await fetch('/api/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword: current, newPassword: next })
+    });
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    const j = await res.json();
+    if (j.ok) {
+      pwMsg.className = 'ok'; pwMsg.textContent = '✓ Heslo bylo změněno.';
+      pwCurrent.value = ''; pwNew.value = ''; pwConfirm.value = '';
+    } else {
+      pwMsg.className = 'err'; pwMsg.textContent = '⚠️ ' + j.error;
+    }
+  } catch (_) {
+    // Bez try/catch by výpadek spojení (např. restart serveru uprostřed
+    // requestu) prošel úplně potichu — tlačítko by vypadalo, že nedělá nic.
+    pwMsg.className = 'err'; pwMsg.textContent = '⚠️ Nepodařilo se spojit se serverem. Zkus to znovu za chvíli.';
   }
 });
 
@@ -1707,14 +1741,18 @@ async function loadUsersList() {
         if (!newPw || !confirmPw) { showToast('⚠️ Vyplňte obě pole hesla.'); return; }
         if (newPw !== confirmPw) { showToast('⚠️ Hesla se neshodují.'); return; }
         if (newPw.length < 4) { showToast('⚠️ Heslo musí mít alespoň 4 znaky.'); return; }
-        const r = await fetch(`/api/users/${encodeURIComponent(u.username)}/password`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ newPassword: newPw })
-        });
-        if (r.status === 401) { window.location.href = '/login'; return; }
-        const rj = await r.json();
-        if (rj.ok) { showToast(`✓ Heslo pro „${u.username}" změněno.`); form.hidden = true; }
-        else showToast('⚠️ ' + rj.error);
+        try {
+          const r = await fetch(`/api/users/${encodeURIComponent(u.username)}/password`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ newPassword: newPw })
+          });
+          if (r.status === 401) { window.location.href = '/login'; return; }
+          const rj = await r.json();
+          if (rj.ok) { showToast(`✓ Heslo pro „${u.username}" změněno.`); form.hidden = true; }
+          else showToast('⚠️ ' + rj.error);
+        } catch (_) {
+          showToast('⚠️ Nepodařilo se spojit se serverem. Zkus to znovu za chvíli.');
+        }
       });
       usersListEl.appendChild(row);
     });
@@ -1732,19 +1770,23 @@ document.getElementById('nu-submit').addEventListener('click', async () => {
   if (pw !== pwConfirm2) { nuMsg.className = 'err'; nuMsg.textContent = 'Hesla se neshodují.'; return; }
   if (pw.length < 4) { nuMsg.className = 'err'; nuMsg.textContent = 'Heslo musí mít alespoň 4 znaky.'; return; }
 
-  const res = await fetch('/api/users', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password: pw })
-  });
-  if (res.status === 401) { window.location.href = '/login'; return; }
-  const j = await res.json();
-  if (j.ok) {
-    nuMsg.className = 'ok'; nuMsg.textContent = `✓ Uživatel „${username}" vytvořen — může se rovnou přihlásit.`;
-    nuUsername.value = ''; nuPassword.value = ''; nuPasswordConfirm.value = '';
-    loadUsersList();
-  } else {
-    nuMsg.className = 'err'; nuMsg.textContent = '⚠️ ' + j.error;
+  try {
+    const res = await fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password: pw })
+    });
+    if (res.status === 401) { window.location.href = '/login'; return; }
+    const j = await res.json();
+    if (j.ok) {
+      nuMsg.className = 'ok'; nuMsg.textContent = `✓ Uživatel „${username}" vytvořen — může se rovnou přihlásit.`;
+      nuUsername.value = ''; nuPassword.value = ''; nuPasswordConfirm.value = '';
+      loadUsersList();
+    } else {
+      nuMsg.className = 'err'; nuMsg.textContent = '⚠️ ' + j.error;
+    }
+  } catch (_) {
+    nuMsg.className = 'err'; nuMsg.textContent = '⚠️ Nepodařilo se spojit se serverem. Zkus to znovu za chvíli.';
   }
 });
 
@@ -1778,17 +1820,21 @@ document.getElementById('pr-submit').addEventListener('click', async () => {
   if (next.length < 4) { prMsg.className = 'err'; prMsg.textContent = 'Heslo musí mít alespoň 4 znaky.'; return; }
   if (!currentUser) { prMsg.className = 'err'; prMsg.textContent = 'Nepodařilo se zjistit přihlášeného uživatele, zkus obnovit stránku.'; return; }
 
-  const res = await fetch('/reset-password', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username: currentUser.username, resetCode: code, newPassword: next })
-  });
-  const j = await res.json();
-  if (j.ok) {
-    prMsg.className = 'ok'; prMsg.textContent = '✓ Heslo bylo změněno.';
-    prCode.value = ''; prNew.value = ''; prNewConfirm.value = '';
-  } else {
-    prMsg.className = 'err'; prMsg.textContent = '⚠️ ' + j.error;
+  try {
+    const res = await fetch('/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: currentUser.username, resetCode: code, newPassword: next })
+    });
+    const j = await res.json();
+    if (j.ok) {
+      prMsg.className = 'ok'; prMsg.textContent = '✓ Heslo bylo změněno.';
+      prCode.value = ''; prNew.value = ''; prNewConfirm.value = '';
+    } else {
+      prMsg.className = 'err'; prMsg.textContent = '⚠️ ' + j.error;
+    }
+  } catch (_) {
+    prMsg.className = 'err'; prMsg.textContent = '⚠️ Nepodařilo se spojit se serverem. Zkus to znovu za chvíli.';
   }
 });
 
