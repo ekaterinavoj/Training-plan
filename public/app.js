@@ -363,9 +363,16 @@ function makeItem(ex, itemsBox) {
   node.querySelector('.btn-pick-variant').addEventListener('click', () => openVariantPicker(node));
 
   // Ruční zadávání (bez šablony): pro cvik, u kterého máš v Profilu zapsané
-  // maximum, dopočítá váhu podle stejného pravidla jako šablony — 60 %
-  // maxima v 1. týdnu cyklu, +krok/týden podle jednotky (viz progressionStep:
-  // 2,5 kg / 5 lb) — a doplní ji do prázdných řádků Plánu.
+  // maximum, umí dopočítat váhu dvěma způsoby — přesně jako šablony to dělají
+  // dvěma různými způsoby na dvou různých místech, tak ať to umí obojí i tady:
+  //   1) prázdný řádek váhy  -> 60 % maxima v 1. týdnu + krok/týden podle
+  //      jednotky (viz progressionStep: 2,5 kg / 5 lb) — stejné jako dřív.
+  //   2) řádek s ručně napsaným procentem (např. "70%") -> dopočítá se
+  //      přesně to procento z posledního maxima (stejná logika jako
+  //      resolveTemplateWeight u šablon), místo aby se ignorovalo jako
+  //      "už vyplněno".
+  // Takže si buď necháš dopočítat výchozí lineární progresi, nebo si pro
+  // konkrétní týden/sérii napíšeš vlastní % a necháš přepočítat jen to.
   node.querySelector('.btn-fill-from-max').addEventListener('click', () => {
     const exName = node.querySelector('.ex-name').value.trim();
     if (!exName) { showToast('⚠️ Nejdřív vyplň název cviku.'); return; }
@@ -376,24 +383,36 @@ function makeItem(ex, itemsBox) {
     const step = progressionStep();
     const raw = max * 0.6 + step * weekIndex;
     const rounded = Math.round(raw / step) * step;
-    const weightStr = trimZero(rounded) + ' ' + unitLabel();
+    const defaultWeightStr = trimZero(rounded) + ' ' + unitLabel();
+    const percentRe = /^\d+(?:[.,]\d+)?\s*%$/;
 
     const planLinesBox = node.querySelector('.plan-lines');
     if (!planLinesBox.children.length) planLinesBox.appendChild(buildSetLine());
-    let filled = 0;
+    let filledDefault = 0, filledPercent = 0;
     planLinesBox.querySelectorAll('.set-line').forEach(lineNode => {
       const w = lineNode.querySelector('.line-weight');
-      if (!w.value.trim()) {
-        w.value = weightStr;
+      const val = w.value.trim();
+      if (!val) {
+        w.value = defaultWeightStr;
         updateWeightBadge(w, lineNode.querySelector('.weight-unit-badge'));
-        filled++;
+        filledDefault++;
+      } else if (percentRe.test(val)) {
+        const r = resolveTemplateWeight(val, exName);
+        if (!r.missing) {
+          w.value = r.weight;
+          updateWeightBadge(w, lineNode.querySelector('.weight-unit-badge'));
+          filledPercent++;
+        }
       }
     });
-    if (filled) {
-      showToast(`✓ Doplněno ${weightStr} (týden ${weekIndex + 1}, 60 % + progrese)`);
+    if (filledDefault || filledPercent) {
+      const parts = [];
+      if (filledDefault) parts.push(`${filledDefault}× ${defaultWeightStr} (60 % + progrese, týden ${weekIndex + 1})`);
+      if (filledPercent) parts.push(`${filledPercent}× dopočteno z vlastního %`);
+      showToast('✓ Doplněno: ' + parts.join(', '));
       scheduleAutoSave();
     } else {
-      showToast('ℹ️ Všechny série už mají vyplněnou váhu.');
+      showToast('ℹ️ Všechny série už mají vyplněnou váhu (a žádná nebyla jako "%").');
     }
   });
 
